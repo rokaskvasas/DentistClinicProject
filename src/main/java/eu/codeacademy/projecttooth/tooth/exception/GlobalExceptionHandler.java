@@ -13,8 +13,8 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(UserByIdNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse userNotFound(UserByIdNotFoundException e){
-        return new ErrorResponse("User not found");
+    public ErrorResponse userNotFound(UserByIdNotFoundException e) {
+        return new ErrorResponse("User not found " + e.getMessage());
     }
 
 }

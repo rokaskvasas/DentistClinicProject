@@ -5,7 +5,7 @@ import eu.codeacademy.projecttooth.tooth.model.User;
 import java.util.List;
 
 public interface UserEntityService {
-    List<User> getAllUsers();
-
-    User getUserById(Long userId);
+//    List<User> getAllUsers();
+//
+//    User getUserById(Long userId);
 }

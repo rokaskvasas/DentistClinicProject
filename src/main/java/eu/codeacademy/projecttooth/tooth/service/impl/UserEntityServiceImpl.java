@@ -1,6 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.advisor.UserEntityAdvisor;
+import eu.codeacademy.projecttooth.tooth.mapper.UserEntityMapper;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.exception.UserByIdNotFoundException;
 import eu.codeacademy.projecttooth.tooth.model.User;
@@ -16,22 +16,23 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserEntityServiceImpl implements UserEntityService {
 
-    private final UserEntityRepository userEntityRepository;
-
-    private final UserEntityAdvisor userEntityAdvisor;
-
-    @Override
-    public List<User> getAllUsers() {
-        return userEntityRepository.findAll().stream().map(this::createUserFromEntity).collect(Collectors.toUnmodifiableList());
-    }
-
-    @Override
-    public User getUserById(Long userId) {
-        return createUserFromEntity(userEntityRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException("User not found:" + userId)));
-    }
-
-    private User createUserFromEntity(UserEntity userEntity) {
-        return userEntityAdvisor.getUser(userEntity);
-    }
+//    private final UserEntityRepository userEntityRepository;
+//
+//    private final UserEntityMapper userEntityMapper;
+//
+//    @Override
+//    public List<User> getAllUsers() {
+//        return userEntityRepository.findAll().stream().map(this::createUserFromEntity).collect(Collectors.toUnmodifiableList());
+//    }
+//
+//    @Override
+//    public User getUserById(Long userId) {
+//        return createUserFromEntity(userEntityRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException("User not found:" + userId)));
+//    }
+////
+////    private User createUserFromEntity(UserEntity userEntity) {
+////        return userEntityMapper.getUser(userEntity);
+////    }
+////
 
 }

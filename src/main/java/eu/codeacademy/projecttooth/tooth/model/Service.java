@@ -1,5 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.model;
 
+import eu.codeacademy.projecttooth.tooth.model.modelenum.QualificationEnum;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.ServiceEnum;
 import lombok.*;
 
 @Getter

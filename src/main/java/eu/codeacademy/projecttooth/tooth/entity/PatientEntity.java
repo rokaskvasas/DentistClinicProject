@@ -21,7 +21,7 @@ public class PatientEntity {
     @Column(name = "user_id", insertable = false, updatable = false)
     private Long userId;
 
-    @OneToOne
+    @OneToOne @MapsId
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userPatientEntity;
 

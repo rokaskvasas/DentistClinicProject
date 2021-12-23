@@ -1,7 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.entity;
 
-import eu.codeacademy.projecttooth.tooth.model.QualificationEnum;
-import eu.codeacademy.projecttooth.tooth.model.StatusEnum;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.QualificationEnum;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,7 +36,7 @@ public class DoctorEntity {
     @Column(name = "location_id", insertable = false, updatable = false)
     private Long locationId;
 
-    @OneToOne
+    @OneToOne @MapsId
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity userDoctorEntity;
 

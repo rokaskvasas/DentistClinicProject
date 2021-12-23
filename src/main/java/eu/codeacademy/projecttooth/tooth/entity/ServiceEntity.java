@@ -1,7 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.entity;
 
-import eu.codeacademy.projecttooth.tooth.model.QualificationEnum;
-import eu.codeacademy.projecttooth.tooth.model.ServiceEnum;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.QualificationEnum;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.ServiceEnum;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

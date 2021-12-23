@@ -28,15 +28,18 @@ public class UserEntity {
     @Column(name = "email")
     private String email;
 
+    @Column(name = "password")
+    private String password;
+
     @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "role_name")
     private String role;
 
-    @OneToOne(mappedBy = "userDoctorEntity")
+    @OneToOne(mappedBy = "userDoctorEntity", cascade = CascadeType.ALL)
     private DoctorEntity doctorEntity;
 
-    @OneToOne(mappedBy = "userPatientEntity")
+    @OneToOne(mappedBy = "userPatientEntity", cascade = CascadeType.ALL)
     private PatientEntity patientEntity;
 }

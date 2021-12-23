@@ -1,5 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.model;
 
+import eu.codeacademy.projecttooth.tooth.model.modelenum.QualificationEnum;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import lombok.*;
 
 @Getter
@@ -7,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Doctor {
+public class Doctor extends User {
 
     private Long doctorId;
 
@@ -20,4 +22,5 @@ public class Doctor {
     private QualificationEnum qualification;
 
     private Long locationId;
+
 }

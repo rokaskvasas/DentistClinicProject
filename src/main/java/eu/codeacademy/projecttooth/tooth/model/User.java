@@ -7,7 +7,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public abstract class User {
 
     private Long userId;
 
@@ -18,6 +18,8 @@ public class User {
     private String email;
 
     private String phoneNumber;
+
+    private String password;
 
     private String role;
 }

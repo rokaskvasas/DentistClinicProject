@@ -1,4 +1,4 @@
-package eu.codeacademy.projecttooth.tooth.model;
+package eu.codeacademy.projecttooth.tooth.model.modelenum;
 
 public enum QualificationEnum {
     FIRST_COURSE,

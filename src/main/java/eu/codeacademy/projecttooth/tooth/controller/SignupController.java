@@ -6,11 +6,14 @@ import eu.codeacademy.projecttooth.tooth.model.User;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorEntityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.PatientEntityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.UserEntityRepository;
+import eu.codeacademy.projecttooth.tooth.service.DoctorEntityService;
 import eu.codeacademy.projecttooth.tooth.service.PatientEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.print.Doc;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,17 +24,15 @@ public class SignupController {
 
     private final PatientEntityService patientEntityService;
 
-    private final DoctorEntityRepository doctorEntityRepository;
+
 
 //    @GetMapping
 
 
-//    @PostMapping("/")
+    //    @PostMapping("/")
 //    public ResponseEntity<?> createUser(@RequestPart User user, @RequestPart Patient patient, @RequestPart Doctor doctor){
 //
 //    }
-    @PostMapping("/patients")
-    public  Patient createPatient( @RequestBody Patient patient){
-    patientEntityService.signupPatient(patient);
-    }
+
+
 }

@@ -12,5 +12,4 @@ public class Patient extends User {
 
     private Long patientId;
 
-
 }

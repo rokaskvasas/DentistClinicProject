@@ -26,11 +26,11 @@ public class DoctorAvailabilityEntity {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @Column(name = "doctor_id", insertable = false, updatable = false)
+    @Column(name = "doctor_id")
     private Long doctorId;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false)
+    @JoinColumn(name = "doctor_id", nullable = false, insertable = false, updatable = false)
     private DoctorEntity doctorEntity;
 
     @OneToMany(mappedBy = "doctorAvailabilityEntity")

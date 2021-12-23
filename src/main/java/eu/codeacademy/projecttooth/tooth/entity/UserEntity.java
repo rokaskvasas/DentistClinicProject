@@ -37,9 +37,4 @@ public class UserEntity {
     @Column(name = "role_name")
     private String role;
 
-    @OneToOne(mappedBy = "userDoctorEntity", cascade = CascadeType.ALL)
-    private DoctorEntity doctorEntity;
-
-    @OneToOne(mappedBy = "userPatientEntity", cascade = CascadeType.ALL)
-    private PatientEntity patientEntity;
 }

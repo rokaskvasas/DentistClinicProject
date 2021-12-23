@@ -30,7 +30,7 @@ public class DoctorAvailabilityServiceEntity {
     private ServiceEntity serviceEntity;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_availability_id", referencedColumnName = "id")
+    @JoinColumn(name = "doctor_availability_id")
     private DoctorAvailabilityEntity doctorAvailabilityEntity;
 
     @OneToMany(mappedBy = "doctorAvailabilityServiceEntity")

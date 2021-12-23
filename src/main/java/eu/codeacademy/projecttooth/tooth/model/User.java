@@ -4,9 +4,6 @@ import lombok.*;
 
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public abstract class User {
 
     private Long userId;
@@ -22,4 +19,5 @@ public abstract class User {
     private String password;
 
     private String role;
+
 }

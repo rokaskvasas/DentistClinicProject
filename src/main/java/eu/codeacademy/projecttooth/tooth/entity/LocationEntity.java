@@ -24,6 +24,4 @@ public class LocationEntity {
     @Column(name = "city")
     private String city;
 
-    @OneToOne(mappedBy = "locationEntity")
-    private DoctorEntity doctorEntity;
 }

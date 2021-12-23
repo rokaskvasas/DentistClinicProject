@@ -1,6 +1,8 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
+import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.model.User;
+import eu.codeacademy.projecttooth.tooth.repository.UserEntityRepository;
 import eu.codeacademy.projecttooth.tooth.service.UserEntityService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,18 +18,19 @@ import java.util.List;
 public class UserController {
 
     private final UserEntityService userEntityService;
+    private final UserEntityRepository userEntityRepository;
 
 
-    @GetMapping
-    public List<User> getAllUsers() {
-        return userEntityService.getAllUsers();
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        log.info("Called method getUserById using" + id);
-        return ResponseEntity.ok(userEntityService.getUserById(id));
-    }
+//    @GetMapping
+//    public List<UserEntity> getAllUsers() {
+//        return userEntityRepository.findAll();
+//    }
+////
+////    @GetMapping("/{id}")
+////    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+////        log.info("Called method getUserById using" + id);
+////        return ResponseEntity.ok(userEntityService.getUserById(id));
+////    }
 
 
 }

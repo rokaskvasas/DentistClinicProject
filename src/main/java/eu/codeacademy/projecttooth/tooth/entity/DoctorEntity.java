@@ -21,8 +21,8 @@ public class DoctorEntity {
     @Column(name = "id")
     private Long doctorId;
 
-   @Column(name = "user_id", insertable = false, updatable = false)
-   private Long userId;
+//   @Column(name = "user_id", insertable = false, updatable = false)
+//   private Long userId;
 
     @Column(name = "doctor_license")
     private String doctorLicense;
@@ -33,15 +33,15 @@ public class DoctorEntity {
     @Enumerated(EnumType.STRING)
     private QualificationEnum qualification;
 
-    @Column(name = "location_id", insertable = false, updatable = false)
+    @Column(name = "location_id")
     private Long locationId;
 
-    @OneToOne @MapsId
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserEntity userDoctorEntity;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @OneToOne
-    @JoinColumn(name = "location_id", referencedColumnName = "id")
+    @JoinColumn(name = "location_id",insertable = false, updatable = false)
     private LocationEntity locationEntity;
 
     @OneToMany(mappedBy = "doctorEntity")

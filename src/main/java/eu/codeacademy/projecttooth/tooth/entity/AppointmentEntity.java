@@ -22,7 +22,7 @@ public class AppointmentEntity {
     @Column(name = "patient_id", insertable = false, updatable = false)
     private Long patientId;
 
-    @Column(name = "doctor_availability_service_id", insertable = false, updatable = false)
+    @Column(name = "doctor_availability_service_id")
     private Long doctorAvailabilityServiceId;
 
     @Column(name = "start_time")
@@ -32,7 +32,7 @@ public class AppointmentEntity {
     private LocalDateTime endTime;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_availability_service_id", referencedColumnName = "id")
+    @JoinColumn(name = "doctor_availability_service_id", insertable = false, updatable = false)
     private DoctorAvailabilityServiceEntity doctorAvailabilityServiceEntity;
 
     @OneToOne

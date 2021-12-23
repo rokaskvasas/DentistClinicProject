@@ -18,12 +18,9 @@ public class PatientEntity {
     @Column(name = "id", nullable = false)
     private Long patientId;
 
-    @Column(name = "user_id", insertable = false, updatable = false)
-    private Long userId;
-
-    @OneToOne @MapsId
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
-    private UserEntity userPatientEntity;
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
 
     @OneToOne(mappedBy = "patientEntity")
     private AppointmentEntity appointmentEntity;

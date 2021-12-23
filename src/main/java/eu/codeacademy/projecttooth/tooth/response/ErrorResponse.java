@@ -1,4 +1,4 @@
-package eu.codeacademy.projecttooth.tooth.model;
+package eu.codeacademy.projecttooth.tooth.response;
 
 import lombok.Getter;
 import lombok.Setter;

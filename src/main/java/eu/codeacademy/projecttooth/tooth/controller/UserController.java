@@ -1,5 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
+import eu.codeacademy.projecttooth.tooth.model.Doctor;
+import eu.codeacademy.projecttooth.tooth.model.Patient;
 import eu.codeacademy.projecttooth.tooth.model.User;
 import eu.codeacademy.projecttooth.tooth.service.UserEntityService;
 import lombok.RequiredArgsConstructor;
@@ -13,33 +15,22 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequestMapping("/api/v1.0/users")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserEntityService userEntityService;
 
-//    @GetMapping()
-//    @ResponseStatus(HttpStatus.OK)
-//    public List<User> getAllUsers(){
-//        return userEntityService.getAllUsers();
-//    }
+
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers(){
-        return  ResponseEntity.ok(userEntityService.getAllUsers());
+    public ResponseEntity<List<User>> getAllUsers() {
+        log.info("Called method getAllUsers");
+        return ResponseEntity.ok(userEntityService.getAllUsers());
     }
 
-    @GetMapping("/{Id}")
-    public ResponseEntity<User> getUserById(@PathVariable("Id") Long userId){
-        return ResponseEntity.ok(userEntityService.getUserById(userId));
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUserById(@PathVariable Long id) {
+        log.info("Called method getUserById using" + id);
+        return ResponseEntity.ok(userEntityService.getUserById(id));
     }
 
-
-
-//    @GetMapping("/{Id}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public User getUserById(@PathVariable("Id") Long userId){
-//        return userEntityService.getUserById(userId);
-//    }
-
-//    @PostMapping()
 }

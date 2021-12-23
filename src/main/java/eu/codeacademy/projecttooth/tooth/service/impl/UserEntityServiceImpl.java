@@ -2,7 +2,7 @@ package eu.codeacademy.projecttooth.tooth.service.impl;
 
 import eu.codeacademy.projecttooth.tooth.advisor.UserEntityAdvisor;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
-import eu.codeacademy.projecttooth.tooth.exception.UserByIdNotFound;
+import eu.codeacademy.projecttooth.tooth.exception.UserByIdNotFoundException;
 import eu.codeacademy.projecttooth.tooth.model.User;
 import eu.codeacademy.projecttooth.tooth.repository.UserEntityRepository;
 import eu.codeacademy.projecttooth.tooth.service.UserEntityService;
@@ -27,7 +27,7 @@ public class UserEntityServiceImpl implements UserEntityService {
 
     @Override
     public User getUserById(Long userId) {
-        return createUserFromEntity(userEntityRepository.findById(userId).orElseThrow(() -> new UserByIdNotFound("User not found:" + userId)));
+        return createUserFromEntity(userEntityRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException("User not found:" + userId)));
     }
 
     private User createUserFromEntity(UserEntity userEntity) {

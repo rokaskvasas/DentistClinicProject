@@ -2,7 +2,9 @@ package eu.codeacademy.projecttooth.tooth.advisor;
 
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.model.User;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserEntityAdvisor {
 
     public User getUser(UserEntity userEntity) {

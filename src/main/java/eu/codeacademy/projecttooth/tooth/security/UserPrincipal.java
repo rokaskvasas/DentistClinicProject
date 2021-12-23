@@ -5,7 +5,6 @@ import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
@@ -19,7 +18,7 @@ public class UserPrincipal implements UserDetails {
     private final String email;
     @JsonIgnore
     private final String password;
-    private final Set<UserEntity> roles;
+    private final String role;
 
     public Long getUserId() {
         return userId;
@@ -27,8 +26,7 @@ public class UserPrincipal implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        String[] userRoles = roles.stream().map((UserEntity::getRole)).toArray(String[]::new);
-        return AuthorityUtils.createAuthorityList(userRoles);
+        return AuthorityUtils.createAuthorityList(role);
     }
 
     @Override

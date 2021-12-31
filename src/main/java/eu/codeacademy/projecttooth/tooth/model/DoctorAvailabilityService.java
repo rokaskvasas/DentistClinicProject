@@ -2,6 +2,8 @@ package eu.codeacademy.projecttooth.tooth.model;
 
 import lombok.*;
 
+
+
 @Getter
 @Setter
 @Builder
@@ -14,4 +16,7 @@ public class DoctorAvailabilityService {
     private Long doctorAvailabilityId;
 
     private Long serviceId;
+
+
+
 }

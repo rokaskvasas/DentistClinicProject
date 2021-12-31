@@ -18,4 +18,16 @@ public class DoctorEntityMapper {
                 .user(userEntity)
                 .build();
     }
+    public Doctor getDoctorModel(DoctorEntity entity){
+        return Doctor.builder()
+                .firstName(entity.getUser().getFirstName())
+                .lastName(entity.getUser().getLastName())
+                .phoneNumber(entity.getUser().getPhoneNumber())
+                .doctorLicense(entity.getDoctorLicense())
+                .qualification(entity.getQualification())
+                .locationName(entity.getLocationEntity().getName())
+                .locationCity(entity.getLocationEntity().getCity())
+                .status(entity.getStatus())
+                .build();
+    }
 }

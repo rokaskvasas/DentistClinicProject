@@ -5,6 +5,7 @@ import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,7 +26,7 @@ public class DoctorEntity {
     @Column(name = "doctor_license")
     private String doctorLicense;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private StatusEnum status;
 
     @Enumerated(EnumType.STRING)
@@ -43,6 +44,6 @@ public class DoctorEntity {
     private LocationEntity locationEntity;
 
     @OneToMany(mappedBy = "doctorEntity")
-    private Set<DoctorAvailabilityEntity> doctorAvailabilityEntities;
+    private List<DoctorAvailabilityEntity> doctorAvailabilityEntities;
 
 }

@@ -1,9 +1,12 @@
 package eu.codeacademy.projecttooth.tooth.model;
 
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
+@SuperBuilder
+@NoArgsConstructor
 public abstract class User {
 
     private Long userId;

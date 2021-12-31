@@ -15,7 +15,7 @@ public class DoctorAvailability {
 
     private LocalDateTime startTime;
 
-    private  LocalDateTime endTime;
+    private LocalDateTime endTime;
 
     private Long doctorId;
 

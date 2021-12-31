@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 public class PatientEntityMapper {
 
     public PatientEntity getPatientEntity(UserEntity userEntity){
-        PatientEntity entity = new PatientEntity();
-        entity.setUser(userEntity);
-        return entity;
+
+        return PatientEntity.builder()
+                .user(userEntity).build();
     }
 }

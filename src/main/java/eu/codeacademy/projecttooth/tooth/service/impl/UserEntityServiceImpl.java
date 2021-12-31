@@ -16,23 +16,4 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserEntityServiceImpl implements UserEntityService {
 
-//    private final UserEntityRepository userEntityRepository;
-//
-//    private final UserEntityMapper userEntityMapper;
-//
-//    @Override
-//    public List<User> getAllUsers() {
-//        return userEntityRepository.findAll().stream().map(this::createUserFromEntity).collect(Collectors.toUnmodifiableList());
-//    }
-//
-//    @Override
-//    public User getUserById(Long userId) {
-//        return createUserFromEntity(userEntityRepository.findById(userId).orElseThrow(() -> new UserByIdNotFoundException("User not found:" + userId)));
-//    }
-////
-////    private User createUserFromEntity(UserEntity userEntity) {
-////        return userEntityMapper.getUser(userEntity);
-////    }
-////
-
 }

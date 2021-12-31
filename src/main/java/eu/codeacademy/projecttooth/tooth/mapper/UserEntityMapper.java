@@ -14,14 +14,14 @@ public class UserEntityMapper {
     private final PasswordService passwordService;
 
     public UserEntity getUserEntity(User user, RoleEnum role) {
-        UserEntity entity = new UserEntity();
-        entity.setFirstName(user.getFirstName());
-        entity.setLastName(user.getLastName());
-        entity.setEmail(user.getEmail());
-        entity.setPhoneNumber(user.getPhoneNumber());
-        entity.setPassword(passwordService.passwordEncoder().encode(user.getPassword()));
-        entity.setRole(determinateRole(role));
-        return entity;
+        return UserEntity.builder()
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .phoneNumber(user.getPhoneNumber())
+                .password(passwordService.passwordEncoder().encode(user.getPassword()))
+                .role(determinateRole(role))
+                .build();
     }
 
     private String determinateRole(RoleEnum role) {

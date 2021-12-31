@@ -20,14 +20,13 @@ public class DoctorAvailabilityServiceEntityMapper {
     private final ServiceEntityRepository serviceEntityRepository;
 
     public DoctorAvailabilityServiceEntity getEntity(DoctorAvailabilityService doctorAvailabilityService) {
-        if(!isQualified(doctorAvailabilityService)){
+        if (!isQualified(doctorAvailabilityService)) {
             throw new QualificationException(("Minimum qualification requirements not enough."));
         }
-        var entity = new DoctorAvailabilityServiceEntity();
-        entity.setServiceEntity(getServiceEntity(doctorAvailabilityService));
-        entity.setDoctorAvailabilityEntity(getDoctorAvailabilityEntity(doctorAvailabilityService));
-
-        return entity;
+        return DoctorAvailabilityServiceEntity.builder()
+                .serviceEntity(getServiceEntity(doctorAvailabilityService))
+                .doctorAvailabilityEntity(getDoctorAvailabilityEntity(doctorAvailabilityService))
+                .build();
     }
 
     private boolean isQualified(DoctorAvailabilityService doctorAvailabilityService) {

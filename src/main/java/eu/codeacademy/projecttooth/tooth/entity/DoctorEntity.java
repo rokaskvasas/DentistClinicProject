@@ -2,9 +2,7 @@ package eu.codeacademy.projecttooth.tooth.entity;
 
 import eu.codeacademy.projecttooth.tooth.model.modelenum.QualificationEnum;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
@@ -14,6 +12,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DoctorEntity {
 
     @Id
@@ -21,8 +21,6 @@ public class DoctorEntity {
     @Column(name = "id")
     private Long doctorId;
 
-//   @Column(name = "user_id", insertable = false, updatable = false)
-//   private Long userId;
 
     @Column(name = "doctor_license")
     private String doctorLicense;

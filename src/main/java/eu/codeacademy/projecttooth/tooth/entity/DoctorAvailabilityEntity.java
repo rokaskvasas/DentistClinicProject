@@ -1,8 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.entity;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +11,8 @@ import java.util.Set;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class DoctorAvailabilityEntity {
 
     @Id
@@ -26,11 +26,9 @@ public class DoctorAvailabilityEntity {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @Column(name = "doctor_id")
-    private Long doctorId;
 
-    @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false, insertable = false, updatable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "doctor_id", nullable = false)
     private DoctorEntity doctorEntity;
 
     @OneToMany(mappedBy = "doctorAvailabilityEntity")

@@ -15,17 +15,25 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DoctorAvailabilityEntityServiceImpl implements DoctorAvailabilityEntityService {
 
-    private final DoctorAvailabilityEntityMapper doctorAvailabilityEntityMapper;
-    private final DoctorAvailabilityEntityRepository doctorAvailabilityEntityRepository;
+    private final DoctorAvailabilityEntityMapper entityMapper;
+    private final DoctorAvailabilityEntityRepository availabilityEntityRepository;
 
     @Override
     public void createAvailability(List<DoctorAvailability> doctorAvailabilityList) {
 
-        doctorAvailabilityEntityRepository.saveAllAndFlush(doctorAvailabilityList.stream().map(this::createEntity).collect(Collectors.toUnmodifiableList()));
+        availabilityEntityRepository.saveAllAndFlush(doctorAvailabilityList.stream().map(this::createEntity).collect(Collectors.toUnmodifiableList()));
 
     }
 
+    @Override
+    public List<DoctorAvailability> getAvailabilityList() {
+        return availabilityEntityRepository.findAll().stream().map(this::createModel).collect(Collectors.toUnmodifiableList());
+    }
+
     public DoctorAvailabilityEntity createEntity(DoctorAvailability doctorAvailability) {
-        return doctorAvailabilityEntityMapper.getEntity(doctorAvailability);
+        return entityMapper.getEntity(doctorAvailability);
+    }
+    public DoctorAvailability createModel(DoctorAvailabilityEntity entity){
+        return entityMapper.getModel(entity);
     }
 }

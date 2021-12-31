@@ -16,16 +16,24 @@ public class DoctorAvailabilityEntityMapper {
 
     private final DoctorEntityRepository doctorEntityRepository;
 
-    public DoctorAvailabilityEntity getEntity(DoctorAvailability doctorAvailability){
-        if(!doctorAvailability.getStartTime().isBefore(doctorAvailability.getEndTime())){
+    public DoctorAvailabilityEntity getEntity(DoctorAvailability doctorAvailability) {
+        if (!doctorAvailability.getStartTime().isBefore(doctorAvailability.getEndTime())) {
             throw new IncorrectDoctorAvailabilityTime("StartTime or endTime is incorrect");
         }
-        var entity = new DoctorAvailabilityEntity();
-        entity.setStartTime(doctorAvailability.getStartTime());
-        entity.setEndTime(doctorAvailability.getEndTime());
-        entity.setDoctorId(doctorAvailability.getDoctorId());
-        entity.setDoctorEntity(getDoctorEntity(doctorAvailability));
-        return entity;
+        return DoctorAvailabilityEntity.builder()
+                .startTime(doctorAvailability.getStartTime())
+                .endTime(doctorAvailability.getEndTime())
+                .doctorEntity(getDoctorEntity(doctorAvailability))
+                .build();
+    }
+
+    public DoctorAvailability getModel(DoctorAvailabilityEntity entity) {
+        return DoctorAvailability.builder()
+                .doctorAvailabilityId(entity.getDoctorAvailabilityId())
+                .doctorId(entity.getDoctorEntity().getDoctorId())
+                .startTime(entity.getStartTime())
+                .endTime(entity.getEndTime())
+                .build();
     }
 
     private DoctorEntity getDoctorEntity(DoctorAvailability doctorAvailability) {

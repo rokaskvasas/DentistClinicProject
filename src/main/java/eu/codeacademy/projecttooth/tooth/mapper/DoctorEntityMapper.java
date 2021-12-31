@@ -10,11 +10,12 @@ import org.springframework.stereotype.Service;
 public class DoctorEntityMapper {
 
     public DoctorEntity getDoctorEntity(Doctor doctor,UserEntity userEntity){
-        DoctorEntity entity = new DoctorEntity();
-        entity.setDoctorLicense(doctor.getDoctorLicense());
-        entity.setLocationId(doctor.getLocationId());
-        entity.setQualification(doctor.getQualification());
-        entity.setUser(userEntity);
-        return entity;
+
+        return DoctorEntity.builder()
+                .doctorLicense(doctor.getDoctorLicense())
+                .locationId(doctor.getLocationId())
+                .qualification(doctor.getQualification())
+                .user(userEntity)
+                .build();
     }
 }

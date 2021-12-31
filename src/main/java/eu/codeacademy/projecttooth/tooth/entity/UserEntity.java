@@ -1,12 +1,11 @@
 package eu.codeacademy.projecttooth.tooth.entity;
 
-import eu.codeacademy.projecttooth.tooth.model.Doctor;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
-import java.util.Set;
+
 
 @Entity
 @Table(name = "user")

@@ -4,12 +4,11 @@ import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityServiceEntity;
 import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
 import eu.codeacademy.projecttooth.tooth.exception.AvailabilityIdNotFoundException;
+import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
 import eu.codeacademy.projecttooth.tooth.exception.ServiceByIdNotFoundException;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityEntityRepository;
-import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityServiceEntityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.ServiceEntityRepository;
-import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,10 +20,18 @@ public class DoctorAvailabilityServiceEntityMapper {
     private final ServiceEntityRepository serviceEntityRepository;
 
     public DoctorAvailabilityServiceEntity getEntity(DoctorAvailabilityService doctorAvailabilityService) {
+        if(!isQualified(doctorAvailabilityService)){
+            throw new QualificationException(("Minimum qualification requirements not enough."));
+        }
         var entity = new DoctorAvailabilityServiceEntity();
         entity.setServiceEntity(getServiceEntity(doctorAvailabilityService));
         entity.setDoctorAvailabilityEntity(getDoctorAvailabilityEntity(doctorAvailabilityService));
+
         return entity;
+    }
+
+    private boolean isQualified(DoctorAvailabilityService doctorAvailabilityService) {
+        return getServiceEntity(doctorAvailabilityService).getMinimumQualification().getCourse() <= getDoctorAvailabilityEntity(doctorAvailabilityService).getDoctorEntity().getQualification().getCourse();
     }
 
     private DoctorAvailabilityEntity getDoctorAvailabilityEntity(DoctorAvailabilityService doctorAvailabilityService) {

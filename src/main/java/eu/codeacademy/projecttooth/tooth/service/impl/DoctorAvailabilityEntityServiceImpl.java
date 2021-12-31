@@ -19,9 +19,9 @@ public class DoctorAvailabilityEntityServiceImpl implements DoctorAvailabilityEn
     private final DoctorAvailabilityEntityRepository doctorAvailabilityEntityRepository;
 
     @Override
-    public void createAvailability(List<DoctorAvailability> doctorAvailabilities) {
+    public void createAvailability(List<DoctorAvailability> doctorAvailabilityList) {
 
-        doctorAvailabilityEntityRepository.saveAllAndFlush(doctorAvailabilities.stream().map(this::createEntity).collect(Collectors.toUnmodifiableList()));
+        doctorAvailabilityEntityRepository.saveAllAndFlush(doctorAvailabilityList.stream().map(this::createEntity).collect(Collectors.toUnmodifiableList()));
 
     }
 

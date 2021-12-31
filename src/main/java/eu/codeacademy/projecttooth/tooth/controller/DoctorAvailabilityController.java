@@ -18,7 +18,7 @@ public class DoctorAvailabilityController {
     private final DoctorAvailabilityEntityService doctorAvailabilityEntityService;
 
     @PostMapping
-    public void createDoctorAvailabilities(@RequestBody List<DoctorAvailability> doctorAvailabilities){
-        doctorAvailabilityEntityService.createAvailability(doctorAvailabilities);
+    public void createDoctorAvailabilities(@RequestBody List<DoctorAvailability> doctorAvailabilityList){
+        doctorAvailabilityEntityService.createAvailability(doctorAvailabilityList);
     }
 }

@@ -21,12 +21,10 @@ public class ServiceEntity {
     private Long serviceId;
 
     @Enumerated(EnumType.STRING)
-    private ServiceEnum serviceName;
+    private ServiceEnum name;
 
     @Enumerated(EnumType.STRING)
     private QualificationEnum minimumQualification;
 
-    @OneToOne(mappedBy = "serviceEntity")
-    private DoctorAvailabilityServiceEntity doctorAvailabilityServiceEntity;
 
 }

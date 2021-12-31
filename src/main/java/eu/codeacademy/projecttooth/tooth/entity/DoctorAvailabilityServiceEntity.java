@@ -19,17 +19,11 @@ public class DoctorAvailabilityServiceEntity {
     @Column(name = "id", nullable = false)
     private Long doctorAvailabilityServiceId;
 
-    @Column(name = "doctor_availability_id", insertable = false, updatable = false)
-    private Long doctorAvailabilityId;
-
-    @Column(name = "service_id", insertable = false, updatable = false)
-    private Long serviceId;
-
-    @OneToOne
-    @JoinColumn(name = "service_id", referencedColumnName = "id")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "service_id")
     private ServiceEntity serviceEntity;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "doctor_availability_id")
     private DoctorAvailabilityEntity doctorAvailabilityEntity;
 

@@ -7,6 +7,7 @@ import eu.codeacademy.projecttooth.tooth.exception.IdNotFoundException;
 import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityEntityRepository;
+import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityServiceEntityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.ServiceEntityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,19 +18,28 @@ public class DoctorAvailabilityServiceEntityMapper {
 
     private final DoctorAvailabilityEntityRepository availabilityEntityRepository;
     private final ServiceEntityRepository serviceEntityRepository;
+    private final DoctorAvailabilityServiceEntityRepository availabilityServiceEntityRepository;
 
-    public DoctorAvailabilityServiceEntity getEntity(DoctorAvailabilityService doctorAvailabilityService) {
-        if (!isQualified(doctorAvailabilityService)) {
-            throw new QualificationException(("Minimum qualification requirements not enough."));
-        }
+    public DoctorAvailabilityServiceEntity createEntity(DoctorAvailabilityService doctorAvailabilityService) {
+        isQualified(doctorAvailabilityService);
         return DoctorAvailabilityServiceEntity.builder()
                 .serviceEntity(getServiceEntity(doctorAvailabilityService))
                 .doctorAvailabilityEntity(getDoctorAvailabilityEntity(doctorAvailabilityService))
                 .build();
     }
 
-    private boolean isQualified(DoctorAvailabilityService doctorAvailabilityService) {
-        return getServiceEntity(doctorAvailabilityService).getMinimumQualification().getCourse() <= getDoctorAvailabilityEntity(doctorAvailabilityService).getDoctorEntity().getQualification().getCourse();
+    public DoctorAvailabilityService createModel(DoctorAvailabilityServiceEntity entity){
+        return DoctorAvailabilityService.builder()
+                .doctorAvailabilityServiceId(entity.getDoctorAvailabilityServiceId())
+                .serviceId(entity.getServiceEntity().getServiceId())
+                .doctorAvailabilityId(entity.getDoctorAvailabilityEntity().getDoctorAvailabilityId())
+                .build();
+    }
+
+    private void isQualified(DoctorAvailabilityService doctorAvailabilityService) {
+        if ((getServiceEntity(doctorAvailabilityService).getMinimumQualification().getCourse() >= getDoctorAvailabilityEntity(doctorAvailabilityService).getDoctorEntity().getQualification().getCourse())) {
+            throw new QualificationException(("Minimum qualification requirements not enough."));
+        }
     }
 
     private DoctorAvailabilityEntity getDoctorAvailabilityEntity(DoctorAvailabilityService doctorAvailabilityService) {
@@ -40,5 +50,14 @@ public class DoctorAvailabilityServiceEntityMapper {
     private ServiceEntity getServiceEntity(DoctorAvailabilityService doctorAvailabilityService) {
         return serviceEntityRepository.findById(doctorAvailabilityService.getServiceId()).
                 orElseThrow(() -> new IdNotFoundException(String.format("Service by id:%s not found", doctorAvailabilityService.getServiceId())));
+    }
+
+
+    public DoctorAvailabilityServiceEntity updateEntity(DoctorAvailabilityService doctorAvailabilityService) {
+        DoctorAvailabilityServiceEntity entity = availabilityServiceEntityRepository.findById(doctorAvailabilityService.getDoctorAvailabilityServiceId())
+                .orElseThrow(() -> new IdNotFoundException(String.format("Availability service by id:%s not found", doctorAvailabilityService.getDoctorAvailabilityId())));
+        isQualified(doctorAvailabilityService);
+        entity.setServiceEntity(getServiceEntity(doctorAvailabilityService));
+        return entity;
     }
 }

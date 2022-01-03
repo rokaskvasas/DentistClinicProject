@@ -10,5 +10,7 @@ import java.util.List;
 public interface DoctorAvailabilityEntityService {
     void createAvailability(List<DoctorAvailability> doctorAvailabilities);
 
-    List<DoctorAvailability> getAvailabilityList();
+    List<DoctorAvailability> getAvailabilityList(Long doctorId);
+
+    void updateAvailability(DoctorAvailability doctorAvailability);
 }

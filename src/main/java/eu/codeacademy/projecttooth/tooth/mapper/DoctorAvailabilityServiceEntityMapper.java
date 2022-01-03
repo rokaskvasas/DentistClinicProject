@@ -3,9 +3,8 @@ package eu.codeacademy.projecttooth.tooth.mapper;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityServiceEntity;
 import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
-import eu.codeacademy.projecttooth.tooth.exception.AvailabilityIdNotFoundException;
+import eu.codeacademy.projecttooth.tooth.exception.IdNotFoundException;
 import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
-import eu.codeacademy.projecttooth.tooth.exception.ServiceByIdNotFoundException;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityEntityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.ServiceEntityRepository;
@@ -35,11 +34,11 @@ public class DoctorAvailabilityServiceEntityMapper {
 
     private DoctorAvailabilityEntity getDoctorAvailabilityEntity(DoctorAvailabilityService doctorAvailabilityService) {
         return availabilityEntityRepository.findById(doctorAvailabilityService.getDoctorAvailabilityId())
-                .orElseThrow(() -> new AvailabilityIdNotFoundException(String.format("Doctor availability by id:%s not found", doctorAvailabilityService.getDoctorAvailabilityId())));
+                .orElseThrow(() -> new IdNotFoundException(String.format("Doctor availability by id:%s not found", doctorAvailabilityService.getDoctorAvailabilityId())));
     }
 
     private ServiceEntity getServiceEntity(DoctorAvailabilityService doctorAvailabilityService) {
         return serviceEntityRepository.findById(doctorAvailabilityService.getServiceId()).
-                orElseThrow(() -> new ServiceByIdNotFoundException(String.format("Service by id:%s not found", doctorAvailabilityService.getServiceId())));
+                orElseThrow(() -> new IdNotFoundException(String.format("Service by id:%s not found", doctorAvailabilityService.getServiceId())));
     }
 }

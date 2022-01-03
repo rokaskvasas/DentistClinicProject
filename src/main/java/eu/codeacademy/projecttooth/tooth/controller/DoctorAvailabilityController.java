@@ -1,6 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
-import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityEntityService;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +12,20 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DoctorAvailabilityController {
 
-    private final DoctorAvailabilityEntityService doctorAvailabilityEntityService;
+    private final DoctorAvailabilityEntityService service;
 
-    @GetMapping
-    public List<DoctorAvailability> getAllDoctorAvailabilities(){
-        return doctorAvailabilityEntityService.getAvailabilityList();
+    @GetMapping("/{doctorId}")
+    public List<DoctorAvailability> getAllDoctorAvailabilities(@PathVariable Long doctorId){
+        return service.getAvailabilityList(doctorId);
     }
 
     @PostMapping
     public void createDoctorAvailabilities(@RequestBody List<DoctorAvailability> doctorAvailabilityList){
-        doctorAvailabilityEntityService.createAvailability(doctorAvailabilityList);
+        service.createAvailability(doctorAvailabilityList);
+    }
+
+    @PutMapping
+    public void updateDoctorAvailability(@RequestBody DoctorAvailability doctorAvailability){
+        service.updateAvailability(doctorAvailability);
     }
 }

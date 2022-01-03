@@ -8,5 +8,7 @@ public interface DoctorEntityService {
     void createDoctor(Doctor doctor);
 
 
-    Doctor getDoctor(Doctor doctor);
+    Doctor getDoctor(Long doctorId);
+
+    void updateDoctor(Doctor doctor);
 }

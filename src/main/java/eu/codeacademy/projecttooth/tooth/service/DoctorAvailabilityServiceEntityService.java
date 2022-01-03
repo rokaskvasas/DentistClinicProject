@@ -12,5 +12,5 @@ public interface DoctorAvailabilityServiceEntityService {
     void createService(List<DoctorAvailabilityService> doctorAvailabilityServiceList);
 
 
-    List<DoctorScheduler> getAll(Doctor doctor);
+
 }

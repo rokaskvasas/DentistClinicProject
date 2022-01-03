@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class DoctorEntityMapper {
 
-    public DoctorEntity getDoctorEntity(Doctor doctor,UserEntity userEntity){
+    public DoctorEntity createDoctorEntity(Doctor doctor, UserEntity userEntity){
 
         return DoctorEntity.builder()
                 .doctorLicense(doctor.getDoctorLicense())
@@ -28,6 +28,25 @@ public class DoctorEntityMapper {
                 .locationName(entity.getLocationEntity().getName())
                 .locationCity(entity.getLocationEntity().getCity())
                 .status(entity.getStatus())
+                .build();
+    }
+    public DoctorEntity updateDoctorEntity(Doctor doctor, DoctorEntity entity){
+        return DoctorEntity.builder()
+                .doctorLicense(doctor.getDoctorLicense())
+                .doctorAvailabilityEntities(entity.getDoctorAvailabilityEntities())
+                .doctorId(entity.getDoctorId())
+                .locationId(entity.getLocationId())
+                .status(entity.getStatus())
+                .qualification(doctor.getQualification())
+                .user(UserEntity.builder()
+                        .firstName(doctor.getFirstName())
+                        .lastName(doctor.getLastName())
+                        .role(entity.getUser().getRole())
+                        .password(entity.getUser().getPassword())
+                        .email(entity.getUser().getEmail())
+                        .phoneNumber(doctor.getPhoneNumber())
+                        .userId(entity.getUser().getUserId())
+                        .build())
                 .build();
     }
 }

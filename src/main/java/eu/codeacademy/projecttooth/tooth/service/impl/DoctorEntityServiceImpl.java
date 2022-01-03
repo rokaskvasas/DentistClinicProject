@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.exception.DoctorByIdNotFoundException;
+import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
+import eu.codeacademy.projecttooth.tooth.exception.IdNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorEntityMapper;
 import eu.codeacademy.projecttooth.tooth.mapper.UserEntityMapper;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
@@ -23,13 +24,21 @@ public class DoctorEntityServiceImpl implements DoctorEntityService {
 
     @Override
     public void createDoctor(Doctor doctor) {
-        doctorEntityRepository.saveAndFlush(doctorEntityMapper.getDoctorEntity(doctor, userEntityMapper.getUserEntity(doctor, RoleEnum.DOCTOR)));
+        doctorEntityRepository.saveAndFlush(doctorEntityMapper.createDoctorEntity(doctor, userEntityMapper.getUserEntity(doctor, RoleEnum.DOCTOR)));
     }
 
     @Override
-    public Doctor getDoctor(Doctor doctor) {
+    public Doctor getDoctor(Long doctorId) {
 
-        return doctorEntityRepository.findById(doctor.getDoctorId()).map(doctorEntityMapper::getDoctorModel)
-                .orElseThrow(() -> new DoctorByIdNotFoundException(String.format("Doctor by id: %s not found", doctor.getDoctorId())));
+        return doctorEntityRepository.findById(doctorId).map(doctorEntityMapper::getDoctorModel)
+                .orElseThrow(() -> new IdNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
+    }
+
+    @Override
+    public void updateDoctor(Doctor doctor) {
+        DoctorEntity doctorEntity = doctorEntityRepository.findById(doctor.getDoctorId())
+                .orElseThrow(() -> new IdNotFoundException(String.format("Doctor by id: %s not found", doctor.getDoctorId())));
+        doctorEntityRepository.saveAndFlush(doctorEntityMapper.updateDoctorEntity(doctor, doctorEntity));
+
     }
 }

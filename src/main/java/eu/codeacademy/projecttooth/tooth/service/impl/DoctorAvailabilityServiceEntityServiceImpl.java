@@ -27,12 +27,12 @@ public class DoctorAvailabilityServiceEntityServiceImpl implements DoctorAvailab
 
     }
 
-    @Override
-    public List<DoctorScheduler> getAll(Doctor doctor) {
-        return serviceEntityRepository.findAll().stream().
-                filter(entity -> entity.getDoctorAvailabilityEntity().getDoctorEntity().getDoctorId().equals(doctor.getDoctorId()))
-                .map(this::createScheduler).collect(Collectors.toUnmodifiableList());
-    }
+//    @Override
+//    public List<DoctorScheduler> getAll(Doctor doctor) {
+//        return serviceEntityRepository.findAll().stream().
+//                filter(entity -> entity.getDoctorAvailabilityEntity().getDoctorEntity().getDoctorId().equals(doctor.getDoctorId()))
+//                .map(this::createScheduler).collect(Collectors.toUnmodifiableList());
+//    }
 
 
     public DoctorAvailabilityServiceEntity createEntity(DoctorAvailabilityService doctorAvailabilityService) {

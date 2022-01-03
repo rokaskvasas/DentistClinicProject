@@ -20,7 +20,7 @@ public class DoctorSchedulerController {
   private final DoctorAvailabilityServiceEntityService service;
 
     @GetMapping
-    public List<DoctorScheduler> getAllDoctorAvailabilityServicesList(@RequestBody Doctor doctor){
-        return  service.getAll(doctor);
+    public List<DoctorScheduler> getAllDoctorAvailabilityServicesList(){
+        return  null;
     }
 }

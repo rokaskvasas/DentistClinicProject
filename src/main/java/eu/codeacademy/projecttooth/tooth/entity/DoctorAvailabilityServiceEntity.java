@@ -19,11 +19,11 @@ public class DoctorAvailabilityServiceEntity {
     @Column(name = "id", nullable = false)
     private Long doctorAvailabilityServiceId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "service_id")
     private ServiceEntity serviceEntity;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "doctor_availability_id")
     private DoctorAvailabilityEntity doctorAvailabilityEntity;
 

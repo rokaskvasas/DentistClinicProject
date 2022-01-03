@@ -16,4 +16,6 @@ public interface DoctorAvailabilityServiceEntityService {
     List<DoctorAvailabilityService> getAvailabilityServiceList(UserPrincipal principal);
 
     void updateAvailabilityService(DoctorAvailabilityService doctorAvailabilityService);
+
+    void deleteAvailabilityService(DoctorAvailabilityService doctorAvailabilityService);
 }

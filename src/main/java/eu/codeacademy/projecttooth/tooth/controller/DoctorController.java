@@ -8,6 +8,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 @Secured({"ROLE_DOCTOR", "ROLE_ADMIN"})
 @RestController
 @RequestMapping("/doctors")
@@ -17,19 +18,19 @@ public class DoctorController {
     private final DoctorEntityService doctorEntityService;
 
     @GetMapping("/account")
-    public Doctor getDoctor(@AuthenticationPrincipal UserPrincipal principal){
+    public Doctor getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
         return doctorEntityService.getDoctor(principal.getUserId());
     }
 
-    @PreAuthorize("hasRole('ROLE_ANONYMOUS')")
-    @PostMapping
+    @PreAuthorize("permitAll()")
+    @PostMapping("/register")
     public void createDoctor(@RequestBody Doctor doctor) {
         doctorEntityService.createDoctor(doctor);
     }
 
-//    TODO:: FINISH UPDATE DOCTOR REQUEST
+    //    TODO:: FINISH UPDATE DOCTOR REQUEST
     @PutMapping
-    public void updateDoctor(@RequestBody Doctor doctor){
+    public void updateDoctor(@RequestBody Doctor doctor) {
         doctorEntityService.updateDoctor(doctor);
     }
 }

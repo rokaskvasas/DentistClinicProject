@@ -17,8 +17,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
-        private final CustomUserDetailsService customUserDetailsService;
-        private final PasswordService passwordService;
+    private final CustomUserDetailsService customUserDetailsService;
+    private final PasswordService passwordService;
 //    private final UserDetailsService userDetailsService;
 //    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable();
-        http.authorizeRequests().antMatchers("/api/doctors").permitAll().anyRequest().authenticated()
+        http.authorizeRequests().antMatchers("api/doctors/register").permitAll()
                 .and()
                 .formLogin()
                 .permitAll()
@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception{
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
                 .userDetailsService(customUserDetailsService)
                 .passwordEncoder(passwordService.passwordEncoder());

@@ -37,7 +37,7 @@ public class DoctorAvailabilityServiceEntityMapper {
     }
 
     private void isQualified(DoctorAvailabilityService doctorAvailabilityService) {
-        if ((getServiceEntity(doctorAvailabilityService).getMinimumQualification().getCourse() >= getDoctorAvailabilityEntity(doctorAvailabilityService).getDoctorEntity().getQualification().getCourse())) {
+        if ((getServiceEntity(doctorAvailabilityService).getMinimumQualification().getCourse() > getDoctorAvailabilityEntity(doctorAvailabilityService).getDoctorEntity().getQualification().getCourse())) {
             throw new QualificationException(("Minimum qualification requirements not enough."));
         }
     }

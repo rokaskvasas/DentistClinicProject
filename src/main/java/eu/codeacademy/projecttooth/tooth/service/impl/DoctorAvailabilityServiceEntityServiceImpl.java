@@ -10,6 +10,7 @@ import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityServiceEntity
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +38,12 @@ public class DoctorAvailabilityServiceEntityServiceImpl implements DoctorAvailab
     @Override
     public void updateAvailabilityService(DoctorAvailabilityService doctorAvailabilityService) {
         serviceEntityRepository.saveAndFlush(updateEntity(doctorAvailabilityService));
+    }
+
+    @Override
+    @Transactional
+    public void deleteAvailabilityService(DoctorAvailabilityService doctorAvailabilityService) {
+        serviceEntityRepository.removeByDoctorAvailabilityServiceId(doctorAvailabilityService.getDoctorAvailabilityServiceId());
     }
 
 

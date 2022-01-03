@@ -33,4 +33,8 @@ public class DoctorAvailabilityServiceController {
     public void updateDoctorAvailabilityService(@RequestBody DoctorAvailabilityService doctorAvailabilityService){
         service.updateAvailabilityService(doctorAvailabilityService);
     }
+    @DeleteMapping
+    public void deleteDoctorAvailabilityService(@RequestBody DoctorAvailabilityService doctorAvailabilityService){
+        service.deleteAvailabilityService(doctorAvailabilityService);
+    }
 }

@@ -27,7 +27,7 @@ public class DoctorAvailabilityEntity {
     private LocalDateTime endTime;
 
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "doctor_id", nullable = false)
     private DoctorEntity doctorEntity;
 

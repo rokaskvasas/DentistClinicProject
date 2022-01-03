@@ -12,4 +12,5 @@ public interface DoctorAvailabilityEntityRepository extends JpaRepository<Doctor
 
 
     List<DoctorAvailabilityEntity> findAllByDoctorEntityDoctorId(Long doctorId);
+    List<DoctorAvailabilityEntity> findAllByDoctorEntityUserUserId(Long userId);
 }

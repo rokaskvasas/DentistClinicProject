@@ -30,7 +30,7 @@ public class DoctorEntityServiceImpl implements DoctorEntityService {
     @Override
     public Doctor getDoctor(Long doctorId) {
 
-        return doctorEntityRepository.findById(doctorId).map(doctorEntityMapper::getDoctorModel)
+        return doctorEntityRepository.findDoctorEntityByUserUserId(doctorId).map(doctorEntityMapper::getDoctorModel)
                 .orElseThrow(() -> new IdNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
     }
 

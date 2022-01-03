@@ -5,6 +5,7 @@ import eu.codeacademy.projecttooth.tooth.exception.IdNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorAvailabilityEntityMapper;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityEntityRepository;
+import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,14 +28,13 @@ public class DoctorAvailabilityEntityServiceImpl implements DoctorAvailabilityEn
     }
 
     @Override
-    public List<DoctorAvailability> getAvailabilityList(Long doctorId) {
-
-        return availabilityEntityRepository.findAllByDoctorEntityDoctorId(doctorId).stream().map(this::createModel).collect(Collectors.toUnmodifiableList());
+    public void updateAvailability(DoctorAvailability doctorAvailability) {
+        availabilityEntityRepository.saveAndFlush(entityMapper.updateEntity(doctorAvailability));
     }
 
     @Override
-    public void updateAvailability(DoctorAvailability doctorAvailability) {
-        availabilityEntityRepository.saveAndFlush(entityMapper.updateEntity(doctorAvailability));
+    public List<DoctorAvailability> getAvailabilityList(UserPrincipal principal) {
+        return availabilityEntityRepository.findAllByDoctorEntityUserUserId(principal.getUserId()).stream().map(this::createModel).collect(Collectors.toUnmodifiableList());
     }
 
     public DoctorAvailabilityEntity createEntity(DoctorAvailability doctorAvailability) {

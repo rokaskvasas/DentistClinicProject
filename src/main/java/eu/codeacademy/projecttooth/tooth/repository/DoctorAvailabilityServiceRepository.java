@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface DoctorAvailabilityServiceEntityRepository extends JpaRepository<DoctorAvailabilityServiceEntity, Long> {
+public interface DoctorAvailabilityServiceRepository extends JpaRepository<DoctorAvailabilityServiceEntity, Long> {
 
 
     List<DoctorAvailabilityServiceEntity> findAllByDoctorAvailabilityEntity_DoctorEntity_User_UserId(Long aLong);

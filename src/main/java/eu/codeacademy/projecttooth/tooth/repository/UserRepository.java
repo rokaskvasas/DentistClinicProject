@@ -1,14 +1,13 @@
 package eu.codeacademy.projecttooth.tooth.repository;
 
-import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
+import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
 @Repository
-public interface PatientEntityRepository extends JpaRepository<PatientEntity, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-
-    Optional<PatientEntity> findByUserUserId(Long aLong);
+    Optional<UserEntity> findByEmail(String email);
 }

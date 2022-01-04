@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Modifying;
 
 import java.util.Optional;
 
-public interface DoctorEntityRepository extends JpaRepository<DoctorEntity, Long> {
+public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
 
 
     Optional<DoctorEntity> findDoctorEntityByUserUserId(Long aLong);

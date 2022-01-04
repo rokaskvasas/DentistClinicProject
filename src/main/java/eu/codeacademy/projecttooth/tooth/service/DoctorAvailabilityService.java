@@ -9,7 +9,7 @@ import java.util.List;
 
 @Service
 public interface DoctorAvailabilityService {
-    void createAvailability(List<DoctorAvailability> doctorAvailabilities);
+    void createAvailability(List<DoctorAvailability> doctorAvailabilities, Long userId);
 
     void updateAvailability(DoctorAvailability doctorAvailability);
 

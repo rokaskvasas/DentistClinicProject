@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DoctorAvailabilityEntityRepository extends JpaRepository<DoctorAvailabilityEntity, Long> {
+public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvailabilityEntity, Long> {
 
 
     List<DoctorAvailabilityEntity> findAllByDoctorEntityDoctorId(Long doctorId);

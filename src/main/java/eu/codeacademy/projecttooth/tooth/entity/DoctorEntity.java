@@ -40,10 +40,10 @@ public class DoctorEntity {
     private UserEntity user;
 
     @OneToOne
-    @JoinColumn(name = "location_id",insertable = false, updatable = false)
-    private LocationEntity locationEntity;
+    @JoinColumn(name = "location_id", insertable = false, updatable = false)
+    private LocationEntity location;
 
-    @OneToMany(mappedBy = "doctorEntity")
+    @OneToMany(mappedBy = "doctorEntity", cascade = CascadeType.ALL)
     private List<DoctorAvailabilityEntity> doctorAvailabilityEntities;
 
 }

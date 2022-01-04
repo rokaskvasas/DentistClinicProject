@@ -10,6 +10,7 @@ import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityEntityService
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,9 +23,8 @@ public class DoctorAvailabilityEntityServiceImpl implements DoctorAvailabilityEn
 
     @Override
     public void createAvailability(List<DoctorAvailability> doctorAvailabilityList) {
-
-        availabilityEntityRepository.saveAllAndFlush(doctorAvailabilityList.stream().map(this::createEntity).collect(Collectors.toUnmodifiableList()));
-
+        availabilityEntityRepository.saveAllAndFlush(doctorAvailabilityList.stream()
+                .map(entityMapper::createEntity).collect(Collectors.toUnmodifiableList()));
     }
 
     @Override
@@ -34,14 +34,14 @@ public class DoctorAvailabilityEntityServiceImpl implements DoctorAvailabilityEn
 
     @Override
     public List<DoctorAvailability> getAvailabilityList(UserPrincipal principal) {
-        return availabilityEntityRepository.findAllByDoctorEntityUserUserId(principal.getUserId()).stream().map(this::createModel).collect(Collectors.toUnmodifiableList());
+        return availabilityEntityRepository.findAllByDoctorEntityUserUserId(principal.getUserId()).stream()
+                .map(entityMapper::createModel).collect(Collectors.toUnmodifiableList());
     }
 
-    public DoctorAvailabilityEntity createEntity(DoctorAvailability doctorAvailability) {
-        return entityMapper.createEntity(doctorAvailability);
+    @Override
+    @Transactional
+    public void deleteAvailability(DoctorAvailability doctorAvailability) {
+        availabilityEntityRepository.removeByDoctorAvailabilityId(doctorAvailability.getDoctorAvailabilityId());
     }
 
-    public DoctorAvailability createModel(DoctorAvailabilityEntity entity) {
-        return entityMapper.createModel(entity);
-    }
 }

@@ -23,21 +23,20 @@ public class DoctorAvailabilityServiceEntityServiceImpl implements DoctorAvailab
 
     @Override
     public void createAvailabilityService(List<DoctorAvailabilityService> doctorAvailabilityServiceList) {
-
-        serviceEntityRepository.saveAllAndFlush(doctorAvailabilityServiceList.stream().map(this::createEntity).collect(Collectors.toUnmodifiableList()));
-
+        serviceEntityRepository.saveAllAndFlush(doctorAvailabilityServiceList.stream()
+                .map(entityMapper::createEntity).collect(Collectors.toUnmodifiableList()));
     }
 
     @Override
     public List<DoctorAvailabilityService> getAvailabilityServiceList(UserPrincipal principal) {
         return serviceEntityRepository
                 .findAllByDoctorAvailabilityEntity_DoctorEntity_User_UserId(principal.getUserId())
-                .stream().map(this::createModel).collect(Collectors.toUnmodifiableList());
+                .stream().map(entityMapper::createModel).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public void updateAvailabilityService(DoctorAvailabilityService doctorAvailabilityService) {
-        serviceEntityRepository.saveAndFlush(updateEntity(doctorAvailabilityService));
+        serviceEntityRepository.saveAndFlush(entityMapper.updateEntity(doctorAvailabilityService));
     }
 
     @Override
@@ -47,28 +46,12 @@ public class DoctorAvailabilityServiceEntityServiceImpl implements DoctorAvailab
     }
 
 
-    private DoctorAvailabilityServiceEntity createEntity(DoctorAvailabilityService doctorAvailabilityService) {
-        return entityMapper.createEntity(doctorAvailabilityService);
-    }
-
-    private DoctorAvailabilityServiceEntity updateEntity(DoctorAvailabilityService doctorAvailabilityService){
-        return  entityMapper.updateEntity(doctorAvailabilityService);
-    }
-
-    private DoctorAvailabilityService createModel(DoctorAvailabilityServiceEntity entity){
-       return entityMapper.createModel(entity);
-    }
-
-
-
-
     //    @Override
 //    public List<DoctorScheduler> getAll(Doctor doctor) {
 //        return serviceEntityRepository.findAll().stream().
 //                filter(entity -> entity.getDoctorAvailabilityEntity().getDoctorEntity().getDoctorId().equals(doctor.getDoctorId()))
 //                .map(this::createScheduler).collect(Collectors.toUnmodifiableList());
 //    }
-
 
 
     public DoctorScheduler createScheduler(DoctorAvailabilityServiceEntity entity) {

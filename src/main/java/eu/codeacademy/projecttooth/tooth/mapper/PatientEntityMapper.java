@@ -8,9 +8,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class PatientEntityMapper {
 
-    public PatientEntity getPatientEntity(UserEntity userEntity){
+    public PatientEntity getEntity(UserEntity userEntity){
 
         return PatientEntity.builder()
                 .user(userEntity).build();
+    }
+    public Patient getModel(PatientEntity entity){
+        return Patient.builder()
+                .firstName(entity.getUser().getFirstName())
+                .lastName(entity.getUser().getLastName())
+                .phoneNumber(entity.getUser().getPhoneNumber()).build();
     }
 }

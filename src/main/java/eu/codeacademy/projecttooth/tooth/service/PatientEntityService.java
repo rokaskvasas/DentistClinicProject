@@ -6,4 +6,6 @@ import org.springframework.stereotype.Service;
 @Service
 public interface PatientEntityService {
     void createPatient(Patient patient);
+
+    Patient getPatient(Long userId);
 }

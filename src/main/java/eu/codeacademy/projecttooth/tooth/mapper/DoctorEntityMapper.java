@@ -1,10 +1,9 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
-import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
-import eu.codeacademy.projecttooth.tooth.model.modelenum.QualificationEnum;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +18,7 @@ public class DoctorEntityMapper {
                 .doctorLicense(doctor.getDoctorLicense())
                 .locationId(doctor.getLocationId())
                 .qualification(doctor.getQualification())
+                .status(StatusEnum.UNVERIFIED)
                 .user(userEntity)
                 .build();
     }

@@ -28,9 +28,13 @@ public class DoctorController {
         doctorEntityService.createDoctor(doctor);
     }
 
-    //    TODO:: FINISH UPDATE DOCTOR REQUEST
     @PutMapping
     public void updateDoctor(@RequestBody Doctor doctor) {
         doctorEntityService.updateDoctor(doctor);
+    }
+
+    @DeleteMapping
+    public void deleteDoctor(@RequestBody Doctor doctor) {
+        doctorEntityService.deleteDoctor(doctor);
     }
 }

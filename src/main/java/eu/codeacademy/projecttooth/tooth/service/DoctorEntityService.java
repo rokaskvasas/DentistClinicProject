@@ -11,4 +11,7 @@ public interface DoctorEntityService {
     Doctor getDoctor(Long doctorId);
 
     void updateDoctor(Doctor doctor);
+
+
+    void deleteDoctor(Doctor doctor);
 }

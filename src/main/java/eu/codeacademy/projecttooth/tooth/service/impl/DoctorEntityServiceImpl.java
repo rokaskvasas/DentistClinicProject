@@ -11,6 +11,8 @@ import eu.codeacademy.projecttooth.tooth.service.DoctorEntityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+
 @Service
 @RequiredArgsConstructor
 public class DoctorEntityServiceImpl implements DoctorEntityService {
@@ -40,5 +42,11 @@ public class DoctorEntityServiceImpl implements DoctorEntityService {
                 .orElseThrow(() -> new IdNotFoundException(String.format("Doctor by id: %s not found", doctor.getDoctorId())));
         doctorEntityRepository.saveAndFlush(doctorEntityMapper.updateDoctorEntity(doctor, doctorEntity));
 
+    }
+
+    @Override
+    @Transactional
+    public void deleteDoctor(Doctor doctor) {
+        doctorEntityRepository.removeByDoctorId(doctor.getDoctorId());
     }
 }

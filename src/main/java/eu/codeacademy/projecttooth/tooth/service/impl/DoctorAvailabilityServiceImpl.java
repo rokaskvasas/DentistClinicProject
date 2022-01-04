@@ -1,10 +1,10 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.mapper.DoctorAvailabilityEntityMapper;
+import eu.codeacademy.projecttooth.tooth.mapper.DoctorAvailabilityMapper;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityEntityRepository;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
-import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityEntityService;
+import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +14,9 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class DoctorAvailabilityEntityServiceImpl implements DoctorAvailabilityEntityService {
+public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService {
 
-    private final DoctorAvailabilityEntityMapper entityMapper;
+    private final DoctorAvailabilityMapper entityMapper;
     private final DoctorAvailabilityEntityRepository availabilityEntityRepository;
 
     @Override

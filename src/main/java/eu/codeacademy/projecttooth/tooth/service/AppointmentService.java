@@ -6,6 +6,6 @@ import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface AppointmentEntityService {
+public interface AppointmentService {
 //    void createAppointment(UserPrincipal principal, DoctorAvailabilityService doctorAvailabilityService);
 }

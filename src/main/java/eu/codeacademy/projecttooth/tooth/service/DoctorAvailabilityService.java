@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public interface DoctorAvailabilityEntityService {
+public interface DoctorAvailabilityService {
     void createAvailability(List<DoctorAvailability> doctorAvailabilities);
 
     void updateAvailability(DoctorAvailability doctorAvailability);

@@ -1,15 +1,10 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
-import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
-import eu.codeacademy.projecttooth.tooth.model.User;
 import eu.codeacademy.projecttooth.tooth.repository.UserEntityRepository;
-import eu.codeacademy.projecttooth.tooth.service.UserEntityService;
+import eu.codeacademy.projecttooth.tooth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,7 +12,7 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private final UserEntityService userEntityService;
+    private final UserService userService;
     private final UserEntityRepository userEntityRepository;
 
 

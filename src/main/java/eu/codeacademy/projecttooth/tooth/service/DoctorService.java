@@ -4,7 +4,7 @@ import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface DoctorEntityService {
+public interface DoctorService {
     void createDoctor(Doctor doctor);
 
 

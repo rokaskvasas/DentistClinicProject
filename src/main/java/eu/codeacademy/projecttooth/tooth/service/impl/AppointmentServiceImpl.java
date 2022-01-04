@@ -1,16 +1,12 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
-import eu.codeacademy.projecttooth.tooth.model.DoctorAvailabilityService;
-import eu.codeacademy.projecttooth.tooth.model.Patient;
-import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
-import eu.codeacademy.projecttooth.tooth.service.AppointmentEntityService;
+import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AppointmentEntityServiceImpl implements AppointmentEntityService {
+public class AppointmentServiceImpl implements AppointmentService {
 
 
 //    private final AppointmentEntityService service;

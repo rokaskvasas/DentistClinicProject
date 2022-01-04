@@ -8,7 +8,7 @@ import java.time.Month;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class DoctorAvailabilityEntityMapperTest {
+class DoctorAvailabilityMapperTest {
 
     @Test
     public void checkDoctorAvailabilityTimeIsCorrect(){

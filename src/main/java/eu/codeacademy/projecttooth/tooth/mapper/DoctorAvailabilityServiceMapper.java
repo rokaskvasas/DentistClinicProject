@@ -3,7 +3,7 @@ package eu.codeacademy.projecttooth.tooth.mapper;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityServiceEntity;
 import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
-import eu.codeacademy.projecttooth.tooth.exception.IdNotFoundException;
+import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityEntityRepository;
@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class DoctorAvailabilityServiceEntityMapper {
+public class DoctorAvailabilityServiceMapper {
 
     private final DoctorAvailabilityEntityRepository availabilityEntityRepository;
     private final ServiceEntityRepository serviceEntityRepository;
@@ -44,18 +44,18 @@ public class DoctorAvailabilityServiceEntityMapper {
 
     private DoctorAvailabilityEntity getDoctorAvailabilityEntity(DoctorAvailabilityService doctorAvailabilityService) {
         return availabilityEntityRepository.findById(doctorAvailabilityService.getDoctorAvailabilityId())
-                .orElseThrow(() -> new IdNotFoundException(String.format("Doctor availability by id:%s not found", doctorAvailabilityService.getDoctorAvailabilityId())));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability by id:%s not found", doctorAvailabilityService.getDoctorAvailabilityId())));
     }
 
     private ServiceEntity getServiceEntity(DoctorAvailabilityService doctorAvailabilityService) {
         return serviceEntityRepository.findById(doctorAvailabilityService.getServiceId()).
-                orElseThrow(() -> new IdNotFoundException(String.format("Service by id:%s not found", doctorAvailabilityService.getServiceId())));
+                orElseThrow(() -> new ObjectNotFoundException(String.format("Service by id:%s not found", doctorAvailabilityService.getServiceId())));
     }
 
 
     public DoctorAvailabilityServiceEntity updateEntity(DoctorAvailabilityService doctorAvailabilityService) {
         DoctorAvailabilityServiceEntity entity = availabilityServiceEntityRepository.findById(doctorAvailabilityService.getDoctorAvailabilityServiceId())
-                .orElseThrow(() -> new IdNotFoundException(String.format("Availability service by id:%s not found", doctorAvailabilityService.getDoctorAvailabilityId())));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Availability service by id:%s not found", doctorAvailabilityService.getDoctorAvailabilityId())));
         isQualified(doctorAvailabilityService);
         entity.setServiceEntity(getServiceEntity(doctorAvailabilityService));
         return entity;

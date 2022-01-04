@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class DoctorEntityMapper {
+public class DoctorMapper {
 
 
     public DoctorEntity createDoctorEntity(Doctor doctor, UserEntity userEntity){
@@ -18,7 +18,7 @@ public class DoctorEntityMapper {
                 .doctorLicense(doctor.getDoctorLicense())
                 .locationId(doctor.getLocationId())
                 .qualification(doctor.getQualification())
-                .status(StatusEnum.UNVERIFIED)
+                .status(doctor.getStatus())
                 .user(userEntity)
                 .build();
     }

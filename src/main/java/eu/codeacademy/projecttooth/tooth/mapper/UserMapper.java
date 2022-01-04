@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserEntityMapper {
+public class UserMapper {
 
     private final PasswordService passwordService;
 
@@ -20,22 +20,8 @@ public class UserEntityMapper {
                 .email(user.getEmail())
                 .phoneNumber(user.getPhoneNumber())
                 .password(passwordService.passwordEncoder().encode(user.getPassword()))
-                .role(determinateRole(role))
+                .role(role.determinateRole())
                 .build();
     }
 
-    private String determinateRole(RoleEnum role) {
-        switch (role) {
-            case ADMIN -> {
-                return "ROLE_ADMIN";
-            }
-            case DOCTOR -> {
-                return "ROLE_DOCTOR";
-            }
-            case PATIENT -> {
-                return "ROLE_PATIENT";
-            }
-        }
-        return "ROLE_ANONYMOUS";
-    }
 }

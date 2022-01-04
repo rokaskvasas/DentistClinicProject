@@ -2,7 +2,7 @@ package eu.codeacademy.projecttooth.tooth.mapper;
 
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
-import eu.codeacademy.projecttooth.tooth.exception.IdNotFoundException;
+import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.exception.IncorrectDoctorAvailabilityTime;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityEntityRepository;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class DoctorAvailabilityEntityMapper {
+public class DoctorAvailabilityMapper {
 
     private final DoctorEntityRepository doctorEntityRepository;
     private final DoctorAvailabilityEntityRepository availabilityEntityRepository;
@@ -38,7 +38,7 @@ public class DoctorAvailabilityEntityMapper {
     public DoctorAvailabilityEntity updateEntity(DoctorAvailability doctorAvailability) {
         availabilityTimeCheck(doctorAvailability);
         DoctorAvailabilityEntity entity = availabilityEntityRepository.findById(doctorAvailability.getDoctorAvailabilityId())
-                .orElseThrow(() -> new IdNotFoundException("DoctorAvailabilityId not found:" + doctorAvailability.getDoctorAvailabilityId()));
+                .orElseThrow(() -> new ObjectNotFoundException("DoctorAvailabilityId not found:" + doctorAvailability.getDoctorAvailabilityId()));
         entity.setStartTime(doctorAvailability.getStartTime());
         entity.setEndTime(doctorAvailability.getEndTime());
         return entity;
@@ -46,7 +46,7 @@ public class DoctorAvailabilityEntityMapper {
 
     private DoctorEntity getDoctorEntity(DoctorAvailability doctorAvailability) {
         return doctorEntityRepository.findById(doctorAvailability.getDoctorId())
-                .orElseThrow(() -> new IdNotFoundException(String.format("DoctorId: %s not found", doctorAvailability.getDoctorId())));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("DoctorId: %s not found", doctorAvailability.getDoctorId())));
     }
 
     private void availabilityTimeCheck(DoctorAvailability doctorAvailability) {

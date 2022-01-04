@@ -17,4 +17,19 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler(EmailNotFoundException.class)
+    public ErrorResponse emailNotFound(EmailNotFoundException e) {
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(IncorrectDoctorAvailabilityTime.class)
+    public ErrorResponse incorrectAvailabilityTime(IncorrectDoctorAvailabilityTime e) {
+        return  new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(QualificationException.class)
+    public ErrorResponse minimumQualification(QualificationException e){
+        return new ErrorResponse(e.getMessage());
+    }
+
 }

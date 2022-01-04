@@ -19,11 +19,11 @@ public class AppointmentEntity {
     @Column(name = "id", nullable = false)
     private Long appointmentId;
 
-    @Column(name = "patient_id", insertable = false, updatable = false)
-    private Long patientId;
+//    @Column(name = "patient_id", insertable = false, updatable = false)
+//    private Long patientId;
 
-    @Column(name = "doctor_availability_service_id")
-    private Long doctorAvailabilityServiceId;
+//    @Column(name = "doctor_availability_service_id")
+//    private Long doctorAvailabilityServiceId;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -31,13 +31,13 @@ public class AppointmentEntity {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
-    @ManyToOne
-    @JoinColumn(name = "doctor_availability_service_id", insertable = false, updatable = false)
-    private DoctorAvailabilityServiceEntity doctorAvailabilityServiceEntity;
+    @ManyToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "doctor_availability_service_id")
+    private DoctorAvailabilityServiceEntity doctorAvailabilityService;
 
-    @OneToOne
-    @JoinColumn(name = "patient_id", referencedColumnName = "id")
-    private PatientEntity patientEntity;
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "patient_id")
+    private PatientEntity patient;
 
 
 }

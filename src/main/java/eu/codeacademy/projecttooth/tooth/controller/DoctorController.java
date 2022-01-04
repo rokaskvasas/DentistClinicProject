@@ -17,7 +17,7 @@ public class DoctorController {
 
     private final DoctorEntityService doctorEntityService;
 
-    @GetMapping("/account")
+    @GetMapping
     public Doctor getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
         return doctorEntityService.getDoctor(principal.getUserId());
     }

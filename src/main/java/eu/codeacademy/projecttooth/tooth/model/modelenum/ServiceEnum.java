@@ -4,5 +4,6 @@ public enum ServiceEnum {
     FILLING,
     ORAL_HYGIENE,
     ROOT_CANAL_TREATMENT,
-    PROSTHETIC
+    PROSTHETIC,
+    CONSULTATION
 }

@@ -27,6 +27,6 @@ public class DoctorAvailabilityServiceEntity {
     @JoinColumn(name = "doctor_availability_id")
     private DoctorAvailabilityEntity doctorAvailabilityEntity;
 
-    @OneToMany(mappedBy = "doctorAvailabilityServiceEntity")
+    @OneToMany(mappedBy = "doctorAvailabilityService")
     private Set<AppointmentEntity> appointmentEntities;
 }

@@ -13,10 +13,18 @@ class DoctorAvailabilityEntityMapperTest {
     @Test
     public void checkDoctorAvailabilityTimeIsCorrect(){
         DoctorAvailability doctorAvailability = new DoctorAvailability();
-        doctorAvailability.setStartTime(LocalDateTime.of(2021, Month.DECEMBER,3,12,00,00));
-//        doctorAvailability.setStartTime(LocalDateTime.now());
+        doctorAvailability.setStartTime(LocalDateTime.of(2021, Month.DECEMBER,3,12, 0,0));
         doctorAvailability.setEndTime(LocalDateTime.now());
         assertTrue(doctorAvailability.getStartTime().isBefore(doctorAvailability.getEndTime()));
+
+    }
+    @Test
+    public void checkDoctorAvailabilityIsSameDay(){
+        DoctorAvailability doctorAvailability = new DoctorAvailability();
+        doctorAvailability.setStartTime(LocalDateTime.of(2021, Month.DECEMBER,3,12, 0,0));
+        doctorAvailability.setEndTime(LocalDateTime.of(2021, Month.DECEMBER,3,13, 0,0));
+
+        assertEquals(doctorAvailability.getStartTime().toLocalDate(), doctorAvailability.getEndTime().toLocalDate());
     }
 
 }

@@ -50,7 +50,7 @@ public class DoctorAvailabilityEntityMapper {
     }
 
     private void availabilityTimeCheck(DoctorAvailability doctorAvailability) {
-        if (!doctorAvailability.getStartTime().isBefore(doctorAvailability.getEndTime())) {
+        if (!doctorAvailability.getStartTime().isBefore(doctorAvailability.getEndTime()) || !doctorAvailability.getStartTime().toLocalDate().isEqual(doctorAvailability.getEndTime().toLocalDate())) {
             throw new IncorrectDoctorAvailabilityTime("StartTime or endTime is incorrect");
         }
     }

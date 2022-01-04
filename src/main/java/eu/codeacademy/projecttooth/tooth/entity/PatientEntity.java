@@ -22,6 +22,6 @@ public class PatientEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToOne(mappedBy = "patientEntity")
-    private AppointmentEntity appointmentEntity;
+    @OneToOne(mappedBy = "patient")
+    private AppointmentEntity appointment;
 }

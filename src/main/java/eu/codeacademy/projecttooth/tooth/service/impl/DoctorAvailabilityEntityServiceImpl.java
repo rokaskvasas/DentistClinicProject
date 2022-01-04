@@ -1,7 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
-import eu.codeacademy.projecttooth.tooth.exception.IdNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorAvailabilityEntityMapper;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityEntityRepository;

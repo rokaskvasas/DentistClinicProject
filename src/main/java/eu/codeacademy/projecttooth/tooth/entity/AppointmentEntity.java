@@ -19,11 +19,6 @@ public class AppointmentEntity {
     @Column(name = "id", nullable = false)
     private Long appointmentId;
 
-//    @Column(name = "patient_id", insertable = false, updatable = false)
-//    private Long patientId;
-
-//    @Column(name = "doctor_availability_service_id")
-//    private Long doctorAvailabilityServiceId;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -33,7 +28,7 @@ public class AppointmentEntity {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "doctor_availability_service_id")
-    private DoctorServiceAvailabilityEntity doctorAvailabilityService;
+    private DoctorServiceAvailabilityEntity doctorServiceAvailability;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "patient_id")

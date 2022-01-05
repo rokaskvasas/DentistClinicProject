@@ -40,19 +40,19 @@ public class DoctorController {
         service.updateDoctor(doctor, principal.getUserId());
     }
 
-    //    paspaus delete ir auto log out
+    //    click delete ir auto log out
     @DeleteMapping
     public void deleteDoctor(@AuthenticationPrincipal UserPrincipal principal) {
         service.deleteDoctor(principal.getUserId());
     }
 
-    //    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/list")
     public List<Doctor> getUnverifiedDoctorList(@RequestParam(name = "approved", required = false, defaultValue = "UNVERIFIED") String approved) {
         return service.getDoctorList(approved);
     }
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/{id}")
     public void verifyDoctor(@PathVariable(name = "id") Long doctorId) {
         service.verifyDoctor(doctorId);

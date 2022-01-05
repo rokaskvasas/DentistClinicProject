@@ -31,6 +31,6 @@ public class DoctorAvailabilityEntity {
     @JoinColumn(name = "doctor_id", nullable = false)
     private DoctorEntity doctorEntity;
 
-    @OneToMany(mappedBy = "doctorAvailabilityEntity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "doctorAvailability", cascade = CascadeType.ALL)
     private Set<DoctorServiceAvailabilityEntity> doctorAvailabilityServiceEntities;
 }

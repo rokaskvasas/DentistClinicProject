@@ -1,7 +1,9 @@
 package eu.codeacademy.projecttooth.tooth.service;
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,4 +20,6 @@ public interface DoctorServiceAvailabilityService {
     void deleteAvailabilityService(Long serviceId, Long userId);
 
     DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId);
+
+    List<DoctorServiceAvailabilityDto> getAvailabilityServiceListAsPatient();
 }

@@ -12,5 +12,5 @@ public interface DoctorRepository extends JpaRepository<DoctorEntity, Long> {
     Optional<DoctorEntity> findDoctorEntityByUserUserId(Long aLong);
 
     @Modifying
-    void removeByDoctorId(Long id);
+    void removeByUser_UserId(Long userId);
 }

@@ -7,12 +7,13 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvailabilityEntity, Long> {
 
 
-    List<DoctorAvailabilityEntity> findAllByDoctorEntityDoctorId(Long doctorId);
+    Optional<DoctorAvailabilityEntity> findByDoctorEntityUserUserId(Long userId);
 
     List<DoctorAvailabilityEntity> findAllByDoctorEntityUserUserId(Long userId);
 

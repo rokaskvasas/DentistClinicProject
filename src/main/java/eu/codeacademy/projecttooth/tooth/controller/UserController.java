@@ -1,6 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
-import eu.codeacademy.projecttooth.tooth.repository.UserEntityRepository;
+import eu.codeacademy.projecttooth.tooth.repository.UserRepository;
 import eu.codeacademy.projecttooth.tooth.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final UserEntityRepository userEntityRepository;
+    private final UserRepository userRepository;
 
 
 //    @GetMapping

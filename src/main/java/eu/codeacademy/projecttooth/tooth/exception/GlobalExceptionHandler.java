@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(IdNotFoundException.class)
+    @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse userNotFound(IdNotFoundException e) {
+    public ErrorResponse userNotFound(ObjectNotFoundException e) {
         return new ErrorResponse(e.getMessage());
     }
 

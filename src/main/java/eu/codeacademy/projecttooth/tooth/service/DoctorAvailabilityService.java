@@ -11,9 +11,11 @@ import java.util.List;
 public interface DoctorAvailabilityService {
     void createAvailability(List<DoctorAvailability> doctorAvailabilities, Long userId);
 
-    void updateAvailability(DoctorAvailability doctorAvailability);
+    void updateAvailability(DoctorAvailability doctorAvailability, Long userId);
 
     List<DoctorAvailability> getAvailabilityList(UserPrincipal principal);
 
-    void deleteAvailability(DoctorAvailability doctorAvailability);
+    void deleteAvailability(Long doctorAvailabilityId, Long userId);
+
+    DoctorAvailability getAvailability(Long availabilityId, Long userId);
 }

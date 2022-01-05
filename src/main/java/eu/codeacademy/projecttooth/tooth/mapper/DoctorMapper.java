@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 public class DoctorMapper {
 
 
-    public DoctorEntity createDoctorEntity(Doctor doctor, UserEntity userEntity){
+    public DoctorEntity createDoctorEntity(Doctor doctor, UserEntity userEntity) {
 
         return DoctorEntity.builder()
                 .doctorLicense(doctor.getDoctorLicense())
@@ -22,7 +22,8 @@ public class DoctorMapper {
                 .user(userEntity)
                 .build();
     }
-    public Doctor getDoctorModel(DoctorEntity entity){
+
+    public Doctor createDoctorModel(DoctorEntity entity) {
         return Doctor.builder()
                 .firstName(entity.getUser().getFirstName())
                 .lastName(entity.getUser().getLastName())
@@ -32,26 +33,9 @@ public class DoctorMapper {
                 .locationName(entity.getLocation().getName())
                 .locationCity(entity.getLocation().getCity())
                 .status(entity.getStatus())
-                .build();
-    }
-    public DoctorEntity updateDoctorEntity(Doctor doctor, DoctorEntity entity){
-        return DoctorEntity.builder()
-                .doctorLicense(doctor.getDoctorLicense())
-                .doctorAvailabilityEntities(entity.getDoctorAvailabilityEntities())
                 .doctorId(entity.getDoctorId())
-                .locationId(entity.getLocationId())
-                .status(entity.getStatus())
-                .qualification(doctor.getQualification())
-                .user(UserEntity.builder()
-                        .firstName(doctor.getFirstName())
-                        .lastName(doctor.getLastName())
-                        .role(entity.getUser().getRole())
-                        .password(entity.getUser().getPassword())
-                        .email(entity.getUser().getEmail())
-                        .phoneNumber(doctor.getPhoneNumber())
-                        .userId(entity.getUser().getUserId())
-                        .build())
                 .build();
     }
+
 
 }

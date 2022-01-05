@@ -9,7 +9,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DoctorAvailabilityService {
+public class DoctorServiceAvailability {
 
     private Long doctorAvailabilityServiceId;
 

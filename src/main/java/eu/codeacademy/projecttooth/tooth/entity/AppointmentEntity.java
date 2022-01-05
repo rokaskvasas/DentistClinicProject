@@ -33,7 +33,7 @@ public class AppointmentEntity {
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "doctor_availability_service_id")
-    private DoctorAvailabilityServiceEntity doctorAvailabilityService;
+    private DoctorServiceAvailabilityEntity doctorAvailabilityService;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "patient_id")

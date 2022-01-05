@@ -2,7 +2,7 @@ package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
-import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityEntityService;
+import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -16,25 +16,35 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DoctorAvailabilityController {
 
-    private final DoctorAvailabilityEntityService service;
+    private final DoctorAvailabilityService service;
+
+
+    @GetMapping("/{id}")
+    public DoctorAvailability getDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
+                                                    @PathVariable(name = "id") Long availabilityId) {
+        return service.getAvailability(availabilityId, principal.getUserId());
+    }
 
     @GetMapping()
-    public List<DoctorAvailability> getAllDoctorAvailabilityList(@AuthenticationPrincipal UserPrincipal principal){
+    public List<DoctorAvailability> getAllDoctorAvailabilityList(@AuthenticationPrincipal UserPrincipal principal) {
         return service.getAvailabilityList(principal);
     }
 
     @PostMapping
-    public void createDoctorAvailabilities(@RequestBody List<DoctorAvailability> doctorAvailabilityList) {
-        service.createAvailability(doctorAvailabilityList);
+    public void createDoctorAvailabilities(@AuthenticationPrincipal UserPrincipal principal,
+                                           @RequestBody List<DoctorAvailability> doctorAvailabilityList) {
+        service.createAvailability(doctorAvailabilityList, principal.getUserId());
     }
 
     @PutMapping
-    public void updateDoctorAvailability(@RequestBody DoctorAvailability doctorAvailability) {
-        service.updateAvailability(doctorAvailability);
+    public void updateDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
+                                         @RequestBody DoctorAvailability doctorAvailability) {
+        service.updateAvailability(doctorAvailability, principal.getUserId());
     }
 
-    @DeleteMapping
-    public void deleteDoctorAvailability(@RequestBody DoctorAvailability doctorAvailability){
-        service.deleteAvailability(doctorAvailability);
+    @DeleteMapping("{id}")
+    public void deleteDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
+                                         @PathVariable(name = "id") Long doctorAvailabilityId) {
+        service.deleteAvailability(doctorAvailabilityId, principal.getUserId());
     }
 }

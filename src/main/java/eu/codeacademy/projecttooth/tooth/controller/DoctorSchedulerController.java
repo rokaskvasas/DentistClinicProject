@@ -1,7 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.model.DoctorScheduler;
-import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityServiceService;
+import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,7 +14,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DoctorSchedulerController {
 
-  private final DoctorAvailabilityServiceService service;
+  private final DoctorServiceAvailabilityService service;
 
     @GetMapping
     public List<DoctorScheduler> getAllDoctorAvailabilityServicesList(){

@@ -1,21 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
-import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
-import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityEntityRepository;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 //
 //@ExtendWith(MockitoExtension.class)

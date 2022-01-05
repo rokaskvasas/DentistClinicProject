@@ -12,7 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class DoctorAvailabilityServiceEntity {
+public class DoctorServiceAvailabilityEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

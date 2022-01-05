@@ -32,5 +32,5 @@ public class DoctorAvailabilityEntity {
     private DoctorEntity doctorEntity;
 
     @OneToMany(mappedBy = "doctorAvailabilityEntity", cascade = CascadeType.ALL)
-    private Set<DoctorAvailabilityServiceEntity> doctorAvailabilityServiceEntities;
+    private Set<DoctorServiceAvailabilityEntity> doctorAvailabilityServiceEntities;
 }

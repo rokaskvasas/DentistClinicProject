@@ -1,12 +1,12 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorServiceAvailabilityMapper;
-import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.model.DoctorScheduler;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityRepository;
@@ -29,19 +29,36 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     private final ServiceRepository serviceRepository;
     private final DoctorServiceAvailabilityRepository availabilityServiceRepository;
 
-    @Override
-    public void createAvailabilityService(DoctorServiceAvailability serviceAvailability, Long userId) {
-        isQualified(serviceAvailability);
-        availabilityServiceRepository.saveAndFlush(serviceAvailabilityMapper
-                .createEntity(getServiceEntity(serviceAvailability.getServiceId()),getDoctorAvailabilityEntityByUserID(serviceAvailability.getDoctorAvailabilityId(),userId)));
-
-    }
 
     @Override
     public List<DoctorServiceAvailability> getAvailabilityServiceList(Long userId) {
         return availabilityServiceRepository
-                .findAllByDoctorAvailabilityEntityDoctorEntityUserUserId(userId)
+                .findAllByDoctorAvailabilityDoctorEntityUserUserId(userId)
                 .stream().map(serviceAvailabilityMapper::createModel).collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId) {
+        return availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId)
+                .stream().filter(entity -> entity.getDoctorAvailabilityServiceId().equals(availabilityServiceId))
+                .findAny().map(serviceAvailabilityMapper::createModel)
+                .orElseThrow(() -> new ObjectNotFoundException("Doctor Availability service by id not found: " + availabilityServiceId));
+    }
+
+    @Override
+    public List<DoctorServiceAvailabilityDto> getAvailabilityServiceListAsPatient() {
+        return availabilityServiceRepository.findAll().stream().map(serviceAvailabilityMapper::createDtoModel).collect(Collectors.toUnmodifiableList());
+
+    }
+
+    @Override
+    public void createAvailabilityService(DoctorServiceAvailability serviceAvailability, Long userId) {
+        isQualified(serviceAvailability);
+        ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
+        DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(serviceAvailability.getDoctorAvailabilityId(), userId);
+        availabilityServiceRepository.saveAndFlush(serviceAvailabilityMapper
+                .createEntity(serviceEntity, doctorAvailabilityEntity));
+
     }
 
     @Override
@@ -55,13 +72,6 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         availabilityServiceRepository.delete(getDoctorServiceAvailabilityEntity(serviceId, userId));
     }
 
-    @Override
-    public DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId) {
-        return availabilityServiceRepository.findAllByDoctorAvailabilityEntityDoctorEntityUserUserId(userId)
-                .stream().filter(entity -> entity.getDoctorAvailabilityServiceId().equals(availabilityServiceId))
-                .findAny().map(serviceAvailabilityMapper::createModel)
-                .orElseThrow(()-> new ObjectNotFoundException("Doctor Availability service by id not found: "+ availabilityServiceId));
-    }
 
     private void isQualified(DoctorServiceAvailability doctorServiceAvailability) {
         if ((getServiceEntity(doctorServiceAvailability.getServiceId()).getMinimumQualification().getCourse() > getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId()).getDoctorEntity().getQualification().getCourse())) {
@@ -74,9 +84,9 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found", availabilityId)));
     }
 
-    private DoctorAvailabilityEntity getDoctorAvailabilityEntityByUserID(Long doctorAvailabilityId, Long userId){
+    private DoctorAvailabilityEntity getDoctorAvailabilityEntityByUserID(Long doctorAvailabilityId, Long userId) {
         return availabilityRepository.findAllByDoctorEntityUserUserId(userId).stream()
-                .filter(entity -> entity.getDoctorAvailabilityId().equals(doctorAvailabilityId)).findFirst().orElseThrow(()-> new ObjectNotFoundException("getDoctorAvailabilityEntityByUserID bad id"));
+                .filter(entity -> entity.getDoctorAvailabilityId().equals(doctorAvailabilityId)).findFirst().orElseThrow(() -> new ObjectNotFoundException("getDoctorAvailabilityEntityByUserID bad id"));
     }
 
     private ServiceEntity getServiceEntity(Long serviceId) {
@@ -84,17 +94,17 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
                 orElseThrow(() -> new ObjectNotFoundException(String.format("Service entity by id:%s not found", serviceId)));
     }
 
-    private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(Long serviceAvailabilityId, Long userId){
-        return availabilityServiceRepository.findAllByDoctorAvailabilityEntityDoctorEntityUserUserId(userId)
+    private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(Long serviceAvailabilityId, Long userId) {
+        return availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId)
                 .stream().filter(entity -> entity.getDoctorAvailabilityServiceId().equals(serviceAvailabilityId)).findAny()
-                .orElseThrow(()-> new ObjectNotFoundException("Doctor Service availability entity not found id:"+serviceAvailabilityId));
+                .orElseThrow(() -> new ObjectNotFoundException("Doctor Service availability entity not found id:" + serviceAvailabilityId));
     }
 
 
     public DoctorServiceAvailabilityEntity updateEntity(DoctorServiceAvailability doctorServiceAvailability, Long userId) {
         isQualified(doctorServiceAvailability);
         DoctorServiceAvailabilityEntity entity = getDoctorServiceAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityServiceId(), userId);
-        entity.setServiceEntity(getServiceEntity(doctorServiceAvailability.getServiceId()));
+        entity.setService(getServiceEntity(doctorServiceAvailability.getServiceId()));
         return entity;
 
     }
@@ -110,9 +120,9 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
     public DoctorScheduler createScheduler(DoctorServiceAvailabilityEntity entity) {
         return DoctorScheduler.builder()
-                .service(entity.getServiceEntity().getName())
-                .startTime(entity.getDoctorAvailabilityEntity().getStartTime())
-                .endTime(entity.getDoctorAvailabilityEntity().getEndTime())
+                .service(entity.getService().getName())
+                .startTime(entity.getDoctorAvailability().getStartTime())
+                .endTime(entity.getDoctorAvailability().getEndTime())
                 .build();
     }
 }

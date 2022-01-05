@@ -1,10 +1,13 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,12 @@ public class DoctorServiceAvailabilityController {
 
     private final DoctorServiceAvailabilityService service;
 
+
+    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    @GetMapping("/available")
+    public List<DoctorServiceAvailabilityDto> getAllDoctorAvailabilityServiceListAsPatient(){
+        return service.getAvailabilityServiceListAsPatient();
+    }
 
     @GetMapping
     public List<DoctorServiceAvailability> getAllDoctorAvailabilityServiceList(@AuthenticationPrincipal UserPrincipal principal) {

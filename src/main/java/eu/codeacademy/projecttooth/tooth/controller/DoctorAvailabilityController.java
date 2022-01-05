@@ -5,6 +5,7 @@ import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class DoctorAvailabilityController {
                                                     @PathVariable(name = "id") Long availabilityId) {
         return service.getAvailability(availabilityId, principal.getUserId());
     }
+
 
     @GetMapping()
     public List<DoctorAvailability> getAllDoctorAvailabilityList(@AuthenticationPrincipal UserPrincipal principal) {

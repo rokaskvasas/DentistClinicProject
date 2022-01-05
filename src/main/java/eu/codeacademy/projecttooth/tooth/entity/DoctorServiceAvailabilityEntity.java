@@ -21,12 +21,12 @@ public class DoctorServiceAvailabilityEntity {
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "service_id")
-    private ServiceEntity serviceEntity;
+    private ServiceEntity service;
 
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "doctor_availability_id")
-    private DoctorAvailabilityEntity doctorAvailabilityEntity;
+    private DoctorAvailabilityEntity doctorAvailability;
 
-    @OneToMany(mappedBy = "doctorAvailabilityService")
-    private Set<AppointmentEntity> appointmentEntities;
+    @OneToMany(mappedBy = "doctorServiceAvailability")
+    private Set<AppointmentEntity> appointments;
 }

@@ -11,10 +11,7 @@ import java.util.List;
 public interface DoctorServiceAvailabilityRepository extends JpaRepository<DoctorServiceAvailabilityEntity, Long> {
 
 
-//    List<DoctorServiceAvailabilityEntity> findAllByDoctorAvailabilityEntity_DoctorEntity_User_UserId(Long aLong);
-    List<DoctorServiceAvailabilityEntity> findAllByDoctorAvailabilityEntityDoctorEntityUserUserId(Long aLong);
+    List<DoctorServiceAvailabilityEntity> findAllByDoctorAvailabilityDoctorEntityUserUserId(Long aLong);
 
-    @Modifying
-    void removeByDoctorAvailabilityServiceId(Long serviceId);
 
 }

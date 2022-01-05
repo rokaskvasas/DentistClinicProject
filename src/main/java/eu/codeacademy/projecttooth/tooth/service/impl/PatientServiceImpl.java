@@ -23,21 +23,39 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void createPatient(Patient patient) {
-        patientRepository.saveAndFlush(patientMapper.getEntity(userMapper.getUserEntity(patient, RoleEnum.PATIENT)));
+        patientRepository.saveAndFlush(patientMapper.createEntity(userMapper.getUserEntity(patient, RoleEnum.PATIENT)));
 
     }
 
     @Override
     public Patient getPatient(Long userId) {
-        return patientRepository.findByUserUserId(userId).map(patientMapper::getModel)
+        return patientRepository.findByUserUserId(userId).map(patientMapper::createModel)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Patient with id:%s not found", userId)));
     }
 
     @Override
-    public void updatePatient(Patient patient) {
-        PatientEntity patientEntity = patientRepository.findById(patient.getPatientId())
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Patient with id:%s not found", patient.getPatientId())));
-        patientRepository.saveAndFlush(patientMapper.updateEntity(patient,patientEntity));
+    public void updatePatient(Patient patient, Long userId) {
+        patientRepository.saveAndFlush(updatePatientEntity(patient, userId));
 
     }
+
+    @Override
+    public void deletePatient(Long userId) {
+        patientRepository.delete(getPatientEntity(userId));
+    }
+
+
+    private PatientEntity getPatientEntity(Long userId) {
+        return patientRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("PatientEntity with id:%s not found", userId)));
+    }
+
+    private PatientEntity updatePatientEntity(Patient patient, Long userId) {
+        PatientEntity entity = getPatientEntity(userId);
+        entity.getUser().setFirstName(patient.getFirstName());
+        entity.getUser().setLastName(patient.getLastName());
+        entity.getUser().setPhoneNumber(patient.getPhoneNumber());
+        return entity;
+    }
+
 }

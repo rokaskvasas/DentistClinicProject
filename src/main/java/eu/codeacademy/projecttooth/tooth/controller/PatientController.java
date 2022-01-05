@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.model.Patient;
+import eu.codeacademy.projecttooth.tooth.model.User;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,14 @@ public class PatientController {
     public void createPatient(@RequestBody Patient patient) {
         service.createPatient(patient);
     }
-//
-//    @PutMapping
-//    public void updatePatient(@RequestBody Patient payload){
-//        final Patient patientDto = payload.toBuilder()
-//                .firstName(payload.getFirstName())
-//                .lastName(payload.getLastName()).phoneNumber(payload.getPhoneNumber()).build();
-//        service.updatePatient(patientDto);
-//    }
+
+    @PutMapping
+    public void updatePatient(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Patient patient){
+        service.updatePatient(patient, principal.getUserId());
+    }
+
+    @DeleteMapping
+    public void deletePatient(@AuthenticationPrincipal UserPrincipal principal){
+        service.deletePatient(principal.getUserId());
+    }
 }

@@ -28,6 +28,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     private final DoctorAvailabilityRepository availabilityRepository;
     private final ServiceRepository serviceRepository;
     private final DoctorServiceAvailabilityRepository availabilityServiceRepository;
+    private final DoctorAvailabilityServiceImpl doctorAvailabilityService;
 
 
     @Override
@@ -59,7 +60,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
     @Override
     public void createAvailabilityService(DoctorServiceAvailability serviceAvailability, Long userId) {
-        isQualified(serviceAvailability);
+        isQualified(serviceAvailability, userId);
         ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
         DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(serviceAvailability.getDoctorAvailabilityId(), userId);
         availabilityServiceRepository.saveAndFlush(mapper.createEntity(serviceEntity, doctorAvailabilityEntity));
@@ -78,18 +79,13 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
 
-    private void isQualified(DoctorServiceAvailability doctorServiceAvailability) {
+    private void isQualified(DoctorServiceAvailability doctorServiceAvailability,Long userId) {
         int requiredQualification = getServiceEntity(doctorServiceAvailability.getServiceId()).getMinimumQualification().getCourse();
-        int currentQualification = getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId()).getDoctorEntity().getQualification().getCourse();
+        int currentQualification = doctorAvailabilityService.getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId(), userId).getDoctorEntity().getQualification().getCourse();
 
         if ((requiredQualification > currentQualification)) {
             throw new QualificationException(("Minimum qualification requirements not met."));
         }
-    }
-
-    private DoctorAvailabilityEntity getDoctorAvailabilityEntity(Long availabilityId) {
-        return availabilityRepository.findById(availabilityId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found", availabilityId)));
     }
 
     private DoctorAvailabilityEntity getDoctorAvailabilityEntityByUserID(Long doctorAvailabilityId, Long userId) {
@@ -115,7 +111,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
 
     public DoctorServiceAvailabilityEntity updateEntity(DoctorServiceAvailability doctorServiceAvailability, Long userId) {
-        isQualified(doctorServiceAvailability);
+        isQualified(doctorServiceAvailability, userId);
         DoctorServiceAvailabilityEntity entity = getDoctorServiceAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityServiceId(), userId);
         entity.setService(getServiceEntity(doctorServiceAvailability.getServiceId()));
         return entity;

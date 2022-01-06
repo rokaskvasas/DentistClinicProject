@@ -22,7 +22,6 @@ public class DoctorEntity {
     @Column(name = "id")
     private Long doctorId;
 
-
     @Column(name = "doctor_license")
     private String doctorLicense;
 

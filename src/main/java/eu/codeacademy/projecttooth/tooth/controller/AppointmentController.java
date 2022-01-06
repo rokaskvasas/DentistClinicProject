@@ -29,4 +29,5 @@ public class AppointmentController {
     public void createAppointment(@AuthenticationPrincipal UserPrincipal principal,@RequestBody DoctorServiceAvailabilityDto payload){
         service.createAppointment(principal.getUserId(), payload);
     }
+
 }

@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service;
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +11,7 @@ public interface DoctorService {
     void createDoctor(Doctor doctor);
 
 
-    Doctor getDoctor(Long doctorId);
+    DoctorDto getDoctor(Long doctorId);
 
     void updateDoctor(Doctor doctor, Long userId);
 

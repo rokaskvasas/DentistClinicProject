@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorMapper;
@@ -34,8 +35,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor getDoctor(Long doctorId) {
-        return doctorMapper.createDoctorModel(getDoctorEntityByUserUserId(doctorId));
+    public DoctorDto getDoctor(Long doctorId) {
+        return doctorMapper.createDtoModel(getDoctorEntityByUserUserId(doctorId));
     }
 
     @Override

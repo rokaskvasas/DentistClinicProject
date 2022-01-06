@@ -8,18 +8,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class UserMapper {
-
-    private final PasswordService passwordService;
 
     public UserEntity getUserEntity(User user, RoleEnum role) {
         return UserEntity.builder()
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .email(user.getEmail())
+                .password(user.getPassword())
                 .phoneNumber(user.getPhoneNumber())
-                .password(passwordService.passwordEncoder().encode(user.getPassword()))
                 .role(role.determinateRole())
                 .build();
     }

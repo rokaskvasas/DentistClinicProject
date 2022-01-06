@@ -9,6 +9,7 @@ import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorRepository;
+import eu.codeacademy.projecttooth.tooth.security.PasswordService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,9 +29,12 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final DoctorMapper doctorMapper;
 
+    private final PasswordService passwordService;
+
     @Override
     public void createDoctor(Doctor doctor) {
         doctor.setStatus(StatusEnum.UNVERIFIED);
+        doctor.setPassword(passwordService.passwordEncoder().encode(doctor.getPassword()));
         doctorRepository.saveAndFlush(doctorMapper.createDoctorEntity(doctor, userMapper.getUserEntity(doctor, RoleEnum.DOCTOR)));
     }
 
@@ -71,7 +75,7 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorRepository.findDoctorEntityByUserUserId(doctorId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
     }
 
-    private DoctorEntity updateDoctorEntity(Doctor doctor, Long userId){
+    private DoctorEntity updateDoctorEntity(Doctor doctor, Long userId) {
         DoctorEntity entity = getDoctorEntityByUserUserId(userId);
         entity.setQualification(doctor.getQualification());
         entity.setDoctorLicense(doctor.getDoctorLicense());

@@ -7,6 +7,7 @@ import eu.codeacademy.projecttooth.tooth.mapper.UserMapper;
 import eu.codeacademy.projecttooth.tooth.model.Patient;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.repository.PatientRepository;
+import eu.codeacademy.projecttooth.tooth.security.PasswordService;
 import eu.codeacademy.projecttooth.tooth.service.PatientService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,8 +22,11 @@ public class PatientServiceImpl implements PatientService {
 
     private final UserMapper userMapper;
 
+    private final PasswordService passwordService;
+
     @Override
     public void createPatient(Patient patient) {
+        patient.setPassword(passwordService.passwordEncoder().encode(patient.getPassword()));
         patientRepository.saveAndFlush(patientMapper.createEntity(userMapper.getUserEntity(patient, RoleEnum.PATIENT)));
 
     }

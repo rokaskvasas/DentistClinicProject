@@ -29,21 +29,26 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     @Override
     public DoctorAvailability getAvailability(Long availabilityId, Long userId) {
         return availabilityRepository.findAllByDoctorEntityUserUserId(userId)
-                .stream().filter(e -> e.getDoctorAvailabilityId().equals(availabilityId)).findAny().map(mapper::createModel)
+                .stream().filter(e -> e.getDoctorAvailabilityId().equals(availabilityId))
+                .findAny()
+                .map(mapper::createModel)
                 .orElseThrow(() -> new ObjectNotFoundException("Availability not found, id: " + availabilityId));
     }
 
     @Override
     public List<DoctorAvailability> getAvailabilityList(UserPrincipal principal) {
-        return availabilityRepository.findAllByDoctorEntityUserUserId(principal.getUserId()).stream()
+        return availabilityRepository.findAllByDoctorEntityUserUserId(principal.getUserId())
+                .stream()
                 .map(mapper::createModel).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public void createAvailability(List<DoctorAvailability> doctorAvailabilityList, Long userId) {
         doctorAvailabilityList.forEach(this::availabilityTimeCheck);
-        availabilityRepository.saveAllAndFlush(doctorAvailabilityList.stream()
-                .map(doctorAvailability -> mapper.createEntity(doctorAvailability, getDoctorEntity(userId))).collect(Collectors.toUnmodifiableList()));
+        availabilityRepository.saveAllAndFlush(doctorAvailabilityList
+                .stream()
+                .map(doctorAvailability -> mapper.createEntity(doctorAvailability, getDoctorEntity(userId)))
+                .collect(Collectors.toUnmodifiableList()));
     }
 
     @Override
@@ -71,9 +76,11 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
 
-    private DoctorAvailabilityEntity getDoctorAvailabilityEntity(Long doctorAvailabilityId, Long userId) {
+    public DoctorAvailabilityEntity getDoctorAvailabilityEntity(Long doctorAvailabilityId, Long userId) {
         return availabilityRepository.findAllByDoctorEntityUserUserId(userId)
-                .stream().filter(entity -> entity.getDoctorAvailabilityId().equals(doctorAvailabilityId)).findAny()
+                .stream()
+                .filter(entity -> entity.getDoctorAvailabilityId().equals(doctorAvailabilityId))
+                .findAny()
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found", userId)));
     }
 

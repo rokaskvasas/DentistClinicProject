@@ -7,7 +7,6 @@ import eu.codeacademy.projecttooth.tooth.entity.AppointmentEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
 
-import eu.codeacademy.projecttooth.tooth.model.Appointment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,7 @@ public class AppointmentMapper {
 
     }
 
-    public AppointmentDto createDtoModel(AppointmentEntity entity){
+    public AppointmentDto createDtoModel(AppointmentEntity entity) {
         return AppointmentDto.builder()
                 .appointmentId(entity.getAppointmentId())
                 .firstName(entity.getDoctorServiceAvailability().getDoctorAvailability().getDoctorEntity().getUser().getFirstName())

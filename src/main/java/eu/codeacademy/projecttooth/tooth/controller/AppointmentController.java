@@ -21,12 +21,17 @@ public class AppointmentController {
     private final AppointmentService service;
 
     @GetMapping
-    public List<AppointmentDto> getAllAppointments(@AuthenticationPrincipal UserPrincipal principal){
+    public List<AppointmentDto> getAllAppointments(@AuthenticationPrincipal UserPrincipal principal) {
         return service.getAppointmentList(principal.getUserId());
     }
 
+    @GetMapping("/{id}")
+    public AppointmentDto getAppointment(@AuthenticationPrincipal UserPrincipal principal, @PathVariable(name = "id") Long appointmentId) {
+        return service.getAppointment(principal.getUserId(), appointmentId);
+    }
+
     @PostMapping
-    public void createAppointment(@AuthenticationPrincipal UserPrincipal principal,@RequestBody DoctorServiceAvailabilityDto payload){
+    public void createAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody DoctorServiceAvailabilityDto payload) {
         service.createAppointment(principal.getUserId(), payload);
     }
 

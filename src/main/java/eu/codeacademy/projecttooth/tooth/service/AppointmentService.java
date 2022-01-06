@@ -12,4 +12,6 @@ public interface AppointmentService {
     void createAppointment(Long userId, DoctorServiceAvailabilityDto payload);
 
     List<AppointmentDto> getAppointmentList(Long userId);
+
+    AppointmentDto getAppointment(Long userId, Long appointmentId);
 }

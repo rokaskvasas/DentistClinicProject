@@ -29,6 +29,23 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final PatientRepository patientRepository;
     private final DoctorServiceAvailabilityRepository serviceAvailabilityRepository;
 
+
+    @Override
+    public List<AppointmentDto> getAppointmentList(Long userId) {
+        return appointmentRepository.findAllByPatientUserUserId(userId).stream().map(appointmentMapper::createDtoModel).collect(Collectors.toUnmodifiableList());
+
+    }
+
+    @Override
+    public AppointmentDto getAppointment(Long userId, Long appointmentId) {
+        return appointmentRepository.findAllByPatientUserUserId(userId)
+                .stream()
+                .filter(app -> app.getAppointmentId().equals(appointmentId))
+                .findAny()
+                .map(appointmentMapper::createDtoModel)
+                .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
+    }
+
     @Override
     public void createAppointment(Long userId, DoctorServiceAvailabilityDto payload) {
         PatientEntity patient = getPatientEntity(userId);
@@ -37,15 +54,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentRepository.saveAndFlush(appointment);
     }
 
-    @Override
-    public List<AppointmentDto> getAppointmentList(Long userId) {
-        return appointmentRepository.findAllByPatientUserUserId(userId).stream().map(appointmentMapper::createDtoModel).collect(Collectors.toUnmodifiableList());
-
-    }
 
     private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(DoctorServiceAvailabilityDto payload) {
         return serviceAvailabilityRepository.findById(payload.getDoctorServiceAvailabilityId())
-                .orElseThrow(()-> new ObjectNotFoundException(String.format("Creating appointment doctor service availability with id:%s not found ", payload.getDoctorServiceAvailabilityId())));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Creating appointment doctor service availability with id:%s not found ", payload.getDoctorServiceAvailabilityId())));
     }
 
     private PatientEntity getPatientEntity(Long userId) {

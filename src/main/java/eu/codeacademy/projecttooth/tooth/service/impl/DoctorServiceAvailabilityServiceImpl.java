@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvailabilityService {
 
-    private final DoctorServiceAvailabilityMapper serviceAvailabilityMapper;
+    private final DoctorServiceAvailabilityMapper mapper;
     private final DoctorAvailabilityRepository availabilityRepository;
     private final ServiceRepository serviceRepository;
     private final DoctorServiceAvailabilityRepository availabilityServiceRepository;
@@ -34,20 +34,26 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     public List<DoctorServiceAvailability> getAvailabilityServiceList(Long userId) {
         return availabilityServiceRepository
                 .findAllByDoctorAvailabilityDoctorEntityUserUserId(userId)
-                .stream().map(serviceAvailabilityMapper::createModel).collect(Collectors.toUnmodifiableList());
+                .stream()
+                .map(mapper::createModel).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
     public DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId) {
         return availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId)
-                .stream().filter(entity -> entity.getDoctorAvailabilityServiceId().equals(availabilityServiceId))
-                .findAny().map(serviceAvailabilityMapper::createModel)
+                .stream()
+                .filter(entity -> entity.getDoctorAvailabilityServiceId().equals(availabilityServiceId))
+                .findAny()
+                .map(mapper::createModel)
                 .orElseThrow(() -> new ObjectNotFoundException("Doctor Availability service by id not found: " + availabilityServiceId));
     }
 
     @Override
     public List<DoctorServiceAvailabilityDto> getAvailabilityServiceListAsPatient() {
-        return availabilityServiceRepository.findAll().stream().map(serviceAvailabilityMapper::createDtoModel).collect(Collectors.toUnmodifiableList());
+        return availabilityServiceRepository.findAll()
+                .stream()
+                .map(mapper::createDtoModel)
+                .collect(Collectors.toUnmodifiableList());
 
     }
 
@@ -56,8 +62,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         isQualified(serviceAvailability);
         ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
         DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(serviceAvailability.getDoctorAvailabilityId(), userId);
-        availabilityServiceRepository.saveAndFlush(serviceAvailabilityMapper
-                .createEntity(serviceEntity, doctorAvailabilityEntity));
+        availabilityServiceRepository.saveAndFlush(mapper.createEntity(serviceEntity, doctorAvailabilityEntity));
 
     }
 
@@ -74,8 +79,11 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
 
     private void isQualified(DoctorServiceAvailability doctorServiceAvailability) {
-        if ((getServiceEntity(doctorServiceAvailability.getServiceId()).getMinimumQualification().getCourse() > getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId()).getDoctorEntity().getQualification().getCourse())) {
-            throw new QualificationException(("Minimum qualification requirements not meet."));
+        int requiredQualification = getServiceEntity(doctorServiceAvailability.getServiceId()).getMinimumQualification().getCourse();
+        int currentQualification = getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId()).getDoctorEntity().getQualification().getCourse();
+
+        if ((requiredQualification > currentQualification)) {
+            throw new QualificationException(("Minimum qualification requirements not met."));
         }
     }
 
@@ -85,8 +93,11 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
     private DoctorAvailabilityEntity getDoctorAvailabilityEntityByUserID(Long doctorAvailabilityId, Long userId) {
-        return availabilityRepository.findAllByDoctorEntityUserUserId(userId).stream()
-                .filter(entity -> entity.getDoctorAvailabilityId().equals(doctorAvailabilityId)).findFirst().orElseThrow(() -> new ObjectNotFoundException("getDoctorAvailabilityEntityByUserID bad id"));
+        return availabilityRepository.findAllByDoctorEntityUserUserId(userId)
+                .stream()
+                .filter(entity -> entity.getDoctorAvailabilityId().equals(doctorAvailabilityId))
+                .findFirst()
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by user id:%s not found", doctorAvailabilityId)));
     }
 
     private ServiceEntity getServiceEntity(Long serviceId) {
@@ -96,7 +107,9 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
     private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(Long serviceAvailabilityId, Long userId) {
         return availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId)
-                .stream().filter(entity -> entity.getDoctorAvailabilityServiceId().equals(serviceAvailabilityId)).findAny()
+                .stream()
+                .filter(entity -> entity.getDoctorAvailabilityServiceId().equals(serviceAvailabilityId))
+                .findAny()
                 .orElseThrow(() -> new ObjectNotFoundException("Doctor Service availability entity not found id:" + serviceAvailabilityId));
     }
 

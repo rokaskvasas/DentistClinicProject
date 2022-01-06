@@ -3,6 +3,7 @@ package eu.codeacademy.projecttooth.tooth.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "patient")
@@ -22,6 +23,7 @@ public class PatientEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToOne(mappedBy = "patient")
-    private AppointmentEntity appointment;
+    @OneToMany(mappedBy = "patient")
+    private List<AppointmentEntity> appointment;
+
 }

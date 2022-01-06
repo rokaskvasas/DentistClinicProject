@@ -2,21 +2,17 @@ package eu.codeacademy.projecttooth.tooth.dto;
 
 import eu.codeacademy.projecttooth.tooth.model.modelenum.ServiceEnum;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
+@SuperBuilder
 @NoArgsConstructor
-@AllArgsConstructor
-public class AppointmentDto {
+public class AppointmentDto extends DoctorDto {
 
     private Long appointmentId;
-
-    private String firstName;
-
-    private String lastName;
 
     private LocalDateTime startTime;
 
@@ -24,9 +20,4 @@ public class AppointmentDto {
 
     private ServiceEnum serviceEnum;
 
-    private String locationCity;
-
-    private String locationName;
-
-    private String phoneNumber;
 }

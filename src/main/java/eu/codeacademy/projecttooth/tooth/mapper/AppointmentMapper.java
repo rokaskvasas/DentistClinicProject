@@ -1,11 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
 
-import eu.codeacademy.projecttooth.tooth.dto.AppointmentDto;
-import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityDto;
-import eu.codeacademy.projecttooth.tooth.entity.AppointmentEntity;
-import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
-import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
+import eu.codeacademy.projecttooth.tooth.entity.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,6 +9,10 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class AppointmentMapper {
+
+    private final PatientMapper patientMapper;
+
+    private final DoctorServiceAvailabilityMapper serviceAvailabilityMapper;
 
     public AppointmentEntity createEntity(DoctorServiceAvailabilityDto dto, PatientEntity patient, DoctorServiceAvailabilityEntity serviceAvailabilityEntity) {
         return AppointmentEntity.builder()
@@ -24,18 +24,45 @@ public class AppointmentMapper {
 
     }
 
-    public AppointmentDto createDtoModel(AppointmentEntity entity) {
-        return AppointmentDto.builder()
+//    public AppointmentDto createDtoModel(AppointmentEntity entity) {
+//        DoctorServiceAvailabilityEntity doctorServiceAvailability = entity.getDoctorServiceAvailability();
+//        ServiceEntity service = doctorServiceAvailability.getService();
+//        DoctorAvailabilityEntity doctorAvailability = doctorServiceAvailability.getDoctorAvailability();
+//        DoctorEntity doctorEntity = doctorAvailability.getDoctorEntity();
+//        LocationEntity location = doctorEntity.getLocation();
+//        UserEntity user = doctorEntity.getUser();
+//
+//        checkIfNullIsPresent("Creating appointmentDTO", doctorAvailability, doctorServiceAvailability, doctorEntity, location, service, user);
+//
+//        return AppointmentDto.builder()
+//                .appointmentId(entity.getAppointmentId())
+//                .startTime(entity.getStartTime())
+//                .endTime(entity.getEndTime())
+//                .firstName(user.getFirstName())
+//                .lastName(user.getLastName())
+//                .locationCity(location.getCity())
+//                .locationName(location.getName())
+//                .phoneNumber(user.getPhoneNumber())
+//                .serviceEnum(service.getName())
+//                .build();
+//    }
+//
+//    private void checkIfNullIsPresent(String methodName, Object... objects) {
+//        List<Object> checksForNull = new ArrayList<>(Arrays.asList(objects));
+//        if (checksForNull.contains(null)) {
+//            throw new NullPointerException(String.format("%s null was found", methodName));
+//        }
+//    }
+//
+    public AppointmentDto createDtoModel2(AppointmentEntity entity){
+        AppointmentDto.AppointmentDtoBuilder builder = AppointmentDto.builder()
                 .appointmentId(entity.getAppointmentId())
-                .firstName(entity.getDoctorServiceAvailability().getDoctorAvailability().getDoctorEntity().getUser().getFirstName())
-                .lastName(entity.getDoctorServiceAvailability().getDoctorAvailability().getDoctorEntity().getUser().getLastName())
                 .startTime(entity.getStartTime())
-                .endTime(entity.getEndTime())
-                .locationCity(entity.getDoctorServiceAvailability().getDoctorAvailability().getDoctorEntity().getLocation().getCity())
-                .locationName(entity.getDoctorServiceAvailability().getDoctorAvailability().getDoctorEntity().getLocation().getName())
-                .phoneNumber(entity.getDoctorServiceAvailability().getDoctorAvailability().getDoctorEntity().getUser().getPhoneNumber())
-                .serviceEnum(entity.getDoctorServiceAvailability().getService().getName())
-                .build();
+                .endTime(entity.getEndTime());
+        builder.patient(patientMapper.createModel(entity.getPatient()))
+                .serviceAvailability(serviceAvailabilityMapper.createModel(entity.getDoctorServiceAvailability()));
+        return builder.build();
+
     }
 
 }

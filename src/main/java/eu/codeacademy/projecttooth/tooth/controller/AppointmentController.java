@@ -1,8 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
-import eu.codeacademy.projecttooth.tooth.dto.AppointmentDto;
-import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityDto;
-import eu.codeacademy.projecttooth.tooth.model.Appointment;
+import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
@@ -33,13 +31,13 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public void createAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody DoctorServiceAvailabilityDto payload) {
+    public void createAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody ModifyAppointmentDto payload) {
         service.createAppointment(principal.getUserId(), payload);
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PutMapping
-    public void updateAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody AppointmentDto payload) {
+    public void updateAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody ModifyAppointmentDto payload) {
         service.updateAppointment(principal.getUserId(), payload);
     }
 

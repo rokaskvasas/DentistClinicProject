@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.model;
 
+import eu.codeacademy.projecttooth.tooth.model.modelenum.ServiceEnum;
 import lombok.*;
 
 
@@ -11,11 +12,11 @@ import lombok.*;
 @AllArgsConstructor
 public class DoctorServiceAvailability {
 
-    private Long doctorAvailabilityServiceId;
+    private Long doctorServiceAvailabilityId;
 
-    private Long doctorAvailabilityId;
+    private DoctorAvailability doctorAvailability;
 
-    private Long serviceId;
+    private ServiceEnum service;
 
 
 

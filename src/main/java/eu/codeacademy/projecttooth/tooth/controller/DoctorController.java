@@ -27,7 +27,6 @@ public class DoctorController {
         return service.getDoctor(principal.getUserId());
     }
 
-
     //    return object????
     @PreAuthorize("permitAll()")
     @PostMapping

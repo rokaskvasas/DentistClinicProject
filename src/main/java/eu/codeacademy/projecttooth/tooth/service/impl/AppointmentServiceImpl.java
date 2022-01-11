@@ -1,7 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.dto.AppointmentDto;
-import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.entity.AppointmentEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
@@ -44,7 +42,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .stream()
                 .filter(app -> app.getAppointmentId().equals(appointmentId))
                 .findAny()
-                .map(appointmentMapper::createDtoModel)
+                .map(appointmentMapper::createDtoModel1)
                 .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
     }
 

@@ -4,8 +4,7 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -13,9 +12,9 @@ public class Appointment {
 
     private Long appointmentId;
 
-    private Long patientId;
+    private Patient patient;
 
-    private Long DoctorAvailabilityServiceId;
+    private DoctorServiceAvailability serviceAvailability;
 
     private LocalDateTime startTime;
 

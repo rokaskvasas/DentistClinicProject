@@ -1,19 +1,15 @@
 package eu.codeacademy.projecttooth.tooth.service;
 
-import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
-import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public interface DoctorServiceAvailabilityService {
     void createAvailabilityService(DoctorServiceAvailability doctorServiceAvailability, Long userId);
 
 
-    List<DoctorServiceAvailability> getAvailabilityServiceList(Long userId);
+    Page<DoctorServiceAvailability> getAvailabilityServiceAsPage(Long userId, int pageNumber, int pageSize);
 
     void updateAvailabilityService(DoctorServiceAvailability doctorServiceAvailability, Long userId);
 
@@ -21,5 +17,5 @@ public interface DoctorServiceAvailabilityService {
 
     DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId);
 
-    List<DoctorServiceAvailabilityDto> getAvailabilityServiceListAsPatient();
+    Page<DoctorServiceAvailabilityDto> getAvailabilityServicePageableAsPatient(int pageNumber, int pageSize);
 }

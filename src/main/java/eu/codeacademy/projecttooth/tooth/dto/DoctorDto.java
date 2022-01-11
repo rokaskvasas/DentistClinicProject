@@ -11,6 +11,8 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 public class DoctorDto {
 
+    private Long doctorId;
+
     private String firstName;
 
     private String lastName;

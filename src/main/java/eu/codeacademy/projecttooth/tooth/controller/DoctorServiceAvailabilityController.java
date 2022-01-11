@@ -1,6 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
-import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
@@ -10,8 +9,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Secured({"ROLE_DOCTOR", "ROLE_ADMIN"})
 @RestController
@@ -24,13 +21,16 @@ public class DoctorServiceAvailabilityController {
 
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     @GetMapping("/available")
-    public List<DoctorServiceAvailabilityDto> getAllDoctorAvailabilityServiceListAsPatient(){
-        return service.getAvailabilityServiceListAsPatient();
+    public Page<DoctorServiceAvailabilityDto> getAllDoctorAvailabilityServiceListAsPatient(@RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                                                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "0") int pageSize) {
+        return service.getAvailabilityServicePageableAsPatient(pageNumber, pageSize);
     }
 
     @GetMapping
-    public List<DoctorServiceAvailability> getAllDoctorAvailabilityServiceList(@AuthenticationPrincipal UserPrincipal principal) {
-        return service.getAvailabilityServiceList(principal.getUserId());
+    public Page<DoctorServiceAvailability> getAllDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
+                                                                           @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "0") int pageSize) {
+        return service.getAvailabilityServiceAsPage(principal.getUserId(), pageNumber, pageSize);
     }
 
     @GetMapping("/{id}")

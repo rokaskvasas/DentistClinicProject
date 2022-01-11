@@ -1,6 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
@@ -14,11 +13,12 @@ import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRep
 import eu.codeacademy.projecttooth.tooth.repository.ServiceRepository;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,11 +32,10 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
 
     @Override
-    public List<DoctorServiceAvailability> getAvailabilityServiceList(Long userId) {
-        return availabilityServiceRepository
-                .findAllByDoctorAvailabilityDoctorEntityUserUserId(userId)
-                .stream()
-                .map(mapper::createModel).collect(Collectors.toUnmodifiableList());
+    public Page<DoctorServiceAvailability> getAvailabilityServiceAsPage(Long userId, int pageNumber, int pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId);
+        return ;
     }
 
     @Override
@@ -50,11 +49,10 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
     @Override
-    public List<DoctorServiceAvailabilityDto> getAvailabilityServiceListAsPatient() {
-        return availabilityServiceRepository.findAll()
-                .stream()
-                .map(mapper::createDtoModel)
-                .collect(Collectors.toUnmodifiableList());
+    public Page<DoctorServiceAvailabilityDto> getAvailabilityServicePageableAsPatient(int pageNumber, int pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository.findAll(page);
+        return pageable.map(mapper::createDtoModel);
 
     }
 
@@ -79,7 +77,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
 
-    private void isQualified(DoctorServiceAvailability doctorServiceAvailability,Long userId) {
+    private void isQualified(DoctorServiceAvailability doctorServiceAvailability, Long userId) {
         int requiredQualification = getServiceEntity(doctorServiceAvailability.getServiceId()).getMinimumQualification().getCourse();
         int currentQualification = doctorAvailabilityService.getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId(), userId).getDoctorEntity().getQualification().getCourse();
 

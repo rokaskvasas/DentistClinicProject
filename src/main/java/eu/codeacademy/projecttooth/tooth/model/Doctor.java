@@ -22,10 +22,7 @@ public class Doctor extends User {
 
     private QualificationEnum qualification;
 
-    private String locationName;
+    private Location location;
 
-    private String locationCity;
-
-    private Long locationId;
 
 }

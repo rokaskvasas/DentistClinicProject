@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
+import eu.codeacademy.projecttooth.tooth.model.Appointment;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
@@ -19,14 +20,14 @@ public class AppointmentController {
     private final AppointmentService service;
 
     @GetMapping
-    public Page<AppointmentDto> getAllAppointments(@AuthenticationPrincipal UserPrincipal principal,
+    public Page<Appointment> getAllAppointments(@AuthenticationPrincipal UserPrincipal principal,
                                                    @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
                                                    @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
         return service.getAppointmentPageable(principal.getUserId(), pageNumber, pageSize);
     }
 
     @GetMapping("/{id}")
-    public AppointmentDto getAppointment(@AuthenticationPrincipal UserPrincipal principal, @PathVariable(name = "id") Long appointmentId) {
+    public Appointment getAppointment(@AuthenticationPrincipal UserPrincipal principal, @PathVariable(name = "id") Long appointmentId) {
         return service.getAppointment(principal.getUserId(), appointmentId);
     }
 
@@ -43,7 +44,7 @@ public class AppointmentController {
 
 
     @DeleteMapping
-    public void deleteAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody AppointmentDto payload) {
+    public void deleteAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Appointment payload) {
         service.deleteAppointment(principal.getUserId(), payload.getAppointmentId());
     }
 

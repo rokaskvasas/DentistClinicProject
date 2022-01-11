@@ -5,8 +5,7 @@ import lombok.*;
 
 
 
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,7 +15,7 @@ public class DoctorServiceAvailability {
 
     private DoctorAvailability doctorAvailability;
 
-    private ServiceEnum service;
+    private Service service;
 
 
 

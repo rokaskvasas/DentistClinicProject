@@ -1,8 +1,11 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
 
+import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
 import eu.codeacademy.projecttooth.tooth.entity.*;
 
+import eu.codeacademy.projecttooth.tooth.model.Appointment;
+import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +17,12 @@ public class AppointmentMapper {
 
     private final DoctorServiceAvailabilityMapper serviceAvailabilityMapper;
 
-    public AppointmentEntity createEntity(DoctorServiceAvailabilityDto dto, PatientEntity patient, DoctorServiceAvailabilityEntity serviceAvailabilityEntity) {
+    public AppointmentEntity createEntity(ModifyAppointmentDto doctorServiceAvailability, PatientEntity patient, DoctorServiceAvailabilityEntity serviceAvailabilityEntity) {
         return AppointmentEntity.builder()
                 .patient(patient)
                 .doctorServiceAvailability(serviceAvailabilityEntity)
-                .startTime(dto.getStartTime())
-                .endTime(dto.getEndTime())
+                .startTime(doctorServiceAvailability.getStartTime())
+                .endTime(doctorServiceAvailability.getEndTime())
                 .build();
 
     }
@@ -54,8 +57,8 @@ public class AppointmentMapper {
 //        }
 //    }
 //
-    public AppointmentDto createDtoModel2(AppointmentEntity entity){
-        AppointmentDto.AppointmentDtoBuilder builder = AppointmentDto.builder()
+    public Appointment createDtoModel(AppointmentEntity entity){
+        Appointment.AppointmentBuilder builder = Appointment.builder()
                 .appointmentId(entity.getAppointmentId())
                 .startTime(entity.getStartTime())
                 .endTime(entity.getEndTime());

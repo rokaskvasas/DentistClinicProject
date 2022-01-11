@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
+import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
 import eu.codeacademy.projecttooth.tooth.entity.AppointmentEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
@@ -7,6 +8,8 @@ import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
 import eu.codeacademy.projecttooth.tooth.exception.IncorrectDoctorForAppointmentException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
+import eu.codeacademy.projecttooth.tooth.model.Appointment;
+import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.repository.AppointmentRepository;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.PatientRepository;
@@ -30,24 +33,24 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 
     @Override
-    public Page<AppointmentDto> getAppointmentPageable(Long userId, int pageNumber, int pageSize) {
+    public Page<Appointment> getAppointmentPageable(Long userId, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<AppointmentEntity> pageable = appointmentRepository.findAllByPatientUserUserId(userId, page);
         return pageable.map(appointmentMapper::createDtoModel);
     }
 
     @Override
-    public AppointmentDto getAppointment(Long userId, Long appointmentId) {
+    public Appointment getAppointment(Long userId, Long appointmentId) {
         return appointmentRepository.findAllByPatientUserUserId(userId)
                 .stream()
                 .filter(app -> app.getAppointmentId().equals(appointmentId))
                 .findAny()
-                .map(appointmentMapper::createDtoModel1)
+                .map(appointmentMapper::createDtoModel)
                 .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
     }
 
     @Override
-    public void updateAppointment(Long userId, AppointmentDto appointment) {
+    public void updateAppointment(Long userId, ModifyAppointmentDto appointment) {
         appointmentRepository.saveAndFlush(updateEntity(userId, appointment));
 
     }
@@ -59,7 +62,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public void createAppointment(Long userId, DoctorServiceAvailabilityDto payload) {
+    public void createAppointment(Long userId, ModifyAppointmentDto payload) {
         PatientEntity patient = getPatientEntity(userId);
         DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload);
         AppointmentEntity appointment = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
@@ -67,9 +70,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
 
-    private AppointmentEntity updateEntity(Long userId, AppointmentDto appointmentDto) {
+    private AppointmentEntity updateEntity(Long userId, ModifyAppointmentDto appointmentDto) {
 
-        AppointmentEntity appointment = getAppointmentEntity(appointmentDto);
+        AppointmentEntity appointment = getAppointmentEntity(appointmentDto.getAppointmentId());
         if (!checkIfAppointmentDoctorIsCorrect(userId, appointment.getDoctorServiceAvailability().getDoctorAvailabilityServiceId())) {
             throw new IncorrectDoctorForAppointmentException("Wrong doctor for this appointment id: " + appointmentDto.getAppointmentId());
         }
@@ -80,23 +83,24 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointment;
     }
 
-    private AppointmentEntity getAppointmentEntity(AppointmentDto appointmentDto) {
+    private AppointmentEntity getAppointmentEntity(Long appointmentId) {
         return appointmentRepository.findAll().stream()
-                .filter(entity -> entity.getAppointmentId().equals(appointmentDto.getAppointmentId()))
+                .filter(entity -> entity.getAppointmentId().equals(appointmentId))
                 .findAny()
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'updateEntity' in appointment service, entity by id:%s not found", appointmentDto.getAppointmentId())));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'updateEntity' in appointment service, entity by id:%s not found", appointmentId)));
     }
 
     private PatientEntity getPatientEntity(Long userId) {
         return patientRepository.findByUserUserId(userId).orElseThrow(() -> new ObjectNotFoundException(String.format("Creating appointment user with id: %s not found", userId)));
     }
 
-    private ServiceEntity getServiceEntity(AppointmentDto appointmentDto) {
-        return serviceRepository.findById(appointmentDto.getServiceEnum().getService())
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'updateEntity' in appointment service, service entity by id:%s not found", appointmentDto.getServiceEnum().getService())));
+    private ServiceEntity getServiceEntity(ModifyAppointmentDto appointment) {
+        Long serviceId = appointment.getServiceId();
+        return serviceRepository.findById(serviceId)
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'updateEntity' in appointment service, service entity by id:%s not found", serviceId)));
     }
 
-    private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(DoctorServiceAvailabilityDto payload) {
+    private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(ModifyAppointmentDto payload) {
         return serviceAvailabilityRepository.findById(payload.getDoctorServiceAvailabilityId())
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Creating appointment doctor service availability with id:%s not found ", payload.getDoctorServiceAvailabilityId())));
     }

@@ -12,12 +12,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DoctorMapper {
 
+    private final LocationMapper locationMapper;
 
     public DoctorEntity createDoctorEntity(Doctor doctor, UserEntity userEntity) {
 
         return DoctorEntity.builder()
                 .doctorLicense(doctor.getDoctorLicense())
-                .locationId(doctor.getLocationId())
+                .locationId(doctor.getLocation().getLocationID())
                 .qualification(doctor.getQualification())
                 .status(doctor.getStatus())
                 .user(userEntity)
@@ -31,8 +32,7 @@ public class DoctorMapper {
                 .phoneNumber(entity.getUser().getPhoneNumber())
                 .doctorLicense(entity.getDoctorLicense())
                 .qualification(entity.getQualification())
-                .locationName(entity.getLocation().getName())
-                .locationCity(entity.getLocation().getCity())
+                .location(locationMapper.createModel(entity.getLocation()))
                 .status(entity.getStatus())
                 .doctorId(entity.getDoctorId())
                 .build();

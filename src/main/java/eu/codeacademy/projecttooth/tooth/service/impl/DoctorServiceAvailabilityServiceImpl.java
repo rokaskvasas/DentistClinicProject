@@ -35,7 +35,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     public Page<DoctorServiceAvailability> getAvailabilityServiceAsPage(Long userId, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId);
-        return ;
+        return null;
     }
 
     @Override
@@ -49,18 +49,21 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
     @Override
-    public Page<DoctorServiceAvailabilityDto> getAvailabilityServicePageableAsPatient(int pageNumber, int pageSize) {
+    public Page<DoctorServiceAvailability> getAvailabilityServicePageableAsPatient(int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository.findAll(page);
-        return pageable.map(mapper::createDtoModel);
+        return pageable.map(mapper::createModel);
 
     }
 
     @Override
     public void createAvailabilityService(DoctorServiceAvailability serviceAvailability, Long userId) {
+
         isQualified(serviceAvailability, userId);
-        ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
-        DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(serviceAvailability.getDoctorAvailabilityId(), userId);
+        Long doctorAvailabilityId = serviceAvailability.getDoctorAvailability().getDoctorAvailabilityId();
+        ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getService().getServiceId());
+
+        DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(doctorAvailabilityId, userId);
         availabilityServiceRepository.saveAndFlush(mapper.createEntity(serviceEntity, doctorAvailabilityEntity));
 
     }
@@ -78,8 +81,8 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
 
     private void isQualified(DoctorServiceAvailability doctorServiceAvailability, Long userId) {
-        int requiredQualification = getServiceEntity(doctorServiceAvailability.getServiceId()).getMinimumQualification().getCourse();
-        int currentQualification = doctorAvailabilityService.getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId(), userId).getDoctorEntity().getQualification().getCourse();
+        int requiredQualification = getServiceEntity(doctorServiceAvailability.getService().getServiceId()).getMinimumQualification().getCourse();
+        int currentQualification = doctorAvailabilityService.getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailability().getDoctorAvailabilityId(), userId).getDoctorEntity().getQualification().getCourse();
 
         if ((requiredQualification > currentQualification)) {
             throw new QualificationException(("Minimum qualification requirements not met."));
@@ -110,8 +113,8 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
     public DoctorServiceAvailabilityEntity updateEntity(DoctorServiceAvailability doctorServiceAvailability, Long userId) {
         isQualified(doctorServiceAvailability, userId);
-        DoctorServiceAvailabilityEntity entity = getDoctorServiceAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityServiceId(), userId);
-        entity.setService(getServiceEntity(doctorServiceAvailability.getServiceId()));
+        DoctorServiceAvailabilityEntity entity = getDoctorServiceAvailabilityEntity(doctorServiceAvailability.getDoctorServiceAvailabilityId(), userId);
+        entity.setService(getServiceEntity(doctorServiceAvailability.getService().getServiceId()));
         return entity;
 
     }

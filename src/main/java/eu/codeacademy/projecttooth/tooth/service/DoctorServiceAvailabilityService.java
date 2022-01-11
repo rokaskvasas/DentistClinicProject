@@ -17,5 +17,5 @@ public interface DoctorServiceAvailabilityService {
 
     DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId);
 
-    Page<DoctorServiceAvailabilityDto> getAvailabilityServicePageableAsPatient(int pageNumber, int pageSize);
+    Page<DoctorServiceAvailability> getAvailabilityServicePageableAsPatient(int pageNumber, int pageSize);
 }

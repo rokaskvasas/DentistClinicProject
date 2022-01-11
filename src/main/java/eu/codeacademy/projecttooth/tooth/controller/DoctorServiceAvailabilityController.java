@@ -21,7 +21,7 @@ public class DoctorServiceAvailabilityController {
 
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     @GetMapping("/available")
-    public Page<DoctorServiceAvailabilityDto> getAllDoctorAvailabilityServiceListAsPatient(@RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+    public Page<DoctorServiceAvailability> getAllDoctorAvailabilityServiceListAsPatient(@RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
                                                                                            @RequestParam(name = "pageSize", required = false, defaultValue = "0") int pageSize) {
         return service.getAvailabilityServicePageableAsPatient(pageNumber, pageSize);
     }

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DoctorAvailabilityMapper {
 
+    private final DoctorMapper doctorMapper;
 
     public DoctorAvailabilityEntity createEntity(DoctorAvailability doctorAvailability,DoctorEntity entity) {
         return DoctorAvailabilityEntity.builder()
@@ -23,7 +24,7 @@ public class DoctorAvailabilityMapper {
     public DoctorAvailability createModel(DoctorAvailabilityEntity entity) {
         return DoctorAvailability.builder()
                 .doctorAvailabilityId(entity.getDoctorAvailabilityId())
-                .doctorId(entity.getDoctorEntity().getDoctorId())
+                .doctor(doctorMapper.createDoctorModel(entity.getDoctorEntity()))
                 .startTime(entity.getStartTime())
                 .endTime(entity.getEndTime())
                 .build();

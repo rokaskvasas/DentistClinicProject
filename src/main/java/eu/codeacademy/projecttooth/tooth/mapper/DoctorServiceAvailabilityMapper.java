@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class DoctorServiceAvailabilityMapper {
 
+    private final DoctorAvailabilityMapper availabilityMapper;
 
+    private final ServiceMapper serviceMapper;
 
     public DoctorServiceAvailabilityEntity createEntity(ServiceEntity serviceEntity, DoctorAvailabilityEntity availabilityEntity) {
         return DoctorServiceAvailabilityEntity.builder()
@@ -20,25 +22,13 @@ public class DoctorServiceAvailabilityMapper {
                 .build();
     }
 
+
     public DoctorServiceAvailability createModel(DoctorServiceAvailabilityEntity entity){
         return DoctorServiceAvailability.builder()
-                .doctorAvailabilityServiceId(entity.getDoctorAvailabilityServiceId())
-                .serviceId(entity.getService().getServiceId())
-                .doctorAvailabilityId(entity.getDoctorAvailability().getDoctorAvailabilityId())
-                .build();
-    }
-
-    public DoctorServiceAvailabilityDto createDtoModel(DoctorServiceAvailabilityEntity entity){
-        return DoctorServiceAvailabilityDto.builder()
-                .firstName(entity.getDoctorAvailability().getDoctorEntity().getUser().getFirstName())
-                .lastName(entity.getDoctorAvailability().getDoctorEntity().getUser().getLastName())
-                .startTime(entity.getDoctorAvailability().getStartTime())
-                .endTime(entity.getDoctorAvailability().getEndTime())
-                .locationName(entity.getDoctorAvailability().getDoctorEntity().getLocation().getName())
-                .locationCity(entity.getDoctorAvailability().getDoctorEntity().getLocation().getCity())
-                .serviceEnum(entity.getService().getName())
+                .doctorAvailability(availabilityMapper.createModel(entity.getDoctorAvailability()))
                 .doctorServiceAvailabilityId(entity.getDoctorAvailabilityServiceId())
-                .build();
+                .service(serviceMapper.createModel(entity.getService())).build();
+
     }
 
 }

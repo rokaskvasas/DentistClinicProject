@@ -7,7 +7,6 @@ import lombok.*;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
 public class ServiceMapper {
 
     public eu.codeacademy.projecttooth.tooth.model.Service createModel(ServiceEntity entity){

@@ -1,6 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorMapper;
@@ -39,8 +38,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorDto getDoctor(Long doctorId) {
-        return doctorMapper.createDtoModel(getDoctorEntityByUserUserId(doctorId));
+    public Doctor getDoctor(Long doctorId) {
+        return doctorMapper.createModel(getDoctorEntityByUserUserId(doctorId));
     }
 
     @Override
@@ -56,7 +55,7 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public List<Doctor> getDoctorList(String approved) {
-        return doctorRepository.findAll().stream().filter(e -> e.getStatus().toString().equals(approved)).map(doctorMapper::createDoctorModel).collect(Collectors.toUnmodifiableList());
+        return doctorRepository.findAll().stream().filter(e -> e.getStatus().toString().equals(approved)).map(doctorMapper::createModel).collect(Collectors.toUnmodifiableList());
     }
 
     @Override

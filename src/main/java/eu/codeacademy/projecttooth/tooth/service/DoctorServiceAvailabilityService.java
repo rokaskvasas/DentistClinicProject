@@ -1,17 +1,18 @@
 package eu.codeacademy.projecttooth.tooth.service;
 
+import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 @Service
 public interface DoctorServiceAvailabilityService {
-    void createAvailabilityService(DoctorServiceAvailability doctorServiceAvailability, Long userId);
+    void createAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId);
 
 
     Page<DoctorServiceAvailability> getAvailabilityServiceAsPage(Long userId, int pageNumber, int pageSize);
 
-    void updateAvailabilityService(DoctorServiceAvailability doctorServiceAvailability, Long userId);
+    void updateAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId);
 
     void deleteAvailabilityService(Long serviceId, Long userId);
 

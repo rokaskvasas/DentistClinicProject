@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
+import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
@@ -29,7 +30,7 @@ public class DoctorServiceAvailabilityController {
     @GetMapping
     public Page<DoctorServiceAvailability> getAllDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
                                                                            @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "0") int pageSize) {
+                                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "1") int pageSize) {
         return service.getAvailabilityServiceAsPage(principal.getUserId(), pageNumber, pageSize);
     }
 
@@ -40,14 +41,14 @@ public class DoctorServiceAvailabilityController {
     }
 
     @PostMapping
-    public void createDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
-                                                @RequestBody DoctorServiceAvailability doctorServiceAvailability) {
-        service.createAvailabilityService(doctorServiceAvailability, principal.getUserId());
+    public void createDoctorServiceAvailability(@AuthenticationPrincipal UserPrincipal principal,
+                                                @RequestBody ModifyDoctorServiceAvailabilityDto payload) {
+        service.createAvailabilityService(payload, principal.getUserId());
     }
 
     @PutMapping
     public void updateDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
-                                                @RequestBody DoctorServiceAvailability doctorServiceAvailability) {
+                                                @RequestBody ModifyDoctorServiceAvailabilityDto doctorServiceAvailability) {
         service.updateAvailabilityService(doctorServiceAvailability, principal.getUserId());
     }
 

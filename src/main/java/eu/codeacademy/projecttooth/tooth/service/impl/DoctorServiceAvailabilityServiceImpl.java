@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
+import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
@@ -57,11 +58,11 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
     @Override
-    public void createAvailabilityService(DoctorServiceAvailability serviceAvailability, Long userId) {
+    public void createAvailabilityService(ModifyDoctorServiceAvailabilityDto serviceAvailability, Long userId) {
 
         isQualified(serviceAvailability, userId);
-        Long doctorAvailabilityId = serviceAvailability.getDoctorAvailability().getDoctorAvailabilityId();
-        ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getService().getServiceId());
+        Long doctorAvailabilityId = serviceAvailability.getDoctorAvailabilityId();
+        ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
 
         DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(doctorAvailabilityId, userId);
         availabilityServiceRepository.saveAndFlush(mapper.createEntity(serviceEntity, doctorAvailabilityEntity));
@@ -69,7 +70,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
     @Override
-    public void updateAvailabilityService(DoctorServiceAvailability doctorServiceAvailability, Long userId) {
+    public void updateAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
         availabilityServiceRepository.saveAndFlush(updateEntity(doctorServiceAvailability, userId));
     }
 
@@ -80,9 +81,9 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
 
-    private void isQualified(DoctorServiceAvailability doctorServiceAvailability, Long userId) {
-        int requiredQualification = getServiceEntity(doctorServiceAvailability.getService().getServiceId()).getMinimumQualification().getCourse();
-        int currentQualification = doctorAvailabilityService.getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailability().getDoctorAvailabilityId(), userId).getDoctorEntity().getQualification().getCourse();
+    private void isQualified(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
+        int requiredQualification = getServiceEntity(doctorServiceAvailability.getServiceId()).getMinimumQualification().getCourse();
+        int currentQualification = doctorAvailabilityService.getDoctorAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId(), userId).getDoctorEntity().getQualification().getCourse();
 
         if ((requiredQualification > currentQualification)) {
             throw new QualificationException(("Minimum qualification requirements not met."));
@@ -111,10 +112,10 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
 
-    public DoctorServiceAvailabilityEntity updateEntity(DoctorServiceAvailability doctorServiceAvailability, Long userId) {
+    public DoctorServiceAvailabilityEntity updateEntity(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
         isQualified(doctorServiceAvailability, userId);
-        DoctorServiceAvailabilityEntity entity = getDoctorServiceAvailabilityEntity(doctorServiceAvailability.getDoctorServiceAvailabilityId(), userId);
-        entity.setService(getServiceEntity(doctorServiceAvailability.getService().getServiceId()));
+        DoctorServiceAvailabilityEntity entity = getDoctorServiceAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId(), userId);
+        entity.setService(getServiceEntity(doctorServiceAvailability.getServiceId()));
         return entity;
 
     }

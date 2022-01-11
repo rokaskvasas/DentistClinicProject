@@ -1,6 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
-import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import eu.codeacademy.projecttooth.tooth.model.User;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
@@ -23,7 +22,7 @@ public class DoctorController {
     private final DoctorService service;
 
     @GetMapping("/account")
-    public DoctorDto getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
+    public Doctor getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
         return service.getDoctor(principal.getUserId());
     }
 

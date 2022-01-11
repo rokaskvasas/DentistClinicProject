@@ -3,7 +3,6 @@ package eu.codeacademy.projecttooth.tooth.mapper;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
-import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +23,7 @@ public class DoctorAvailabilityMapper {
     public DoctorAvailability createModel(DoctorAvailabilityEntity entity) {
         return DoctorAvailability.builder()
                 .doctorAvailabilityId(entity.getDoctorAvailabilityId())
-                .doctor(doctorMapper.createDoctorModel(entity.getDoctorEntity()))
+                .doctor(doctorMapper.createModel(entity.getDoctorEntity()))
                 .startTime(entity.getStartTime())
                 .endTime(entity.getEndTime())
                 .build();

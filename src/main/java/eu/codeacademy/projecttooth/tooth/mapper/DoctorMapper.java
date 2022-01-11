@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
+
 import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
@@ -25,7 +26,7 @@ public class DoctorMapper {
                 .build();
     }
 
-    public Doctor createDoctorModel(DoctorEntity entity) {
+    public Doctor createModel(DoctorEntity entity) {
         return Doctor.builder()
                 .firstName(entity.getUser().getFirstName())
                 .lastName(entity.getUser().getLastName())
@@ -38,17 +39,14 @@ public class DoctorMapper {
                 .build();
     }
 
-    public DoctorDto createDtoModel(DoctorEntity entity){
-        return DoctorDto.builder()
-                .firstName(entity.getUser().getFirstName())
-                .lastName(entity.getUser().getLastName())
-                .phoneNumber(entity.getUser().getPhoneNumber())
-                .status(entity.getStatus())
-                .doctorLicense(entity.getDoctorLicense())
-                .qualification(entity.getQualification())
-                .locationCity(entity.getLocation().getCity())
-                .locationName(entity.getLocation().getName())
-                .build();
-    }
+//    public DoctorDto createDtoModel(DoctorEntity entity){
+//        return DoctorDto.builder()
+//                .firstName(entity.getUser().getFirstName())
+//                .lastName(entity.getUser().getLastName())
+//                .phoneNumber(entity.getUser().getPhoneNumber())
+//                .location(locationMapper.createModel(entity.getLocation()))
+//                .doctorId(entity.getDoctorId())
+//                .build();
+//    }
 
 }

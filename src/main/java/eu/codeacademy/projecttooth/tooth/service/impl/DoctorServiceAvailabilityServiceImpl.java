@@ -36,7 +36,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     public Page<DoctorServiceAvailability> getAvailabilityServiceAsPage(Long userId, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId, page);
-        return null;
+        return pageable.map(mapper::createModel);
     }
 
     @Override

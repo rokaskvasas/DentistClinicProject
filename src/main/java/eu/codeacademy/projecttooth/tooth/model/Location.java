@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Location {
 
-    private Long locationID;
+    private Long locationId;
 
     private String name;
 

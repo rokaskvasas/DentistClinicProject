@@ -21,6 +21,7 @@ public class DoctorController {
 
     private final DoctorService service;
 
+    @PreAuthorize("hasAnyRole('ROLE_DOCTOR','ROLE_UNVERIFIED_DOCTOR' )")
     @GetMapping("/account")
     public Doctor getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
         return service.getDoctor(principal.getUserId());

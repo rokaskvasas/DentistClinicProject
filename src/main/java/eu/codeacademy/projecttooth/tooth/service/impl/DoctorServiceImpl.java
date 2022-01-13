@@ -34,7 +34,7 @@ public class DoctorServiceImpl implements DoctorService {
     public void createDoctor(Doctor doctor) {
         doctor.setStatus(StatusEnum.UNVERIFIED);
         doctor.setPassword(passwordService.passwordEncoder().encode(doctor.getPassword()));
-        doctorRepository.saveAndFlush(doctorMapper.createDoctorEntity(doctor, userMapper.getUserEntity(doctor, RoleEnum.DOCTOR)));
+        doctorRepository.saveAndFlush(doctorMapper.createDoctorEntity(doctor, userMapper.getUserEntity(doctor, RoleEnum.UNVERIFIED_DOCTOR)));
     }
 
     @Override
@@ -62,6 +62,7 @@ public class DoctorServiceImpl implements DoctorService {
     public void verifyDoctor(Long doctorId) {
         DoctorEntity doctorEntity = getDoctorEntity(doctorId);
         doctorEntity.setStatus(StatusEnum.VERIFIED);
+        doctorEntity.getUser().setRole(RoleEnum.DOCTOR.determinateRole());
         doctorRepository.saveAndFlush(doctorEntity);
     }
 

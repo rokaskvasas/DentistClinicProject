@@ -33,7 +33,8 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     @Override
     public DoctorAvailability getAvailability(Long availabilityId, Long userId) {
         return availabilityRepository.findAllByDoctorEntityUserUserId(userId)
-                .stream().filter(e -> e.getDoctorAvailabilityId().equals(availabilityId))
+                .stream()
+                .filter(e -> e.getDoctorAvailabilityId().equals(availabilityId))
                 .findAny()
                 .map(mapper::createModel)
                 .orElseThrow(() -> new ObjectNotFoundException("Availability not found, id: " + availabilityId));
@@ -43,10 +44,10 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     public Page<DoctorAvailability> getAvailabilityPageable(UserPrincipal principal, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorAvailabilityEntity> pageable;
-        if(principal.hasRole(RoleEnum.ADMIN)){
+        if (principal.hasRole(RoleEnum.ADMIN)) {
             pageable = availabilityRepository.findAll(page);
         } else {
-         pageable =  availabilityRepository.findAllByDoctorEntityUserUserId(principal.getUserId(), page);
+            pageable = availabilityRepository.findAllByDoctorEntityUserUserId(principal.getUserId(), page);
         }
         return pageable.map(mapper::createModel);
     }
@@ -59,17 +60,19 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     @Override
-    public void createAvailability(List<DoctorAvailability> doctorAvailabilityList, Long userId) {
+    public List<DoctorAvailability> createAvailability(List<DoctorAvailability> doctorAvailabilityList, Long userId) {
         doctorAvailabilityList.forEach(this::availabilityTimeCheck);
-        availabilityRepository.saveAllAndFlush(doctorAvailabilityList
+        List<DoctorAvailabilityEntity> doctorAvailabilityEntities = doctorAvailabilityList
                 .stream()
                 .map(doctorAvailability -> mapper.createEntity(doctorAvailability, getDoctorEntity(userId)))
-                .collect(Collectors.toUnmodifiableList()));
+                .collect(Collectors.toUnmodifiableList());
+        availabilityRepository.saveAllAndFlush(doctorAvailabilityEntities);
+        return doctorAvailabilityEntities.stream().map(mapper::createModel).collect(Collectors.toUnmodifiableList());
     }
 
     @Override
-    public void updateAvailability(DoctorAvailability doctorAvailability, Long userId) {
-        availabilityRepository.saveAndFlush(updateEntity(doctorAvailability, userId));
+    public DoctorAvailability updateAvailability(DoctorAvailability doctorAvailability, Long userId) {
+        return mapper.createModel(availabilityRepository.saveAndFlush(updateEntity(doctorAvailability, userId)));
     }
 
     @Override
@@ -78,7 +81,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         availabilityRepository.delete(getDoctorAvailabilityEntity(doctorAvailabilityId, userId));
     }
 
-    public DoctorAvailabilityEntity updateEntity(DoctorAvailability doctorAvailability, Long userId) {
+    private DoctorAvailabilityEntity updateEntity(DoctorAvailability doctorAvailability, Long userId) {
         availabilityTimeCheck(doctorAvailability);
         DoctorAvailabilityEntity entity = getDoctorAvailabilityEntity(doctorAvailability.getDoctorAvailabilityId(), userId);
         entity.setStartTime(doctorAvailability.getStartTime());

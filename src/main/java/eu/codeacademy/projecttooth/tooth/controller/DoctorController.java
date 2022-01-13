@@ -28,11 +28,10 @@ public class DoctorController {
     }
 
 
-    //    return object????
     @PreAuthorize("permitAll()")
     @PostMapping
-    public void createDoctor(@RequestBody Doctor doctor) {
-        service.createDoctor(doctor);
+    public Doctor createDoctor(@RequestBody Doctor doctor) {
+        return service.createDoctor(doctor);
     }
 
 

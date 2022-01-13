@@ -2,6 +2,7 @@ package eu.codeacademy.projecttooth.tooth.security;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -57,5 +58,10 @@ public class UserPrincipal implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public boolean hasRole(RoleEnum roleEnum) {
+
+        return roleEnum.determinateRole().equals(this.role);
     }
 }

@@ -11,6 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ModifyDoctorServiceAvailabilityDto {
 
+    private Long doctorServiceAvailabilityId;
+
     private Long doctorAvailabilityId;
 
     private Long serviceId;

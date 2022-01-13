@@ -6,11 +6,15 @@ import eu.codeacademy.projecttooth.tooth.exception.IncorrectDoctorAvailabilityTi
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorAvailabilityMapper;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorRepository;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -36,10 +40,22 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     @Override
-    public List<DoctorAvailability> getAvailabilityList(UserPrincipal principal) {
-        return availabilityRepository.findAllByDoctorEntityUserUserId(principal.getUserId())
-                .stream()
-                .map(mapper::createModel).collect(Collectors.toUnmodifiableList());
+    public Page<DoctorAvailability> getAvailabilityPageable(UserPrincipal principal, int pageNumber, int pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<DoctorAvailabilityEntity> pageable;
+        if(principal.hasRole(RoleEnum.ADMIN)){
+            pageable = availabilityRepository.findAll(page);
+        } else {
+         pageable =  availabilityRepository.findAllByDoctorEntityUserUserId(principal.getUserId(), page);
+        }
+        return pageable.map(mapper::createModel);
+    }
+
+    @Override
+    public Page<DoctorAvailability> getAvailabilityPageableAdmin(int pageNumber, int pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<DoctorAvailabilityEntity> pageable = availabilityRepository.findAll(page);
+        return pageable.map(mapper::createModel);
     }
 
     @Override

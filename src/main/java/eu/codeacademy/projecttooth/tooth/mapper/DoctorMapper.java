@@ -1,13 +1,13 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
 
-import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
-import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ public class DoctorMapper {
 
         return DoctorEntity.builder()
                 .doctorLicense(doctor.getDoctorLicense())
-                .locationId(doctor.getLocation().getLocationID())
+                .locationId(doctor.getLocation().getLocationId())
                 .qualification(doctor.getQualification())
                 .status(doctor.getStatus())
                 .user(userEntity)
@@ -27,10 +27,9 @@ public class DoctorMapper {
     }
 
     public Doctor createModel(DoctorEntity entity) {
-        return Doctor.builder()
-                .firstName(entity.getUser().getFirstName())
-                .lastName(entity.getUser().getLastName())
-                .phoneNumber(entity.getUser().getPhoneNumber())
+        Doctor.DoctorBuilder<?, ?> builder = Doctor.builder();
+        setUserDetailsToDoctor(builder, entity.getUser());
+        return builder
                 .doctorLicense(entity.getDoctorLicense())
                 .qualification(entity.getQualification())
                 .location(locationMapper.createModel(entity.getLocation()))
@@ -39,14 +38,14 @@ public class DoctorMapper {
                 .build();
     }
 
-//    public DoctorDto createDtoModel(DoctorEntity entity){
-//        return DoctorDto.builder()
-//                .firstName(entity.getUser().getFirstName())
-//                .lastName(entity.getUser().getLastName())
-//                .phoneNumber(entity.getUser().getPhoneNumber())
-//                .location(locationMapper.createModel(entity.getLocation()))
-//                .doctorId(entity.getDoctorId())
-//                .build();
-//    }
+    private void setUserDetailsToDoctor(Doctor.DoctorBuilder<?, ?> builder, UserEntity user) {
+        if (Objects.nonNull(user)) {
+            builder
+                    .userId(user.getUserId())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .phoneNumber(user.getPhoneNumber());
+        }
+    }
 
 }

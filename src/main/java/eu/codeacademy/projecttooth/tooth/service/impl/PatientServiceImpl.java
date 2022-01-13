@@ -26,7 +26,7 @@ public class PatientServiceImpl implements PatientService {
 
     @Override
     public void createPatient(Patient patient) {
-        patient.setPassword(passwordService.passwordEncoder().encode(patient.getPassword()));
+        patient.setPassword(passwordService.encode(patient.getPassword()));
         patientRepository.saveAndFlush(patientMapper.createEntity(userMapper.getUserEntity(patient, RoleEnum.PATIENT)));
 
     }

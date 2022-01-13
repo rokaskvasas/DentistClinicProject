@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class LocationMapper {
 
     public Location createModel(LocationEntity entity){
-        return Location.builder().locationID(entity.getLocationId())
+        return Location.builder().locationId(entity.getLocationId())
                 .name(entity.getName())
                 .city(entity.getCity()).build();
     }

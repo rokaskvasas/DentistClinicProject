@@ -31,10 +31,10 @@ public class DoctorServiceImpl implements DoctorService {
     private final PasswordService passwordService;
 
     @Override
-    public void createDoctor(Doctor doctor) {
+    public Doctor createDoctor(Doctor doctor) {
         doctor.setStatus(StatusEnum.UNVERIFIED);
-        doctor.setPassword(passwordService.passwordEncoder().encode(doctor.getPassword()));
-        doctorRepository.saveAndFlush(doctorMapper.createDoctorEntity(doctor, userMapper.getUserEntity(doctor, RoleEnum.UNVERIFIED_DOCTOR)));
+        doctor.setPassword(passwordService.encode(doctor.getPassword()));
+        return doctorMapper.createModel(doctorRepository.saveAndFlush(doctorMapper.createDoctorEntity(doctor, userMapper.getUserEntity(doctor, RoleEnum.UNVERIFIED_DOCTOR))));
     }
 
     @Override

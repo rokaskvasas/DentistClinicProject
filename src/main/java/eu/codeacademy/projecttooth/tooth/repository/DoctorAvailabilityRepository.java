@@ -1,6 +1,8 @@
 package eu.codeacademy.projecttooth.tooth.repository;
 
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,6 +18,7 @@ public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvaila
     Optional<DoctorAvailabilityEntity> findByDoctorEntityUserUserId(Long userId);
 
     List<DoctorAvailabilityEntity> findAllByDoctorEntityUserUserId(Long userId);
+    Page<DoctorAvailabilityEntity> findAllByDoctorEntityUserUserId(Long userId, Pageable pageable);
 
     @Modifying
     void removeByDoctorAvailabilityId(Long id);

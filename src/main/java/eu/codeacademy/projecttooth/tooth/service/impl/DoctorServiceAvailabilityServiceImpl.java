@@ -114,7 +114,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
     public DoctorServiceAvailabilityEntity updateEntity(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
         isQualified(doctorServiceAvailability, userId);
-        DoctorServiceAvailabilityEntity entity = getDoctorServiceAvailabilityEntity(doctorServiceAvailability.getDoctorAvailabilityId(), userId);
+        DoctorServiceAvailabilityEntity entity = getDoctorServiceAvailabilityEntity(doctorServiceAvailability.getDoctorServiceAvailabilityId(), userId);
         entity.setService(getServiceEntity(doctorServiceAvailability.getServiceId()));
         return entity;
 

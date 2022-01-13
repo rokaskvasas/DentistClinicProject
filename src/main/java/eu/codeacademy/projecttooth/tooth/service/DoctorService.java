@@ -8,7 +8,7 @@ import java.util.List;
 
 
 public interface DoctorService {
-    void createDoctor(Doctor doctor);
+    Doctor createDoctor(Doctor doctor);
 
 
     Doctor getDoctor(Long doctorId);

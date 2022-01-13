@@ -52,7 +52,6 @@ public class DoctorServiceAvailabilityController {
         service.updateAvailabilityService(doctorServiceAvailability, principal.getUserId());
     }
 
-    //    @Pathvariable su serviceID
     @DeleteMapping("/{id}")
     public void deleteDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal, @PathVariable(name = "id") Long serviceId) {
         service.deleteAvailabilityService(serviceId, principal.getUserId());

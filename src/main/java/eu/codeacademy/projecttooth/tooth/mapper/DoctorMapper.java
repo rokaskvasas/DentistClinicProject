@@ -44,7 +44,8 @@ public class DoctorMapper {
                     .userId(user.getUserId())
                     .firstName(user.getFirstName())
                     .lastName(user.getLastName())
-                    .phoneNumber(user.getPhoneNumber());
+                    .phoneNumber(user.getPhoneNumber())
+                    .role(user.getRole());
         }
     }
 

@@ -43,8 +43,8 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public void updateDoctor(Doctor doctor, Long userId) {
-        doctorRepository.saveAndFlush(updateDoctorEntity(doctor, userId));
+    public Doctor updateDoctor(Doctor doctor, Long userId) {
+        return doctorMapper.createModel(doctorRepository.saveAndFlush(updateDoctorEntity(doctor, userId)));
     }
 
     @Override
@@ -59,11 +59,11 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public void verifyDoctor(Long doctorId) {
+    public Doctor verifyDoctor(Long doctorId) {
         DoctorEntity doctorEntity = getDoctorEntity(doctorId);
         doctorEntity.setStatus(StatusEnum.VERIFIED);
         doctorEntity.getUser().setRole(RoleEnum.DOCTOR.determinateRole());
-        doctorRepository.saveAndFlush(doctorEntity);
+        return doctorMapper.createModel(doctorRepository.saveAndFlush(doctorEntity));
     }
 
     private DoctorEntity getDoctorEntity(Long doctorId) {

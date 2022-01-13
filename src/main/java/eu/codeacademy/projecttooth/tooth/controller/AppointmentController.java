@@ -32,14 +32,14 @@ public class AppointmentController {
     }
 
     @PostMapping
-    public void createAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody ModifyAppointmentDto payload) {
-        service.createAppointment(principal.getUserId(), payload);
+    public Appointment createAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody ModifyAppointmentDto payload) {
+        return service.createAppointment(principal.getUserId(), payload);
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PutMapping
-    public void updateAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody ModifyAppointmentDto payload) {
-        service.updateAppointment(principal.getUserId(), payload);
+    public Appointment updateAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody ModifyAppointmentDto payload) {
+        return service.updateAppointment(principal.getUserId(), payload);
     }
 
 

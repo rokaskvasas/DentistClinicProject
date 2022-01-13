@@ -50,9 +50,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public void updateAppointment(Long userId, ModifyAppointmentDto appointment) {
-        appointmentRepository.saveAndFlush(updateEntity(userId, appointment));
-
+    public Appointment updateAppointment(Long userId, ModifyAppointmentDto appointment) {
+        return appointmentMapper.createDtoModel(appointmentRepository.saveAndFlush(updateEntity(userId, appointment)));
     }
 
 
@@ -62,11 +61,11 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    public void createAppointment(Long userId, ModifyAppointmentDto payload) {
+    public Appointment createAppointment(Long userId, ModifyAppointmentDto payload) {
         PatientEntity patient = getPatientEntity(userId);
         DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload);
         AppointmentEntity appointment = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
-        appointmentRepository.saveAndFlush(appointment);
+        return appointmentMapper.createDtoModel(appointmentRepository.saveAndFlush(appointment));
     }
 
 

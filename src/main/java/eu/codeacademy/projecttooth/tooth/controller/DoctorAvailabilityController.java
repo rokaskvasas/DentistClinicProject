@@ -6,7 +6,6 @@ import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,15 +34,15 @@ public class DoctorAvailabilityController {
     }
 
     @PostMapping
-    public void createDoctorAvailabilities(@AuthenticationPrincipal UserPrincipal principal,
-                                           @RequestBody List<DoctorAvailability> doctorAvailabilityList) {
-        service.createAvailability(doctorAvailabilityList, principal.getUserId());
+    public List<DoctorAvailability> createDoctorAvailabilities(@AuthenticationPrincipal UserPrincipal principal,
+                                                               @RequestBody List<DoctorAvailability> doctorAvailabilityList) {
+        return service.createAvailability(doctorAvailabilityList, principal.getUserId());
     }
 
     @PutMapping
-    public void updateDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
-                                         @RequestBody DoctorAvailability doctorAvailability) {
-        service.updateAvailability(doctorAvailability, principal.getUserId());
+    public DoctorAvailability updateDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
+                                                       @RequestBody DoctorAvailability doctorAvailability) {
+        return service.updateAvailability(doctorAvailability, principal.getUserId());
     }
 
     @DeleteMapping("{id}")

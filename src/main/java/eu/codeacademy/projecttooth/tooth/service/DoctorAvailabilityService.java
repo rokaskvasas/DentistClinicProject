@@ -10,9 +10,9 @@ import java.util.List;
 
 @Service
 public interface DoctorAvailabilityService {
-    void createAvailability(List<DoctorAvailability> doctorAvailabilities, Long userId);
+    List<DoctorAvailability> createAvailability(List<DoctorAvailability> doctorAvailabilities, Long userId);
 
-    void updateAvailability(DoctorAvailability doctorAvailability, Long userId);
+    DoctorAvailability updateAvailability(DoctorAvailability doctorAvailability, Long userId);
 
     void deleteAvailability(Long doctorAvailabilityId, Long userId);
 

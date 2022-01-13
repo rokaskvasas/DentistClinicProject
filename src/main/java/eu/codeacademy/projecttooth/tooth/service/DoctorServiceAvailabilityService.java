@@ -7,12 +7,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface DoctorServiceAvailabilityService {
-    void createAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId);
 
+    DoctorServiceAvailability createAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId);
 
     Page<DoctorServiceAvailability> getAvailabilityServiceAsPage(Long userId, int pageNumber, int pageSize);
 
-    void updateAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId);
+    DoctorServiceAvailability updateAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId);
 
     void deleteAvailabilityService(Long serviceId, Long userId);
 

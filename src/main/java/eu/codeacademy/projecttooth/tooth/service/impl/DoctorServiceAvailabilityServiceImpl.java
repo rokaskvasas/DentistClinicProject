@@ -58,20 +58,20 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
     @Override
-    public void createAvailabilityService(ModifyDoctorServiceAvailabilityDto serviceAvailability, Long userId) {
+    public DoctorServiceAvailability createAvailabilityService(ModifyDoctorServiceAvailabilityDto serviceAvailability, Long userId) {
 
         isQualified(serviceAvailability, userId);
         Long doctorAvailabilityId = serviceAvailability.getDoctorAvailabilityId();
         ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
 
         DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(doctorAvailabilityId, userId);
-        availabilityServiceRepository.saveAndFlush(mapper.createEntity(serviceEntity, doctorAvailabilityEntity));
+        return mapper.createModel(availabilityServiceRepository.saveAndFlush(mapper.createEntity(serviceEntity, doctorAvailabilityEntity)));
 
     }
 
     @Override
-    public void updateAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
-        availabilityServiceRepository.saveAndFlush(updateEntity(doctorServiceAvailability, userId));
+    public DoctorServiceAvailability updateAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
+        return mapper.createModel(availabilityServiceRepository.saveAndFlush(updateEntity(doctorServiceAvailability, userId)));
     }
 
     @Override
@@ -112,7 +112,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
 
-    public DoctorServiceAvailabilityEntity updateEntity(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
+    private DoctorServiceAvailabilityEntity updateEntity(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
         isQualified(doctorServiceAvailability, userId);
         DoctorServiceAvailabilityEntity entity = getDoctorServiceAvailabilityEntity(doctorServiceAvailability.getDoctorServiceAvailabilityId(), userId);
         entity.setService(getServiceEntity(doctorServiceAvailability.getServiceId()));

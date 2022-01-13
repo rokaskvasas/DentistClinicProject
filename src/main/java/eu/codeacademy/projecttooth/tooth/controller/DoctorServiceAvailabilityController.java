@@ -23,7 +23,7 @@ public class DoctorServiceAvailabilityController {
     @PreAuthorize("hasRole('ROLE_PATIENT')")
     @GetMapping("/available")
     public Page<DoctorServiceAvailability> getAllDoctorAvailabilityServiceListAsPatient(@RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "0") int pageSize) {
+                                                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "0") int pageSize) {
         return service.getAvailabilityServicePageableAsPatient(pageNumber, pageSize);
     }
 
@@ -41,15 +41,15 @@ public class DoctorServiceAvailabilityController {
     }
 
     @PostMapping
-    public void createDoctorServiceAvailability(@AuthenticationPrincipal UserPrincipal principal,
-                                                @RequestBody ModifyDoctorServiceAvailabilityDto payload) {
-        service.createAvailabilityService(payload, principal.getUserId());
+    public DoctorServiceAvailability createDoctorServiceAvailability(@AuthenticationPrincipal UserPrincipal principal,
+                                                                     @RequestBody ModifyDoctorServiceAvailabilityDto payload) {
+        return service.createAvailabilityService(payload, principal.getUserId());
     }
 
     @PutMapping
-    public void updateDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
-                                                @RequestBody ModifyDoctorServiceAvailabilityDto doctorServiceAvailability) {
-        service.updateAvailabilityService(doctorServiceAvailability, principal.getUserId());
+    public DoctorServiceAvailability updateDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
+                                                                     @RequestBody ModifyDoctorServiceAvailabilityDto doctorServiceAvailability) {
+        return service.updateAvailabilityService(doctorServiceAvailability, principal.getUserId());
     }
 
     @DeleteMapping("/{id}")

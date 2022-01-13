@@ -10,15 +10,13 @@ import java.util.List;
 public interface DoctorService {
     Doctor createDoctor(Doctor doctor);
 
-
     Doctor getDoctor(Long doctorId);
 
-    void updateDoctor(Doctor doctor, Long userId);
-
+    Doctor updateDoctor(Doctor doctor, Long userId);
 
     void deleteDoctor(Long userId);
 
     List<Doctor> getDoctorList(String approved);
 
-    void verifyDoctor(Long doctorId);
+    Doctor verifyDoctor(Long doctorId);
 }

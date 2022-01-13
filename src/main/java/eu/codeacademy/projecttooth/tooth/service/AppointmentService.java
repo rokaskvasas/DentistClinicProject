@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface AppointmentService {
-    void createAppointment(Long userId, ModifyAppointmentDto payload);
+    Appointment createAppointment(Long userId, ModifyAppointmentDto payload);
 
     Page<Appointment> getAppointmentPageable(Long userId, int pageNumber, int pageSize);
 
     Appointment getAppointment(Long userId, Long appointmentId);
 
-    void updateAppointment(Long userId, ModifyAppointmentDto appointmentId);
+    Appointment updateAppointment(Long userId, ModifyAppointmentDto appointmentId);
 
     void deleteAppointment(Long userId, Long appointmentId);
 }

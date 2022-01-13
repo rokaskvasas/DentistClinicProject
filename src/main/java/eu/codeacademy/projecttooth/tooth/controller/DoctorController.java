@@ -36,8 +36,8 @@ public class DoctorController {
 
 
     @PutMapping
-    public void updateDoctor(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Doctor doctor) {
-        service.updateDoctor(doctor, principal.getUserId());
+    public Doctor updateDoctor(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Doctor doctor) {
+        return service.updateDoctor(doctor, principal.getUserId());
     }
 
     //    click delete ir auto log out
@@ -54,7 +54,7 @@ public class DoctorController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PutMapping("/admin/{id}")
-    public void verifyDoctor(@PathVariable(name = "id") Long doctorId) {
-        service.verifyDoctor(doctorId);
+    public Doctor verifyDoctor(@PathVariable(name = "id") Long doctorId) {
+        return service.verifyDoctor(doctorId);
     }
 }

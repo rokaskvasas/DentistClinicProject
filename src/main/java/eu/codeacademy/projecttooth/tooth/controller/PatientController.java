@@ -25,13 +25,13 @@ public class PatientController {
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public void createPatient(@RequestBody Patient patient) {
-        service.createPatient(patient);
+    public Patient createPatient(@RequestBody Patient patient) {
+        return service.createPatient(patient);
     }
 
     @PutMapping
-    public void updatePatient(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Patient patient){
-        service.updatePatient(patient, principal.getUserId());
+    public Patient updatePatient(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Patient patient){
+       return service.updatePatient(patient, principal.getUserId());
     }
 
     @DeleteMapping

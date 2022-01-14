@@ -25,10 +25,9 @@ public class PatientServiceImpl implements PatientService {
     private final PasswordService passwordService;
 
     @Override
-    public void createPatient(Patient patient) {
+    public Patient createPatient(Patient patient) {
         patient.setPassword(passwordService.encode(patient.getPassword()));
-        patientRepository.saveAndFlush(patientMapper.createEntity(userMapper.getUserEntity(patient, RoleEnum.PATIENT)));
-
+        return patientMapper.createModel(patientRepository.saveAndFlush(patientMapper.createEntity(userMapper.getUserEntity(patient, RoleEnum.PATIENT))));
     }
 
     @Override
@@ -38,9 +37,8 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public void updatePatient(Patient patient, Long userId) {
-        patientRepository.saveAndFlush(updatePatientEntity(patient, userId));
-
+    public Patient updatePatient(Patient patient, Long userId) {
+        return patientMapper.createModel(patientRepository.saveAndFlush(updatePatientEntity(patient, userId)));
     }
 
     @Override

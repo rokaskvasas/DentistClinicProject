@@ -22,7 +22,7 @@ public abstract class User {
 
     @JsonIgnore
     private String password;
-
+    @JsonIgnore
     private String role;
 
 }

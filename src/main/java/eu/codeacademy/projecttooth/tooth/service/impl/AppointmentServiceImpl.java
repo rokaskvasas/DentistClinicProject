@@ -60,7 +60,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public void deleteAppointment(Long userId, Long appointmentId) {
-
+        appointmentRepository.delete(getAppointmentEntity(userId, appointmentId));
     }
 
     @Override
@@ -97,7 +97,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private AppointmentEntity updateEntity(Long userId, ModifyAppointmentDto appointmentDto) {
 
-        AppointmentEntity appointment = getAppointmentEntity(appointmentDto.getAppointmentId());
+        AppointmentEntity appointment = getAppointmentEntity(userId, appointmentDto.getAppointmentId());
         if (!checkIfAppointmentDoctorIsCorrect(userId, appointment.getDoctorServiceAvailability().getDoctorAvailabilityServiceId())) {
             throw new IncorrectDoctorForAppointmentException("Wrong doctor for this appointment id: " + appointmentDto.getAppointmentId());
         }
@@ -108,26 +108,26 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointment;
     }
 
-    private AppointmentEntity getAppointmentEntity(Long appointmentId) {
-        return appointmentRepository.findAll().stream()
+    private AppointmentEntity getAppointmentEntity(Long userId, Long appointmentId) {
+        return appointmentRepository.findAllByPatientUserUserId(userId).stream()
                 .filter(entity -> entity.getAppointmentId().equals(appointmentId))
                 .findAny()
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'updateEntity' in appointment service, entity by id:%s not found", appointmentId)));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getAppointmentEntity' in AppointmentService with id:%s not found", appointmentId)));
     }
 
     private PatientEntity getPatientEntity(Long userId) {
-        return patientRepository.findByUserUserId(userId).orElseThrow(() -> new ObjectNotFoundException(String.format("Creating appointment user with id: %s not found", userId)));
+        return patientRepository.findByUserUserId(userId).orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getPatientEntity' in AppointmentService with id: %s not found", userId)));
     }
 
     private ServiceEntity getServiceEntity(ModifyAppointmentDto appointment) {
         Long serviceId = appointment.getServiceId();
         return serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'updateEntity' in appointment service, service entity by id:%s not found", serviceId)));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'updateEntity' in AppointmentService with id:%s not found", serviceId)));
     }
 
     private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(ModifyAppointmentDto payload) {
         return serviceAvailabilityRepository.findById(payload.getDoctorServiceAvailabilityId())
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Creating appointment doctor service availability with id:%s not found ", payload.getDoctorServiceAvailabilityId())));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getDoctorServiceAvailabilityEntity' in AppointmentService with id:%s not found ", payload.getDoctorServiceAvailabilityId())));
     }
 
     private boolean checkIfAppointmentDoctorIsCorrect(Long userId, Long doctorServiceAvailabilityId) {

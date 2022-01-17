@@ -21,8 +21,8 @@ public class AppointmentController {
 
     @GetMapping
     public Page<Appointment> getAllAppointments(@AuthenticationPrincipal UserPrincipal principal,
-                                                   @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                                   @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+                                                @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                                                @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
         return service.getAppointmentPageable(principal.getUserId(), pageNumber, pageSize);
     }
 
@@ -43,9 +43,9 @@ public class AppointmentController {
     }
 
 
-    @DeleteMapping
-    public void deleteAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Appointment payload) {
-        service.deleteAppointment(principal.getUserId(), payload.getAppointmentId());
+    @DeleteMapping("{id}")
+    public void deleteAppointment(@AuthenticationPrincipal UserPrincipal principal, @PathVariable(name = "id") Long appointmentId) {
+        service.deleteAppointment(principal.getUserId(), appointmentId);
     }
 
 }

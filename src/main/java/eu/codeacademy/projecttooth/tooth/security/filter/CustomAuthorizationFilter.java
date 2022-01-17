@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -32,14 +33,14 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        if(request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token/refresh")){
-            filterChain.doFilter(request,response);
+        if (request.getServletPath().equals("/api/login") || request.getServletPath().equals("/api/token")) {
+            filterChain.doFilter(request, response);
         } else {
             String authorizationHeader = request.getHeader(AUTHORIZATION);
-            if(authorizationHeader !=null && authorizationHeader.startsWith(jwtUtility.getHeaderPrefix())) {
+            if (authorizationHeader != null && authorizationHeader.startsWith(jwtUtility.getHeaderPrefix())) {
                 try {
                     DecodedJWT decodedJWT = jwtUtility.decodeJWT(authorizationHeader);
-                    String username = decodedJWT.getSubject();
+                    String email = decodedJWT.getSubject();
                     String[] role = decodedJWT.getClaim("roles").asArray(String.class);
                     String userRole = Arrays.stream(role).findAny().get();
                     List<GrantedAuthority> authorityList = AuthorityUtils.createAuthorityList(role);
@@ -47,24 +48,25 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                             new UsernamePasswordAuthenticationToken(
                                     new UserPrincipal(
                                             decodedJWT.getClaim("userId").asLong(),
-                                            username,
+                                            email,
                                             null,
                                             userRole
-                                    ),null,authorityList);
+                                    ), null, authorityList);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                    filterChain.doFilter(request,response);
+                    filterChain.doFilter(request, response);
                 } catch (Exception exception) {
-                    log.error("Error authorizing: {}",exception.getMessage(),exception);
+                    log.error("Error authorizing: {}", exception.getMessage(), exception);
                     response.setHeader("error", exception.getMessage());
                     response.setStatus(FORBIDDEN.value());
-                    Map<String,String> error = new HashMap<>();
-                    error.put("error_message",exception.getMessage());
+                    Map<String, String> error = new HashMap<>();
+                    error.put("error_message", exception.getMessage());
                     response.setContentType(APPLICATION_JSON_VALUE);
-                    new ObjectMapper().writeValue(response.getOutputStream(),error);
+                    new ObjectMapper().writeValue(response.getOutputStream(), error);
                 }
             } else {
-                filterChain.doFilter(request,response);
+                filterChain.doFilter(request, response);
             }
         }
     }
+
 }

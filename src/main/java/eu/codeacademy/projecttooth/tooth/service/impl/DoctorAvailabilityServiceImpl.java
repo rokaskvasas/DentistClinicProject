@@ -21,6 +21,7 @@ import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,13 +34,19 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
 
     @Override
-    public DoctorAvailability getAvailability(Long availabilityId, Long userId) {
-        return availabilityRepository.findAllByDoctorEntityUserUserId(userId)
+    public DoctorAvailability getAvailability(Long availabilityId, UserPrincipal principal) {
+
+        Supplier<ObjectNotFoundException> objectNotFoundExceptionSupplier = () -> new ObjectNotFoundException("Availability not found, id: " + availabilityId);
+
+        if (principal.hasRole(RoleEnum.ADMIN)) {
+            return availabilityRepository.findById(availabilityId).map(mapper::createModel).orElseThrow(objectNotFoundExceptionSupplier);
+        }
+        return availabilityRepository.findAllByDoctorEntityUserUserId(principal.getUserId())
                 .stream()
                 .filter(e -> e.getDoctorAvailabilityId().equals(availabilityId))
                 .findAny()
                 .map(mapper::createModel)
-                .orElseThrow(() -> new ObjectNotFoundException("Availability not found, id: " + availabilityId));
+                .orElseThrow(objectNotFoundExceptionSupplier);
     }
 
     @Override
@@ -54,15 +61,9 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         return pageable.map(mapper::createModel);
     }
 
-    @Override
-    public Page<DoctorAvailability> getAvailabilityPageableAdmin(int pageNumber, int pageSize) {
-        Pageable page = PageRequest.of(pageNumber, pageSize);
-        Page<DoctorAvailabilityEntity> pageable = availabilityRepository.findAll(page);
-        return pageable.map(mapper::createModel);
-    }
 
     @Override
-    public void deleteExpiredAvailability() {
+    public void deleteExpiredAvailabilities() {
         availabilityRepository.deleteAllById(expiredAvailabilityIds());
 
     }
@@ -85,8 +86,12 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
     @Override
     @Transactional
-    public void deleteAvailability(Long doctorAvailabilityId, Long userId) {
-        availabilityRepository.delete(getDoctorAvailabilityEntity(doctorAvailabilityId, userId));
+    public void deleteAvailability(Long doctorAvailabilityId, UserPrincipal principal) {
+        if (principal.hasRole(RoleEnum.ADMIN)) {
+            availabilityRepository.deleteById(doctorAvailabilityId);
+        } else {
+            availabilityRepository.delete(getDoctorAvailabilityEntity(doctorAvailabilityId, principal.getUserId()));
+        }
     }
 
     private DoctorAvailabilityEntity updateEntity(DoctorAvailability doctorAvailability, Long userId) {
@@ -128,7 +133,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     private Iterable<Long> expiredAvailabilityIds() {
         return () -> availabilityRepository.findAll()
                 .stream()
-                .filter( availability -> availability.getEndTime().isBefore(LocalDateTime.now(ZoneId.systemDefault())))
+                .filter(availability -> availability.getEndTime().isBefore(LocalDateTime.now(ZoneId.systemDefault())))
                 .mapToLong(DoctorAvailabilityEntity::getDoctorAvailabilityId).iterator();
     }
 

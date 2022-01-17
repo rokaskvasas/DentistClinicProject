@@ -1,4 +1,4 @@
-package eu.codeacademy.projecttooth.tooth.security;
+package eu.codeacademy.projecttooth.tooth.exception;
 
 import eu.codeacademy.projecttooth.tooth.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;

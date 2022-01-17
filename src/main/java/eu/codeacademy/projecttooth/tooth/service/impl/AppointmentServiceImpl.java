@@ -1,15 +1,12 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
 import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
-import eu.codeacademy.projecttooth.tooth.entity.AppointmentEntity;
-import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
-import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
-import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
+import eu.codeacademy.projecttooth.tooth.entity.*;
 import eu.codeacademy.projecttooth.tooth.exception.IncorrectDoctorForAppointmentException;
+import eu.codeacademy.projecttooth.tooth.exception.IncorrectTime;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
-import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.repository.AppointmentRepository;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.PatientRepository;
@@ -20,6 +17,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -61,11 +64,34 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    public List<Appointment> getAppointmentList() {
+        return appointmentRepository.findAll().stream().map(appointmentMapper::createDtoModel).collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public void deleteExpiredAppointments() {
+        appointmentRepository.deleteAllById(getExpiredAppointmentsId());
+    }
+
+
+    @Override
     public Appointment createAppointment(Long userId, ModifyAppointmentDto payload) {
+
         PatientEntity patient = getPatientEntity(userId);
         DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload);
+        checkIfAppointmentTimeMatchesWithAvailability(payload, doctorServiceAvailability);
         AppointmentEntity appointment = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
         return appointmentMapper.createDtoModel(appointmentRepository.saveAndFlush(appointment));
+    }
+
+    private void checkIfAppointmentTimeMatchesWithAvailability(ModifyAppointmentDto payload, DoctorServiceAvailabilityEntity doctorServiceAvailability) {
+        DoctorAvailabilityEntity doctorAvailability = doctorServiceAvailability.getDoctorAvailability();
+        if (!Objects.nonNull(doctorAvailability)) {
+            throw new ObjectNotFoundException("Checking Appointment time with availability, DoctorAvailability entity not found");
+        }
+        if (!(payload.getStartTime().isEqual(doctorAvailability.getStartTime()) && payload.getEndTime().isEqual(doctorAvailability.getEndTime()))) {
+            throw new IncorrectTime("Checking appointment time with availability time, one of them was incorrect");
+        }
     }
 
 
@@ -104,9 +130,15 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Creating appointment doctor service availability with id:%s not found ", payload.getDoctorServiceAvailabilityId())));
     }
 
-
     private boolean checkIfAppointmentDoctorIsCorrect(Long userId, Long doctorServiceAvailabilityId) {
         return serviceAvailabilityRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId).stream()
                 .anyMatch(entity -> entity.getDoctorAvailabilityServiceId().equals(doctorServiceAvailabilityId));
+    }
+
+    private Iterable<Long> getExpiredAppointmentsId() {
+        return () -> appointmentRepository.findAll()
+                .stream()
+                .filter(app -> app.getEndTime().isBefore(LocalDateTime.now(ZoneId.systemDefault())))
+                .mapToLong(AppointmentEntity::getAppointmentId).iterator();
     }
 }

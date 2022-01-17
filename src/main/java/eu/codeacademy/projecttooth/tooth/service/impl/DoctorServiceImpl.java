@@ -13,6 +13,9 @@ import eu.codeacademy.projecttooth.tooth.repository.LocationRepository;
 import eu.codeacademy.projecttooth.tooth.security.PasswordService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -59,7 +62,9 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<Doctor> getDoctorList(String approved) {
+    public List<Doctor> getUnverifiedDoctors(String approved, int pageNumber, int pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+//        Page<DoctorEntity> pageable = doctorRepository.findAll(page).stream().filter(doctor -> doctor.getStatus().toString().equals(approved));
         return doctorRepository.findAll().stream().filter(e -> e.getStatus().toString().equals(approved)).map(doctorMapper::createModel).collect(Collectors.toUnmodifiableList());
     }
 

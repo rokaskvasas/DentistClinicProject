@@ -1,11 +1,10 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
-import eu.codeacademy.projecttooth.tooth.model.User;
-import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,7 +26,6 @@ public class DoctorController {
         return service.getDoctor(principal.getUserId());
     }
 
-
     @PreAuthorize("permitAll()")
     @PostMapping
     public Doctor createDoctor(@RequestBody Doctor doctor) {
@@ -40,7 +38,6 @@ public class DoctorController {
         return service.updateDoctor(doctor, principal.getUserId());
     }
 
-    //    click delete ir auto log out
     @DeleteMapping
     public void deleteDoctor(@AuthenticationPrincipal UserPrincipal principal) {
         service.deleteDoctor(principal.getUserId());
@@ -48,8 +45,10 @@ public class DoctorController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/list")
-    public List<Doctor> getUnverifiedDoctorList(@RequestParam(name = "approved", required = false, defaultValue = "UNVERIFIED") String approved) {
-        return service.getDoctorList(approved);
+    public List<Doctor> getUnverifiedDoctors(@RequestParam(name = "approved", required = false, defaultValue = "UNVERIFIED") String approved,
+                                             @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                                             @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+        return service.getUnverifiedDoctors(approved, pageNumber, pageSize);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

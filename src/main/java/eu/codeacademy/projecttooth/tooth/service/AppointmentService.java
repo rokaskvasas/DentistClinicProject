@@ -6,6 +6,8 @@ import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface AppointmentService {
     Appointment createAppointment(Long userId, ModifyAppointmentDto payload);
@@ -17,4 +19,8 @@ public interface AppointmentService {
     Appointment updateAppointment(Long userId, ModifyAppointmentDto appointmentId);
 
     void deleteAppointment(Long userId, Long appointmentId);
+
+    List<Appointment> getAppointmentList();
+
+    void deleteExpiredAppointments();
 }

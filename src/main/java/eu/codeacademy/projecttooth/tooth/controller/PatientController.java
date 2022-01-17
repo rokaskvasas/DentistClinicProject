@@ -10,6 +10,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+
 @Secured({"ROLE_PATIENT", "ROLE_ADMIN"})
 @RestController
 @RequiredArgsConstructor
@@ -25,7 +27,7 @@ public class PatientController {
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public Patient createPatient(@RequestBody Patient patient) {
+    public Patient createPatient(@Valid @RequestBody Patient patient) {
         return service.createPatient(patient);
     }
 

@@ -22,8 +22,8 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(IncorrectDoctorAvailabilityTime.class)
-    public ErrorResponse incorrectAvailabilityTime(IncorrectDoctorAvailabilityTime e) {
+    @ExceptionHandler(IncorrectTime.class)
+    public ErrorResponse incorrectAvailabilityTime(IncorrectTime e) {
         return  new ErrorResponse(e.getMessage());
     }
 

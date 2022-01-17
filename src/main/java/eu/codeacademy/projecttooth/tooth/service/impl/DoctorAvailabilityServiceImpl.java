@@ -2,7 +2,7 @@ package eu.codeacademy.projecttooth.tooth.service.impl;
 
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
-import eu.codeacademy.projecttooth.tooth.exception.IncorrectDoctorAvailabilityTime;
+import eu.codeacademy.projecttooth.tooth.exception.IncorrectTime;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorAvailabilityMapper;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
@@ -105,7 +105,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
     private void availabilityTimeCheck(DoctorAvailability doctorAvailability) {
         if (!startAndEndTimeIsCorrect(doctorAvailability) || !timeIsInSameDay(doctorAvailability)) {
-            throw new IncorrectDoctorAvailabilityTime("StartTime or endTime is incorrect");
+            throw new IncorrectTime("StartTime or endTime is incorrect");
         }
     }
 

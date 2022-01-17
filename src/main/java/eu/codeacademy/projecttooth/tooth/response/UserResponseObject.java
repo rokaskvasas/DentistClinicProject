@@ -8,7 +8,7 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserLoginResponseObject {
-    private UserLoginResponseBody userLoginResponseBody;
+public class UserResponseObject {
+    private UserResponseBody userResponseBody;
     private Map<String, String > tokens;
 }

@@ -1,8 +1,8 @@
 package eu.codeacademy.projecttooth.tooth.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import eu.codeacademy.projecttooth.tooth.response.UserLoginResponseBody;
-import eu.codeacademy.projecttooth.tooth.response.UserLoginResponseObject;
+import eu.codeacademy.projecttooth.tooth.response.UserResponseBody;
+import eu.codeacademy.projecttooth.tooth.response.UserResponseObject;
 import eu.codeacademy.projecttooth.tooth.security.JWTUtility;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +56,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         UserPrincipal user = (UserPrincipal) authentication.getPrincipal();
         String access_token = jwtUtility.accessTokenForPrincipal(user, request);
         String refresh_token = jwtUtility.refreshTokenForPrincipal(user, request);
-        UserLoginResponseBody responseBody = new UserLoginResponseBody(
+        UserResponseBody responseBody = new UserResponseBody(
                 user.getUserId(),
                 user.getUsername(),
                 user.getAuthorities()
@@ -69,7 +69,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
 //        response.setHeader("refresh_token", refresh_token);
 
 
-        UserLoginResponseObject responseObject = new UserLoginResponseObject(responseBody, tokens);
+        UserResponseObject responseObject = new UserResponseObject(responseBody, tokens);
 
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), responseObject);

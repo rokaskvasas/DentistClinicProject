@@ -8,7 +8,7 @@ import java.util.Collection;
 
 @Data
 @RequiredArgsConstructor
-public class UserLoginResponseBody {
+public class UserResponseBody {
     private final Long userId;
     private final String email;
     private final Collection<? extends GrantedAuthority> roles;

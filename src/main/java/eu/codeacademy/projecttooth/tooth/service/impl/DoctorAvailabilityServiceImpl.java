@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -57,6 +59,12 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorAvailabilityEntity> pageable = availabilityRepository.findAll(page);
         return pageable.map(mapper::createModel);
+    }
+
+    @Override
+    public void deleteExpiredAvailability() {
+        availabilityRepository.deleteAllById(expiredAvailabilityIds());
+
     }
 
     @Override
@@ -115,6 +123,13 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
     private boolean startAndEndTimeIsCorrect(DoctorAvailability doctorAvailability) {
         return doctorAvailability.getStartTime().isBefore(doctorAvailability.getEndTime());
+    }
+
+    private Iterable<Long> expiredAvailabilityIds() {
+        return () -> availabilityRepository.findAll()
+                .stream()
+                .filter( availability -> availability.getEndTime().isBefore(LocalDateTime.now(ZoneId.systemDefault())))
+                .mapToLong(DoctorAvailabilityEntity::getDoctorAvailabilityId).iterator();
     }
 
 }

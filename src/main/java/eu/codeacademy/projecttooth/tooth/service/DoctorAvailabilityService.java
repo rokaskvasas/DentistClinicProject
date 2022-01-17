@@ -21,4 +21,6 @@ public interface DoctorAvailabilityService {
     Page<DoctorAvailability> getAvailabilityPageable(UserPrincipal principal, int pageNumber, int pageSize);
 
     Page<DoctorAvailability> getAvailabilityPageableAdmin(int pageNumber, int pageSize);
+
+    void deleteExpiredAvailability();
 }

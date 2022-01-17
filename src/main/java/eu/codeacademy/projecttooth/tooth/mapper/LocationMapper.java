@@ -14,4 +14,5 @@ public class LocationMapper {
                 .name(entity.getName())
                 .city(entity.getCity()).build();
     }
+
 }

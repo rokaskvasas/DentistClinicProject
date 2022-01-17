@@ -2,6 +2,7 @@ package eu.codeacademy.projecttooth.tooth.mapper;
 
 
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
+import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +16,12 @@ public class DoctorMapper {
 
     private final LocationMapper locationMapper;
 
-    public DoctorEntity createDoctorEntity(Doctor doctor, UserEntity userEntity) {
+    public DoctorEntity createDoctorEntity(Doctor doctor, UserEntity userEntity, LocationEntity locationEntity) {
 
         return DoctorEntity.builder()
                 .doctorLicense(doctor.getDoctorLicense())
                 .locationId(doctor.getLocation().getLocationId())
+                .location(locationEntity)
                 .qualification(doctor.getQualification())
                 .status(doctor.getStatus())
                 .user(userEntity)

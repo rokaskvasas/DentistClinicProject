@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
+import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorMapper;
 import eu.codeacademy.projecttooth.tooth.mapper.UserMapper;
@@ -8,6 +9,7 @@ import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorRepository;
+import eu.codeacademy.projecttooth.tooth.repository.LocationRepository;
 import eu.codeacademy.projecttooth.tooth.security.PasswordService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
 import lombok.RequiredArgsConstructor;
@@ -30,11 +32,14 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final PasswordService passwordService;
 
+    private final LocationRepository locationRepository;
+
     @Override
     public Doctor createDoctor(Doctor doctor) {
         doctor.setStatus(StatusEnum.UNVERIFIED);
         doctor.setPassword(passwordService.encode(doctor.getPassword()));
-        return doctorMapper.createModel(doctorRepository.saveAndFlush(doctorMapper.createDoctorEntity(doctor, userMapper.getUserEntity(doctor, RoleEnum.UNVERIFIED_DOCTOR))));
+        LocationEntity locationEntity = locationRepository.findById(doctor.getLocation().getLocationId()).orElseThrow(() -> new ObjectNotFoundException(String.format("Location by id: %s not found", doctor.getLocation().getLocationId())));
+        return doctorMapper.createModel(doctorRepository.saveAndFlush(doctorMapper.createDoctorEntity(doctor, userMapper.getUserEntity(doctor, RoleEnum.UNVERIFIED_DOCTOR), locationEntity)));
     }
 
     @Override

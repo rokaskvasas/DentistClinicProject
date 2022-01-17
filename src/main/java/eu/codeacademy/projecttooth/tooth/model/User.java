@@ -1,6 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -20,7 +20,6 @@ public abstract class User {
 
     private String phoneNumber;
 
-    @JsonIgnore
     private String password;
 
     private String role;

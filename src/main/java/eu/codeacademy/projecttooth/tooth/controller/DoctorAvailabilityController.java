@@ -29,7 +29,7 @@ public class DoctorAvailabilityController {
     @GetMapping()
     public Page<DoctorAvailability> getAllDoctorAvailabilityPageable(@AuthenticationPrincipal UserPrincipal principal,
                                                                      @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                                                     @RequestParam(name = "pageSize", required = false, defaultValue = "1") int pageSize) {
+                                                                     @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
         return service.getAvailabilityPageable(principal, pageNumber, pageSize);
     }
 

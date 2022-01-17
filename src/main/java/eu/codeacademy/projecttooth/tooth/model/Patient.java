@@ -7,6 +7,7 @@ import lombok.experimental.SuperBuilder;
 @Setter
 @SuperBuilder
 @NoArgsConstructor
+@AllArgsConstructor
 public class Patient extends User {
 
     private Long patientId;

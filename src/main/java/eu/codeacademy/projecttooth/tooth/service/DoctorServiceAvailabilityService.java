@@ -19,4 +19,6 @@ public interface DoctorServiceAvailabilityService {
     DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId);
 
     Page<DoctorServiceAvailability> getAvailabilityServicePageableAsPatient(int pageNumber, int pageSize);
+
+    void deleteExpiredServiceAvailability();
 }

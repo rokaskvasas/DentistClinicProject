@@ -20,6 +20,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +58,12 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         return pageable.map(mapper::createModel);
 
     }
+
+    @Override
+    public void deleteExpiredServiceAvailability() {
+        serviceRepository.deleteAllById(getExpiredServices());
+    }
+
 
     @Override
     public DoctorServiceAvailability createAvailabilityService(ModifyDoctorServiceAvailabilityDto serviceAvailability, Long userId) {
@@ -120,20 +128,11 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
     }
 
-
-    //    @Override
-//    public List<DoctorScheduler> getAll(Doctor doctor) {
-//        return serviceEntityRepository.findAll().stream().
-//                filter(entity -> entity.getDoctorAvailabilityEntity().getDoctorEntity().getDoctorId().equals(doctor.getDoctorId()))
-//                .map(this::createScheduler).collect(Collectors.toUnmodifiableList());
-//    }
-
-
-    public DoctorScheduler createScheduler(DoctorServiceAvailabilityEntity entity) {
-        return DoctorScheduler.builder()
-                .service(entity.getService().getName())
-                .startTime(entity.getDoctorAvailability().getStartTime())
-                .endTime(entity.getDoctorAvailability().getEndTime())
-                .build();
+    private Iterable<Long> getExpiredServices() {
+        return () -> availabilityServiceRepository.findAll()
+                .stream()
+                .filter(service -> service.getDoctorAvailability().getEndTime().isBefore(LocalDateTime.now(ZoneId.systemDefault())))
+                .mapToLong(DoctorServiceAvailabilityEntity::getDoctorAvailabilityServiceId).iterator();
     }
+
 }

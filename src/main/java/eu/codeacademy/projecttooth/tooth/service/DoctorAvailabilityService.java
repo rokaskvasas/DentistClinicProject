@@ -14,13 +14,12 @@ public interface DoctorAvailabilityService {
 
     DoctorAvailability updateAvailability(DoctorAvailability doctorAvailability, Long userId);
 
-    void deleteAvailability(Long doctorAvailabilityId, Long userId);
+    void deleteAvailability(Long doctorAvailabilityId,UserPrincipal principal);
 
-    DoctorAvailability getAvailability(Long availabilityId, Long userId);
+    DoctorAvailability getAvailability(Long availabilityId, UserPrincipal principal);
 
     Page<DoctorAvailability> getAvailabilityPageable(UserPrincipal principal, int pageNumber, int pageSize);
 
-    Page<DoctorAvailability> getAvailabilityPageableAdmin(int pageNumber, int pageSize);
 
-    void deleteExpiredAvailability();
+    void deleteExpiredAvailabilities();
 }

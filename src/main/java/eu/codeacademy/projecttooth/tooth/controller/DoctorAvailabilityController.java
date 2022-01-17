@@ -23,7 +23,7 @@ public class DoctorAvailabilityController {
     @GetMapping("/{id}")
     public DoctorAvailability getDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
                                                     @PathVariable(name = "id") Long availabilityId) {
-        return service.getAvailability(availabilityId, principal.getUserId());
+        return service.getAvailability(availabilityId, principal);
     }
 
     @GetMapping()
@@ -48,7 +48,7 @@ public class DoctorAvailabilityController {
     @DeleteMapping("{id}")
     public void deleteDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
                                          @PathVariable(name = "id") Long doctorAvailabilityId) {
-        service.deleteAvailability(doctorAvailabilityId, principal.getUserId());
+        service.deleteAvailability(doctorAvailabilityId, principal);
     }
 
 }

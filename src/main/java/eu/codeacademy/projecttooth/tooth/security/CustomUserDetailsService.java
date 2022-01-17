@@ -18,7 +18,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email).map(this::convertUserEntityToPrincipal)
-                .orElseThrow(() -> new EmailNotFoundException("Email not found: " + email));
+                .orElseThrow(() -> new EmailNotFoundException("Invalid credentials"));
     }
 
     private UserPrincipal convertUserEntityToPrincipal(UserEntity user) {

@@ -1,25 +1,23 @@
 package eu.codeacademy.projecttooth.tooth.security;
 
 
+
+import eu.codeacademy.projecttooth.tooth.security.filter.CustomAuthenticationFilter;
+import eu.codeacademy.projecttooth.tooth.security.filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
@@ -31,52 +29,53 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final PasswordEncoder passwordEncoder;
-//    private final UserDetailsService userDetailsService;
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-//    @Bean
-//    public UserDetailsService userDetailsService(UserEntityRepository userEntityRepository){
-//        return email -> userEntityRepository.findByEmail(email).map(this::convertUserEntityToPrincipal)
-//                .orElseThrow(() -> new EmailNotFoundException("Email not found"+email));
-//    }
+    private final JWTUtility jwtUtility;
+    public static final SessionCreationPolicy STATELESS = SessionCreationPolicy.STATELESS;
+    private final CustomAuthenticationEntryPoint unAuthorizedHandler;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
 
 
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.cors().and().csrf().disable();
+        CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), this.jwtUtility);
+        customAuthenticationFilter.setFilterProcessesUrl("/login");
+        http.sessionManagement().sessionCreationPolicy(STATELESS);
+        http.csrf().disable();
+        http.cors();
+        http.addFilter(customAuthenticationFilter);
+        http.addFilterBefore(new CustomAuthorizationFilter(this.jwtUtility), UsernamePasswordAuthenticationFilter.class);
+        http.exceptionHandling().authenticationEntryPoint(unAuthorizedHandler)
+                        .accessDeniedHandler(accessDeniedHandler);
+        http.authorizeRequests().antMatchers(HttpMethod.POST, "api/doctors").permitAll();
         http
-//                .cors(withDefaults())
-//                .csrf().disable()
+
                 .authorizeRequests()
-                    .antMatchers("api/doctors/register").permitAll()
+                .antMatchers("api/doctors/register").permitAll()
+                .antMatchers("api/login").permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                    .permitAll()
-                    .and()
+                .permitAll()
+                .and()
                 .logout()
-                    .deleteCookies("JSESSIONID")
-                    .permitAll();
+                .deleteCookies("JSESSIONID")
+                .permitAll();
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+    protected void configure(AuthenticationManagerBuilder auth)  {
         auth
-                .userDetailsService(customUserDetailsService)
-                .passwordEncoder(passwordEncoder);
+                .authenticationProvider(daoAuthenticationProvider());
     }
+
     @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-        configuration.setAllowedHeaders(List.of("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "OPTIONS"));
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(passwordEncoder);
+        provider.setUserDetailsService(customUserDetailsService);
+        return provider;
     }
+
+
 }

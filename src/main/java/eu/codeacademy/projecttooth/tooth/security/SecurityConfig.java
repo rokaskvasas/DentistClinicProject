@@ -1,7 +1,8 @@
 package eu.codeacademy.projecttooth.tooth.security;
 
 
-
+import eu.codeacademy.projecttooth.tooth.exception.CustomAccessDeniedHandler;
+import eu.codeacademy.projecttooth.tooth.exception.CustomAuthenticationEntryPoint;
 import eu.codeacademy.projecttooth.tooth.security.filter.CustomAuthenticationFilter;
 import eu.codeacademy.projecttooth.tooth.security.filter.CustomAuthorizationFilter;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 
-
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -35,36 +35,38 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final CustomAccessDeniedHandler accessDeniedHandler;
 
 
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), this.jwtUtility);
         customAuthenticationFilter.setFilterProcessesUrl("/login");
-        http.sessionManagement().sessionCreationPolicy(STATELESS);
-        http.csrf().disable();
-        http.cors();
-        http.addFilter(customAuthenticationFilter);
-        http.addFilterBefore(new CustomAuthorizationFilter(this.jwtUtility), UsernamePasswordAuthenticationFilter.class);
-        http.exceptionHandling().authenticationEntryPoint(unAuthorizedHandler)
-                        .accessDeniedHandler(accessDeniedHandler);
-        http.authorizeRequests().antMatchers(HttpMethod.POST, "api/doctors").permitAll();
-        http
 
+
+        http
+                .csrf().disable()
+                .addFilter(customAuthenticationFilter)
+                .addFilterBefore(new CustomAuthorizationFilter(this.jwtUtility), UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling()
+                .authenticationEntryPoint(unAuthorizedHandler)
+                .accessDeniedHandler(accessDeniedHandler)
+                .and()
+                .sessionManagement().sessionCreationPolicy(STATELESS)
+                .and()
                 .authorizeRequests()
-                .antMatchers("api/doctors/register").permitAll()
-                .antMatchers("api/login").permitAll()
+                .antMatchers(HttpMethod.POST, "/doctors").permitAll()
+                .antMatchers(HttpMethod.POST, "/patients").permitAll()
+                .antMatchers("/login").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
                 .permitAll()
                 .and()
                 .logout()
-                .deleteCookies("JSESSIONID")
                 .permitAll();
     }
 
     @Override
-    protected void configure(AuthenticationManagerBuilder auth)  {
+    protected void configure(AuthenticationManagerBuilder auth) {
         auth
                 .authenticationProvider(daoAuthenticationProvider());
     }

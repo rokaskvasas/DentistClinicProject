@@ -41,10 +41,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public Appointment getAppointment(Long userId, Long appointmentId) {
-        return appointmentRepository.findAllByPatientUserUserId(userId)
-                .stream()
-                .filter(app -> app.getAppointmentId().equals(appointmentId))
-                .findAny()
+        return appointmentRepository.findByUserId(userId)
                 .map(appointmentMapper::createDtoModel)
                 .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
     }
@@ -107,9 +104,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private AppointmentEntity getAppointmentEntity(Long userId, Long appointmentId) {
-        return appointmentRepository.findAllByPatientUserUserId(userId).stream()
-                .filter(entity -> entity.getAppointmentId().equals(appointmentId))
-                .findAny()
+        return appointmentRepository.findByUserId(userId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getAppointmentEntity' in AppointmentService with id:%s not found", appointmentId)));
     }
 

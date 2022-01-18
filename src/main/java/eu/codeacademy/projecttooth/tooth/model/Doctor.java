@@ -5,6 +5,9 @@ import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+
 @Getter
 @Setter
 @SuperBuilder
@@ -15,7 +18,8 @@ public class Doctor extends User {
     private Long doctorId;
 
     private Long userId;
-
+    @NotBlank
+    @Size(min = 5, max = 70)
     private String doctorLicense;
 
     private StatusEnum status;

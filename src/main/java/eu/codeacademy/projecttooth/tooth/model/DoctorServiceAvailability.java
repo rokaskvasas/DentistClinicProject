@@ -17,6 +17,8 @@ public class DoctorServiceAvailability {
 
     private Service service;
 
+    private boolean reserved;
+
 
 
 }

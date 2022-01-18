@@ -19,6 +19,9 @@ public class DoctorServiceAvailabilityEntity {
     @Column(name = "id", nullable = false)
     private Long doctorAvailabilityServiceId;
 
+    @Column(name = "reserved")
+    private boolean reserved;
+
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "service_id")
     private ServiceEntity service;

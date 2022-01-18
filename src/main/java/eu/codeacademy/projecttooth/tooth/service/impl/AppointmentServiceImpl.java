@@ -3,7 +3,7 @@ package eu.codeacademy.projecttooth.tooth.service.impl;
 import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
 import eu.codeacademy.projecttooth.tooth.entity.*;
 import eu.codeacademy.projecttooth.tooth.exception.IncorrectDoctorForAppointmentException;
-import eu.codeacademy.projecttooth.tooth.exception.IncorrectTime;
+import eu.codeacademy.projecttooth.tooth.exception.IncorrectTimeException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
@@ -90,7 +90,7 @@ public class AppointmentServiceImpl implements AppointmentService {
             throw new ObjectNotFoundException("Checking Appointment time with availability, DoctorAvailability entity not found");
         }
         if (!(payload.getStartTime().isEqual(doctorAvailability.getStartTime()) && payload.getEndTime().isEqual(doctorAvailability.getEndTime()))) {
-            throw new IncorrectTime("Checking appointment time with availability time, one of them was incorrect");
+            throw new IncorrectTimeException("Checking appointment time with availability time, one of them was incorrect");
         }
     }
 

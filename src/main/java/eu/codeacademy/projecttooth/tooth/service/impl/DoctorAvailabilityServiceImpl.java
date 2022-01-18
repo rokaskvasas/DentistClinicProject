@@ -36,14 +36,14 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     @Override
     public DoctorAvailability getAvailability(Long availabilityId, UserPrincipal principal) {
 
-        Supplier<ObjectNotFoundException> objectNotFoundExceptionSupplier = () -> new ObjectNotFoundException("Availability not found, id: " + availabilityId);
+        Supplier<ObjectNotFoundException> objectNotFoundExceptionSupplier = () -> new ObjectNotFoundException("Method 'getAvailability' Availability not found, id: " + availabilityId);
 
         if (principal.hasRole(RoleEnum.ADMIN)) {
             return availabilityRepository.findById(availabilityId).map(mapper::createModel).orElseThrow(objectNotFoundExceptionSupplier);
         }
         return mapper.createModel(
                 availabilityRepository.findByUserAndAvailabilityId(principal.getUserId(), availabilityId)
-                        .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getAvailability' doctor availability by id: %s not found", availabilityId))));
+                        .orElseThrow(objectNotFoundExceptionSupplier));
     }
 
     @Override
@@ -83,12 +83,13 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
     @Override
     @Transactional
-    public void deleteAvailability(Long doctorAvailabilityId, UserPrincipal principal) {
+    public Long deleteAvailability(Long doctorAvailabilityId, UserPrincipal principal) {
         if (principal.hasRole(RoleEnum.ADMIN)) {
             availabilityRepository.deleteById(doctorAvailabilityId);
         } else {
             availabilityRepository.delete(getDoctorAvailabilityEntity(doctorAvailabilityId, principal.getUserId()));
         }
+        return doctorAvailabilityId;
     }
 
     private DoctorAvailabilityEntity updateEntity(DoctorAvailability doctorAvailability, Long userId) {

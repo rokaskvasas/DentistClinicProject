@@ -14,7 +14,7 @@ public interface DoctorAvailabilityService {
 
     DoctorAvailability updateAvailability(DoctorAvailability doctorAvailability, Long userId);
 
-    void deleteAvailability(Long doctorAvailabilityId,UserPrincipal principal);
+    Long deleteAvailability(Long doctorAvailabilityId,UserPrincipal principal);
 
     DoctorAvailability getAvailability(Long availabilityId, UserPrincipal principal);
 

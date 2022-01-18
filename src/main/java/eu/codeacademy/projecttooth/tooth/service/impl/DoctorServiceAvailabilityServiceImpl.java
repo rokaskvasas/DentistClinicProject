@@ -80,8 +80,13 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
     @Override
     @Transactional
-    public void deleteAvailabilityService(Long serviceId, Long userId) {
-        availabilityServiceRepository.delete(getDoctorServiceAvailabilityEntity(serviceId, userId));
+    public Long deleteAvailabilityService(Long serviceId, UserPrincipal principal) {
+        if (principal.hasRole(RoleEnum.ADMIN)) {
+            availabilityServiceRepository.deleteById(serviceId);
+        } else {
+            availabilityServiceRepository.delete(getDoctorServiceAvailabilityEntity(serviceId, principal.getUserId()));
+        }
+        return serviceId;
     }
 
 

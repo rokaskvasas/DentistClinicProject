@@ -42,7 +42,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         Page<DoctorServiceAvailabilityEntity> pageable;
 
         if (principal.hasRole(RoleEnum.PATIENT) || principal.hasRole(RoleEnum.ADMIN)) {
-            pageable = availabilityServiceRepository.findAll(page);
+            pageable = availabilityServiceRepository.findAllAvailable(page);
         } else {
             pageable = availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(principal.getUserId(), page);
         }

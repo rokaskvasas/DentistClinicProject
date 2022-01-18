@@ -1,10 +1,11 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
+import eu.codeacademy.projecttooth.tooth.model.Location;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
+import eu.codeacademy.projecttooth.tooth.service.LocationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -18,29 +19,36 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DoctorController {
 
-    private final DoctorService service;
+    private final DoctorService doctorService;
+    private final LocationService locationService;
 
     @PreAuthorize("hasAnyRole('ROLE_DOCTOR','ROLE_UNVERIFIED_DOCTOR' )")
     @GetMapping("/account")
     public Doctor getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
-        return service.getDoctor(principal.getUserId());
+        return doctorService.getDoctor(principal.getUserId());
+    }
+
+    @PreAuthorize("permitAll()")
+    @GetMapping("/register")
+    public List<Location> getLocations() {
+        return locationService.getAllLocations();
     }
 
     @PreAuthorize("permitAll()")
     @PostMapping
     public Doctor createDoctor(@RequestBody Doctor doctor) {
-        return service.createDoctor(doctor);
+        return doctorService.createDoctor(doctor);
     }
 
 
     @PutMapping
     public Doctor updateDoctor(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Doctor doctor) {
-        return service.updateDoctor(doctor, principal.getUserId());
+        return doctorService.updateDoctor(doctor, principal.getUserId());
     }
 
     @DeleteMapping
     public void deleteDoctor(@AuthenticationPrincipal UserPrincipal principal) {
-        service.deleteDoctor(principal.getUserId());
+        doctorService.deleteDoctor(principal.getUserId());
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -48,12 +56,12 @@ public class DoctorController {
     public List<Doctor> getUnverifiedDoctors(@RequestParam(name = "approved", required = false, defaultValue = "UNVERIFIED") String approved,
                                              @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
                                              @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
-        return service.getUnverifiedDoctors(approved, pageNumber, pageSize);
+        return doctorService.getUnverifiedDoctors(approved, pageNumber, pageSize);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    @PutMapping("/admin/{id}")
+    @PatchMapping("/admin/{id}")
     public Doctor verifyDoctor(@PathVariable(name = "id") Long doctorId) {
-        return service.verifyDoctor(doctorId);
+        return doctorService.verifyDoctor(doctorId);
     }
 }

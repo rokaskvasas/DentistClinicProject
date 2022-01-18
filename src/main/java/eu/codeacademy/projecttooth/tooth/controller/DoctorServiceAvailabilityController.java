@@ -20,18 +20,19 @@ public class DoctorServiceAvailabilityController {
     private final DoctorServiceAvailabilityService service;
 
 
-    @PreAuthorize("hasRole('ROLE_PATIENT')")
+    @PreAuthorize("hasAnyRole('ROLE_PATIENT','ROLE_ADMIN')")
     @GetMapping("/available")
-    public Page<DoctorServiceAvailability> getAllDoctorAvailabilityServiceListAsPatient(@RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "0") int pageSize) {
-        return service.getAvailabilityServicePageableAsPatient(pageNumber, pageSize);
+    public Page<DoctorServiceAvailability> getAllDoctorAvailabilityServiceListAsPatient(@AuthenticationPrincipal UserPrincipal principal,
+                                                                                        @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                                                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+        return service.getAvailabilityServiceAsPage(principal, pageNumber, pageSize);
     }
 
     @GetMapping
     public Page<DoctorServiceAvailability> getAllDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
                                                                            @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "1") int pageSize) {
-        return service.getAvailabilityServiceAsPage(principal.getUserId(), pageNumber, pageSize);
+                                                                           @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+        return service.getAvailabilityServiceAsPage(principal, pageNumber, pageSize);
     }
 
     @GetMapping("/{id}")

@@ -9,9 +9,11 @@ import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorServiceAvailabilityMapper;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.model.DoctorScheduler;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.ServiceRepository;
+import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -35,9 +37,15 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
 
     @Override
-    public Page<DoctorServiceAvailability> getAvailabilityServiceAsPage(Long userId, int pageNumber, int pageSize) {
+    public Page<DoctorServiceAvailability> getAvailabilityServiceAsPage(UserPrincipal principal, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
-        Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId, page);
+        Page<DoctorServiceAvailabilityEntity> pageable;
+
+        if (principal.hasRole(RoleEnum.PATIENT) || principal.hasRole(RoleEnum.ADMIN)) {
+            pageable = availabilityServiceRepository.findAll(page);
+        } else {
+            pageable = availabilityServiceRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(principal.getUserId(), page);
+        }
         return pageable.map(mapper::createModel);
     }
 
@@ -51,13 +59,6 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
                 .orElseThrow(() -> new ObjectNotFoundException("Doctor Availability service by id not found: " + availabilityServiceId));
     }
 
-    @Override
-    public Page<DoctorServiceAvailability> getAvailabilityServicePageableAsPatient(int pageNumber, int pageSize) {
-        Pageable page = PageRequest.of(pageNumber, pageSize);
-        Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository.findAll(page);
-        return pageable.map(mapper::createModel);
-
-    }
 
     @Override
     public void deleteExpiredServiceAvailability() {
@@ -71,7 +72,6 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         isQualified(serviceAvailability, userId);
         Long doctorAvailabilityId = serviceAvailability.getDoctorAvailabilityId();
         ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
-
         DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(doctorAvailabilityId, userId);
         return mapper.createModel(availabilityServiceRepository.saveAndFlush(mapper.createEntity(serviceEntity, doctorAvailabilityEntity)));
 

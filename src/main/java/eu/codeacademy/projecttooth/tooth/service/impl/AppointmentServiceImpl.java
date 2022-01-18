@@ -109,7 +109,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private PatientEntity getPatientEntity(Long userId) {
-        return patientRepository.findByUserUserId(userId).orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getPatientEntity' in AppointmentService with id: %s not found", userId)));
+        return patientRepository.findByUserUserId(userId)
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getPatientEntity' in AppointmentService with id: %s not found", userId)));
     }
 
     private ServiceEntity getServiceEntity(ModifyAppointmentDto appointment) {

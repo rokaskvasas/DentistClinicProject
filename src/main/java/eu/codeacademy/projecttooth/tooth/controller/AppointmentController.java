@@ -42,7 +42,6 @@ public class AppointmentController {
         return service.updateAppointment(principal.getUserId(), payload);
     }
 
-
     @DeleteMapping("{id}")
     public void deleteAppointment(@AuthenticationPrincipal UserPrincipal principal, @PathVariable(name = "id") Long appointmentId) {
         service.deleteAppointment(principal.getUserId(), appointmentId);

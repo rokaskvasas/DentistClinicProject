@@ -7,10 +7,7 @@ import eu.codeacademy.projecttooth.tooth.exception.IncorrectTimeException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
-import eu.codeacademy.projecttooth.tooth.repository.AppointmentRepository;
-import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
-import eu.codeacademy.projecttooth.tooth.repository.PatientRepository;
-import eu.codeacademy.projecttooth.tooth.repository.ServiceRepository;
+import eu.codeacademy.projecttooth.tooth.repository.*;
 import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -57,7 +54,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentMapper.createDtoModel(appointmentRepository.saveAndFlush(updateEntity(userId, appointment)));
     }
 
-
     @Override
     public void deleteAppointment(Long userId, Long appointmentId) {
         appointmentRepository.delete(getAppointmentEntity(userId, appointmentId));
@@ -68,11 +64,6 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepository.findAll().stream().map(appointmentMapper::createDtoModel).collect(Collectors.toUnmodifiableList());
     }
 
-    @Override
-    public void deleteExpiredAppointments() {
-        appointmentRepository.deleteAllById(getExpiredAppointmentsId());
-    }
-
 
     @Override
     public Appointment createAppointment(Long userId, ModifyAppointmentDto payload) {
@@ -80,18 +71,25 @@ public class AppointmentServiceImpl implements AppointmentService {
         PatientEntity patient = getPatientEntity(userId);
         DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload);
         checkIfAppointmentTimeMatchesWithAvailability(payload, doctorServiceAvailability);
+        reserveServiceAvailability(doctorServiceAvailability);
         AppointmentEntity appointment = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
         return appointmentMapper.createDtoModel(appointmentRepository.saveAndFlush(appointment));
     }
 
+    private void reserveServiceAvailability(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
+        doctorServiceAvailability.setReserved(true);
+        serviceAvailabilityRepository.saveAndFlush(doctorServiceAvailability);
+    }
+
+    @Override
+    public void deleteExpiredAppointments() {
+        appointmentRepository.deleteAllById(getExpiredAppointmentsId());
+    }
+
     private void checkIfAppointmentTimeMatchesWithAvailability(ModifyAppointmentDto payload, DoctorServiceAvailabilityEntity doctorServiceAvailability) {
         DoctorAvailabilityEntity doctorAvailability = doctorServiceAvailability.getDoctorAvailability();
-        if (!Objects.nonNull(doctorAvailability)) {
-            throw new ObjectNotFoundException("Checking Appointment time with availability, DoctorAvailability entity not found");
-        }
-        if (!(payload.getStartTime().isEqual(doctorAvailability.getStartTime()) && payload.getEndTime().isEqual(doctorAvailability.getEndTime()))) {
-            throw new IncorrectTimeException("Checking appointment time with availability time, one of them was incorrect");
-        }
+        objectIsNotNull(doctorAvailability);
+        checksIfAppointmentTimeIsCorrect(payload, doctorAvailability);
     }
 
 
@@ -140,5 +138,17 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .stream()
                 .filter(app -> app.getEndTime().isBefore(LocalDateTime.now(ZoneId.systemDefault())))
                 .mapToLong(AppointmentEntity::getAppointmentId).iterator();
+    }
+
+    private void checksIfAppointmentTimeIsCorrect(ModifyAppointmentDto payload, DoctorAvailabilityEntity doctorAvailability) {
+        if (!(payload.getStartTime().isEqual(doctorAvailability.getStartTime()) && payload.getEndTime().isEqual(doctorAvailability.getEndTime()))) {
+            throw new IncorrectTimeException("Checking appointment time with availability time, one of them was incorrect");
+        }
+    }
+
+    private void objectIsNotNull(DoctorAvailabilityEntity doctorAvailability) {
+        if (!Objects.nonNull(doctorAvailability)) {
+            throw new ObjectNotFoundException("Checking Appointment time with availability, DoctorAvailability entity not found");
+        }
     }
 }

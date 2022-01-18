@@ -9,13 +9,18 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface DoctorServiceAvailabilityRepository extends JpaRepository<DoctorServiceAvailabilityEntity, Long> {
 
+    @Query("select dsa from DoctorServiceAvailabilityEntity dsa where dsa.doctorAvailability.doctorEntity.user.userId = ?1")
+    Page<DoctorServiceAvailabilityEntity> findAllByUserId(Long aLong, Pageable pageable);
 
-    Page<DoctorServiceAvailabilityEntity> findAllByDoctorAvailabilityDoctorEntityUserUserId(Long aLong, Pageable pageable);
-    List<DoctorServiceAvailabilityEntity> findAllByDoctorAvailabilityDoctorEntityUserUserId(Long aLong);
+
+    @Query("SELECT dsa from DoctorServiceAvailabilityEntity dsa left join UserEntity  u on u.userId = dsa.doctorAvailability.doctorEntity.user.userId where u.userId= ?1 and dsa.doctorAvailabilityServiceId = ?2 ")
+    Optional<DoctorServiceAvailabilityEntity> findByUserAndServiceAvailabilityId(Long userId, Long serviceAvailabilityId);
+
 
     @Query("SELECT service from DoctorServiceAvailabilityEntity  as service where service.reserved = false")
     Page<DoctorServiceAvailabilityEntity> findAllAvailable(Pageable pageable);

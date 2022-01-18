@@ -75,14 +75,13 @@ public class DoctorServiceImpl implements DoctorService {
         doctorEntity.getUser().setRole(RoleEnum.DOCTOR.determinateRole());
         return doctorMapper.createModel(doctorRepository.saveAndFlush(doctorEntity));
     }
-
     private DoctorEntity getDoctorEntity(Long doctorId) {
         return doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
     }
 
     private DoctorEntity getDoctorEntityByUserUserId(Long doctorId) {
-        return doctorRepository.findDoctorEntityByUserUserId(doctorId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
+        return doctorRepository.findDoctor(doctorId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
     }
 
     private DoctorEntity updateDoctorEntity(Doctor doctor, Long userId) {

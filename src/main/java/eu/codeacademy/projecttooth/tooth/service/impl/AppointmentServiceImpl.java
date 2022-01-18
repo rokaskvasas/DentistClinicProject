@@ -129,8 +129,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private boolean checkIfAppointmentDoctorIsCorrect(Long userId, Long doctorServiceAvailabilityId) {
-        return serviceAvailabilityRepository.findAllByDoctorAvailabilityDoctorEntityUserUserId(userId).stream()
-                .anyMatch(entity -> entity.getDoctorAvailabilityServiceId().equals(doctorServiceAvailabilityId));
+        return serviceAvailabilityRepository.findByUserAndServiceAvailabilityId(userId, doctorServiceAvailabilityId).isPresent();
     }
 
     private Iterable<Long> getExpiredAppointmentsId() {

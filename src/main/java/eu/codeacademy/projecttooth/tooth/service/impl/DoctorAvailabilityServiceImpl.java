@@ -41,12 +41,9 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         if (principal.hasRole(RoleEnum.ADMIN)) {
             return availabilityRepository.findById(availabilityId).map(mapper::createModel).orElseThrow(objectNotFoundExceptionSupplier);
         }
-        return availabilityRepository.findAllByDoctorEntityUserUserId(principal.getUserId())
-                .stream()
-                .filter(e -> e.getDoctorAvailabilityId().equals(availabilityId))
-                .findAny()
-                .map(mapper::createModel)
-                .orElseThrow(objectNotFoundExceptionSupplier);
+        return mapper.createModel(
+                availabilityRepository.findByUserAndAvailabilityId(principal.getUserId(), availabilityId)
+                        .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getAvailability' doctor availability by id: %s not found", availabilityId))));
     }
 
     @Override
@@ -56,7 +53,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         if (principal.hasRole(RoleEnum.ADMIN)) {
             pageable = availabilityRepository.findAll(page);
         } else {
-            pageable = availabilityRepository.findAllByDoctorEntityUserUserId(principal.getUserId(), page);
+            pageable = availabilityRepository.findAllByUserId(principal.getUserId(), page);
         }
         return pageable.map(mapper::createModel);
     }
@@ -103,16 +100,13 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     private DoctorEntity getDoctorEntity(Long userId) {
-        return doctorRepository.findDoctorEntityByUserUserId(userId)
+        return doctorRepository.findDoctor(userId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("DoctorEntity not found by id: %s", userId)));
     }
 
 
     public DoctorAvailabilityEntity getDoctorAvailabilityEntity(Long doctorAvailabilityId, Long userId) {
-        return availabilityRepository.findAllByDoctorEntityUserUserId(userId)
-                .stream()
-                .filter(entity -> entity.getDoctorAvailabilityId().equals(doctorAvailabilityId))
-                .findAny()
+        return availabilityRepository.findByUserAndAvailabilityId(userId,doctorAvailabilityId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found", userId)));
     }
 

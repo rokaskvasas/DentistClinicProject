@@ -27,7 +27,6 @@ public abstract class User {
 
     @NotBlank
     @Size(min = 2, max = 30)
-    @Pattern(regexp = "^[A-Za-z]*$", message = "Please use only alphabets")
     @ValidOnlyAlphabets
     private String lastName;
 

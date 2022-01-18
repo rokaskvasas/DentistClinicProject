@@ -2,14 +2,18 @@ package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
+import eu.codeacademy.projecttooth.tooth.model.Service;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
+import eu.codeacademy.projecttooth.tooth.service.ServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Secured({"ROLE_DOCTOR", "ROLE_ADMIN"})
 @RestController
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class DoctorServiceAvailabilityController {
 
     private final DoctorServiceAvailabilityService service;
+    private final ServiceService serviceService;
 
 
     @PreAuthorize("hasAnyRole('ROLE_PATIENT','ROLE_ADMIN')")
@@ -28,12 +33,18 @@ public class DoctorServiceAvailabilityController {
         return service.getAvailabilityServiceAsPage(principal, pageNumber, pageSize);
     }
 
+    @GetMapping("/services")
+    public List<Service> getAllServices() {
+        return serviceService.getAllServices();
+    }
+
     @GetMapping
     public Page<DoctorServiceAvailability> getAllDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
                                                                            @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
                                                                            @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
         return service.getAvailabilityServiceAsPage(principal, pageNumber, pageSize);
     }
+
 
     @GetMapping("/{id}")
     public DoctorServiceAvailability getDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,

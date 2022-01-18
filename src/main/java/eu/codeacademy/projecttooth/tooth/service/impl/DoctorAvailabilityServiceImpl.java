@@ -133,9 +133,6 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         return doctorAvailability.getStartTime().getHour() <= (doctorAvailability.getEndTime().getHour());
     }
 
-//    private boolean startAndEndTimeIsCorrect(DoctorAvailability doctorAvailability) {
-//        return doctorAvailability.getStartTime().isBefore(doctorAvailability.getEndTime());
-//    }
 
     private Iterable<Long> expiredAvailabilityIds() {
         return () -> availabilityRepository.findAll()

@@ -22,9 +22,9 @@ public class DoctorServiceAvailabilityController {
 
     @PreAuthorize("hasAnyRole('ROLE_PATIENT','ROLE_ADMIN')")
     @GetMapping("/available")
-    public Page<DoctorServiceAvailability> getAllDoctorAvailabilityServiceListAsPatient(@AuthenticationPrincipal UserPrincipal principal,
-                                                                                        @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+    public Page<DoctorServiceAvailability> getAllDoctorAvailabilityServiceListAsPatientAndAdmin(@AuthenticationPrincipal UserPrincipal principal,
+                                                                                                @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                                                                                                @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
         return service.getAvailabilityServiceAsPage(principal, pageNumber, pageSize);
     }
 

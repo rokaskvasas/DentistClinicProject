@@ -29,4 +29,5 @@ public class DoctorDto {
     private String locationName;
 
     private String phoneNumber;
+
 }

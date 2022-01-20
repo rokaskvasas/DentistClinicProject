@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -40,4 +41,10 @@ public class PatientController {
     public void deletePatient(@AuthenticationPrincipal UserPrincipal principal){
         service.deletePatient(principal.getUserId());
     }
+
+//    @DeleteMapping("{userId}")
+//    @PreAuthorize("#userId == principal.getUserId()")
+//    public void deletePatient(@P("userId") @PathVariable  Long userId){
+//        service.deletePatient(userId);
+//    }
 }

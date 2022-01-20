@@ -40,7 +40,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorServiceAvailabilityEntity> pageable;
 
-        if (principal.hasRole(RoleEnum.PATIENT) || principal.hasRole(RoleEnum.ADMIN)) {
+        if (principal.hasRole(RoleEnum.ROLE_PATIENT) || principal.hasRole(RoleEnum.ROLE_ADMIN)) {
             pageable = availabilityServiceRepository.findAllAvailable(page);
         } else {
             pageable = availabilityServiceRepository.findAllByUserId(principal.getUserId(), page);
@@ -81,7 +81,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     @Override
     @Transactional
     public Long deleteAvailabilityService(Long serviceId, UserPrincipal principal) {
-        if (principal.hasRole(RoleEnum.ADMIN)) {
+        if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
             availabilityServiceRepository.deleteById(serviceId);
         } else {
             availabilityServiceRepository.delete(getDoctorServiceAvailabilityEntity(serviceId, principal.getUserId()));

@@ -15,16 +15,16 @@ import java.util.Objects;
 public class DoctorMapper {
 
     private final LocationMapper locationMapper;
+    private final UserMapper userMapper;
 
-    public DoctorEntity createDoctorEntity(Doctor doctor, UserEntity userEntity, LocationEntity locationEntity) {
+    public DoctorEntity createDoctorEntity(Doctor doctor) {
 
         return DoctorEntity.builder()
                 .doctorLicense(doctor.getDoctorLicense())
-                .locationId(doctor.getLocation().getLocationId())
-                .location(locationEntity)
+                .locationId(doctor.getLocationId())
                 .qualification(doctor.getQualification())
                 .status(doctor.getStatus())
-                .user(userEntity)
+                .user(userMapper.getUserEntity(doctor))
                 .build();
     }
 

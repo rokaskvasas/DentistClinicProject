@@ -26,8 +26,11 @@ public class DoctorAvailabilityEntity {
     @Column(name = "end_time")
     private LocalDateTime endTime;
 
+//    @Column(name = "doctor_id", nullable = false)
+//    private Long doctorId;
+
     @ManyToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "doctor_id", nullable = false)
+    @JoinColumn(name = "doctor_id")
     private DoctorEntity doctorEntity;
 
     @OneToMany(mappedBy = "doctorAvailability", cascade = CascadeType.ALL)

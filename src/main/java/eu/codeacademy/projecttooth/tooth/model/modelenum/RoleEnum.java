@@ -1,23 +1,23 @@
 package eu.codeacademy.projecttooth.tooth.model.modelenum;
 
 public enum RoleEnum {
-    ADMIN,
-    PATIENT,
-    UNVERIFIED_DOCTOR,
-    DOCTOR;
+    ROLE_ADMIN,
+    ROLE_PATIENT,
+    ROLE_UNVERIFIED_DOCTOR,
+    ROLE_DOCTOR;
 
     public String determinateRole() {
         switch (this) {
-            case ADMIN -> {
+            case ROLE_ADMIN -> {
                 return "ROLE_ADMIN";
             }
-            case DOCTOR -> {
+            case ROLE_DOCTOR -> {
                 return "ROLE_DOCTOR";
             }
-            case PATIENT -> {
+            case ROLE_PATIENT -> {
                 return "ROLE_PATIENT";
             }
-            case UNVERIFIED_DOCTOR -> {
+            case ROLE_UNVERIFIED_DOCTOR -> {
                 return "ROLE_UNVERIFIED_DOCTOR";
             }
         }

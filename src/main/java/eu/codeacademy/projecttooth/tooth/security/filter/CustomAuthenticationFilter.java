@@ -54,7 +54,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
             Authentication authentication
     ) throws IOException, ServletException {
         UserPrincipal user = (UserPrincipal) authentication.getPrincipal();
-        String access_token = jwtUtility.accessTokenForPrincipal(user, request);
+        String access_token = jwtUtility.accessTokenForPrincipal(user);
         String refresh_token = jwtUtility.refreshTokenForPrincipal(user, request);
         UserResponseBody responseBody = new UserResponseBody(
                 user.getUserId(),

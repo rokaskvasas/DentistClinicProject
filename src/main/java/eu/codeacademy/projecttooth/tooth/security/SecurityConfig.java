@@ -41,7 +41,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         CustomAuthenticationFilter customAuthenticationFilter = new CustomAuthenticationFilter(authenticationManagerBean(), this.jwtUtility);
         customAuthenticationFilter.setFilterProcessesUrl("/login");
 
-
+        http.cors();
         http
                 .csrf().disable()
                 .addFilter(customAuthenticationFilter)

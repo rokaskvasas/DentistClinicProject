@@ -38,7 +38,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
         Supplier<ObjectNotFoundException> objectNotFoundExceptionSupplier = () -> new ObjectNotFoundException("Method 'getAvailability' Availability not found, id: " + availabilityId);
 
-        if (principal.hasRole(RoleEnum.ADMIN)) {
+        if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
             return availabilityRepository.findById(availabilityId).map(mapper::createModel).orElseThrow(objectNotFoundExceptionSupplier);
         }
         return mapper.createModel(
@@ -50,7 +50,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     public Page<DoctorAvailability> getAvailabilityPageable(UserPrincipal principal, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorAvailabilityEntity> pageable;
-        if (principal.hasRole(RoleEnum.ADMIN)) {
+        if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
             pageable = availabilityRepository.findAll(page);
         } else {
             pageable = availabilityRepository.findAllByUserId(principal.getUserId(), page);
@@ -84,7 +84,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     @Override
     @Transactional
     public Long deleteAvailability(Long doctorAvailabilityId, UserPrincipal principal) {
-        if (principal.hasRole(RoleEnum.ADMIN)) {
+        if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
             availabilityRepository.deleteById(doctorAvailabilityId);
         } else {
             availabilityRepository.delete(getDoctorAvailabilityEntity(doctorAvailabilityId, principal.getUserId()));

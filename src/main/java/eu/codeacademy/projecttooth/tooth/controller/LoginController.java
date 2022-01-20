@@ -10,4 +10,5 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/login")
 @Slf4j
 public class LoginController {
+
 }

@@ -16,8 +16,6 @@ import java.util.Optional;
 public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvailabilityEntity, Long> {
 
 
-//    Optional<DoctorAvailabilityEntity> findByDoctorEntityUserUserId(Long userId);
-
 
     @Query("select da from DoctorAvailabilityEntity da left join DoctorEntity doc on doc.doctorId = da.doctorEntity.doctorId where doc.user.userId=?1 and da.doctorAvailabilityId =?2")
     Optional<DoctorAvailabilityEntity> findByUserAndAvailabilityId(Long userId, Long availabilityId);
@@ -25,6 +23,4 @@ public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvaila
     @Query("select da from DoctorAvailabilityEntity da left join DoctorEntity doc on doc.doctorId = da.doctorEntity.doctorId where doc.user.userId = ?1 ")
     Page<DoctorAvailabilityEntity> findAllByUserId(Long userId, Pageable pageable);
 
-//    @Modifying
-//    void removeByDoctorAvailabilityId(Long id);
 }

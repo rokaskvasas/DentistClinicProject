@@ -4,22 +4,21 @@ import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorMapper;
-import eu.codeacademy.projecttooth.tooth.mapper.UserMapper;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorRepository;
-import eu.codeacademy.projecttooth.tooth.repository.LocationRepository;
 import eu.codeacademy.projecttooth.tooth.security.PasswordService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
+import eu.codeacademy.projecttooth.tooth.service.LocationService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,7 +26,6 @@ import java.util.stream.Collectors;
 public class DoctorServiceImpl implements DoctorService {
 
 
-    private final UserMapper userMapper;
 
     private final DoctorRepository doctorRepository;
 
@@ -35,14 +33,29 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final PasswordService passwordService;
 
-    private final LocationRepository locationRepository;
+    private final LocationService locationService;
 
     @Override
     public Doctor createDoctor(Doctor doctor) {
+        LocationEntity locationEntity = verifyIfLocationExist(doctor);
         doctor.setStatus(StatusEnum.UNVERIFIED);
         doctor.setPassword(passwordService.encode(doctor.getPassword()));
-        LocationEntity locationEntity = locationRepository.findById(doctor.getLocation().getLocationId()).orElseThrow(() -> new ObjectNotFoundException(String.format("Location by id: %s not found", doctor.getLocation().getLocationId())));
-        return doctorMapper.createModel(doctorRepository.saveAndFlush(doctorMapper.createDoctorEntity(doctor, userMapper.getUserEntity(doctor, RoleEnum.UNVERIFIED_DOCTOR), locationEntity)));
+        doctor.setRole(RoleEnum.ROLE_UNVERIFIED_DOCTOR.determinateRole());
+        doctor.setLocationId(doctor.getLocationId());
+        DoctorEntity doctorEntity = doctorMapper.createDoctorEntity(doctor);
+        doctorEntity.setLocation(locationEntity);
+
+        return doctorMapper.createModel(doctorRepository.saveAndFlush(doctorEntity));
+    }
+
+    private LocationEntity verifyIfLocationExist(Doctor doctor) {
+
+        LocationEntity locationEntity = locationService.getLocationEntity(doctor.getLocationId());
+        if (Objects.isNull(locationEntity)) {
+
+            throw new ObjectNotFoundException(String.format("Location by id%s not found", doctor.getLocationId()));
+        }
+        return locationEntity;
     }
 
     @Override
@@ -72,7 +85,7 @@ public class DoctorServiceImpl implements DoctorService {
     public Doctor verifyDoctor(Long doctorId) {
         DoctorEntity doctorEntity = getDoctorEntity(doctorId);
         doctorEntity.setStatus(StatusEnum.VERIFIED);
-        doctorEntity.getUser().setRole(RoleEnum.DOCTOR.determinateRole());
+        doctorEntity.getUser().setRole(RoleEnum.ROLE_DOCTOR.determinateRole());
         return doctorMapper.createModel(doctorRepository.saveAndFlush(doctorEntity));
     }
     private DoctorEntity getDoctorEntity(Long doctorId) {

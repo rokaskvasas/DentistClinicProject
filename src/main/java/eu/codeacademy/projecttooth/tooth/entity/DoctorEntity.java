@@ -38,7 +38,7 @@ public class DoctorEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "location_id", insertable = false, updatable = false)
     private LocationEntity location;
 

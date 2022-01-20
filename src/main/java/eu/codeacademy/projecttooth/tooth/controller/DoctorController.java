@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorRegisterDto;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import eu.codeacademy.projecttooth.tooth.model.Location;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
@@ -20,7 +21,6 @@ import java.util.List;
 public class DoctorController {
 
     private final DoctorService doctorService;
-    private final LocationService locationService;
 
     @PreAuthorize("hasAnyRole('ROLE_DOCTOR','ROLE_UNVERIFIED_DOCTOR' )")
     @GetMapping("/account")
@@ -28,11 +28,6 @@ public class DoctorController {
         return doctorService.getDoctor(principal.getUserId());
     }
 
-    @PreAuthorize("permitAll()")
-    @GetMapping("/register")
-    public List<Location> getLocations() {
-        return locationService.getAllLocations();
-    }
 
     @PreAuthorize("permitAll()")
     @PostMapping

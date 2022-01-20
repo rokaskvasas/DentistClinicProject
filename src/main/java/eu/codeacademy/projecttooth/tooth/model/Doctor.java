@@ -28,5 +28,7 @@ public class Doctor extends User {
 
     private Location location;
 
+    private Long locationId;
+
 
 }

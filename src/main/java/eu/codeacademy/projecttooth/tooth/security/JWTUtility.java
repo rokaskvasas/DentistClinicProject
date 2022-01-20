@@ -40,11 +40,11 @@ public class JWTUtility {
         return algorithm = Algorithm.HMAC256(secret.getBytes());
     }
 
-    public String accessTokenForPrincipal(UserPrincipal user, HttpServletRequest request) {
+    public String accessTokenForPrincipal(UserPrincipal user) {
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenTime))
-                .withIssuer(request.getRequestURL().toString())
+//                .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .withClaim("userId", user.getUserId())
                 .sign(algorithm);

@@ -1,11 +1,8 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
-import eu.codeacademy.projecttooth.tooth.dto.DoctorRegisterDto;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
-import eu.codeacademy.projecttooth.tooth.model.Location;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
-import eu.codeacademy.projecttooth.tooth.service.LocationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,7 +22,7 @@ public class DoctorController {
     @PreAuthorize("hasAnyRole('ROLE_DOCTOR','ROLE_UNVERIFIED_DOCTOR' )")
     @GetMapping("/account")
     public Doctor getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
-        return doctorService.getDoctor(principal.getUserId());
+        return doctorService.getDoctorByUserId(principal.getUserId());
     }
 
 

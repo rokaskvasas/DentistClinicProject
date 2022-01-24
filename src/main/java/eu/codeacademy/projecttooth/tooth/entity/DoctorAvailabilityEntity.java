@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -34,5 +35,5 @@ public class DoctorAvailabilityEntity {
     private DoctorEntity doctorEntity;
 
     @OneToMany(mappedBy = "doctorAvailability", cascade = CascadeType.ALL)
-    private Set<DoctorServiceAvailabilityEntity> doctorAvailabilityServiceEntities;
+    private List<DoctorServiceAvailabilityEntity> doctorServiceAvailability;
 }

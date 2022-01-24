@@ -1,8 +1,10 @@
 package eu.codeacademy.projecttooth.tooth.model;
 
+import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorServiceAvailabilityDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -20,6 +22,6 @@ public class DoctorAvailability {
 
     private Doctor doctor;
 
-    private Set<DoctorServiceAvailability> doctorServiceAvailabilitySet;
+    private List<ModifyDoctorServiceAvailabilityDto> doctorServiceAvailabilityList;
 
 }

@@ -9,7 +9,7 @@ import java.util.List;
 public interface DoctorService {
     Doctor createDoctor(Doctor doctor);
 
-    Doctor getDoctor(Long doctorId);
+    Doctor getDoctorByUserId(Long doctorId);
 
     Doctor updateDoctor(Doctor doctor, Long userId);
 

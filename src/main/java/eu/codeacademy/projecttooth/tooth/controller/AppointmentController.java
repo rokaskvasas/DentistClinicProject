@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 @Secured({"ROLE_PATIENT", "ROLE_DOCTOR", "ROLE_ADMIN"})
@@ -20,16 +21,31 @@ public class AppointmentController {
     private final AppointmentService service;
 
     @GetMapping
-    public Page<Appointment> getAllAppointments(@AuthenticationPrincipal UserPrincipal principal,
-                                                @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                                @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+    public Page<Appointment> getAllAppointmentsAsPatient(@AuthenticationPrincipal UserPrincipal principal,
+                                                         @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                                                         @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
         return service.getAppointmentPageable(principal.getUserId(), pageNumber, pageSize);
     }
 
-    @GetMapping("/{id}")
-    public Appointment getAppointment(@AuthenticationPrincipal UserPrincipal principal, @PathVariable(name = "id") Long appointmentId) {
-        return service.getAppointment(principal.getUserId(), appointmentId);
+    @GetMapping("/{appointmentId}/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
+    public Appointment getAppointmentAsPatient(@PathVariable Long appointmentId, @P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal) {
+        return service.getAppointmentAsPatient(appointmentId, userId);
     }
+
+    @GetMapping("/doctors/{appointmentId}/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
+    public Appointment getAppointmentAsDoctor(@PathVariable Long appointmentId, @P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal) {
+        return service.getAppointmentAsDoctor(appointmentId, userId);
+    }
+
+    @GetMapping("/doctors")
+    public Page<Appointment> getAllAppointmentsAsDoctor(@AuthenticationPrincipal UserPrincipal principal,
+                                                        @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                                                        @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+        return service.getAppointmentPageableAsDoctor(principal.getUserId(), pageNumber, pageSize);
+    }
+
 
     @PostMapping
     public Appointment createAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody ModifyAppointmentDto payload) {

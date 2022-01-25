@@ -7,14 +7,20 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<AppointmentEntity, Long> {
 
-    @Query("select app from AppointmentEntity app where app.patient.user.userId = ?1")
-    Optional<AppointmentEntity> findByUserId(Long userId);
+    @Query("select app from AppointmentEntity app where app.appointmentId = ?1 and app.patient.user.userId= ?2")
+    Optional<AppointmentEntity> findByAppointmentIdAndUserIdAsPatient(Long appointmentId, Long userId);
 
-    Page<AppointmentEntity> findAllByPatientUserUserId(Long userId, Pageable page);
+    @Query("select app from AppointmentEntity app where app.patient.user.userId =?1")
+    Page<AppointmentEntity> findAllByPatientUserId(Long userId, Pageable page);
+
+    @Query("select app from AppointmentEntity app where app.appointmentId = ?1 and app.doctorServiceAvailability.doctorAvailability.doctorEntity.user.userId = ?2")
+    Optional<AppointmentEntity> findByAppointmentIdAndUserIdAsDoctor(Long appointmentId, Long userId);
+
+    @Query("select app from AppointmentEntity app where app.doctorServiceAvailability.doctorAvailability.doctorEntity.user.userId =?1")
+    Page<AppointmentEntity> findAllByDoctorUserId(Long userId, Pageable page);
 }

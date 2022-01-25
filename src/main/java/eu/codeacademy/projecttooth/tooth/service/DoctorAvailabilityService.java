@@ -6,15 +6,14 @@ import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public interface DoctorAvailabilityService {
-    List<DoctorAvailability> createAvailability(List<DoctorAvailability> doctorAvailabilities, Long userId);
+
+    DoctorAvailability createAvailability(DoctorAvailability doctorAvailability, Long userId);
 
     DoctorAvailability updateAvailability(DoctorAvailability doctorAvailability, Long userId);
 
-    Long deleteAvailability(Long doctorAvailabilityId,UserPrincipal principal);
+    Long deleteAvailability(Long doctorAvailabilityId, UserPrincipal principal);
 
     DoctorAvailability getAvailability(Long availabilityId, UserPrincipal principal);
 
@@ -22,4 +21,8 @@ public interface DoctorAvailabilityService {
 
 
     void deleteExpiredAvailabilities();
+
+    DoctorAvailabilityEntity findDoctorAvailabilityEntityByUserAndAvailabilityId(Long availabilityId, Long userId);
+
+    DoctorAvailabilityEntity getDoctorAvailabilityEntity(Long doctorAvailabilityId, Long userId);
 }

@@ -9,8 +9,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @Secured({"ROLE_DOCTOR", "ROLE_ADMIN"})
 @RestController
 @RequestMapping("/doctorAvailability")
@@ -18,7 +16,6 @@ import java.util.List;
 public class DoctorAvailabilityController {
 
     private final DoctorAvailabilityService service;
-
 
     @GetMapping("/{id}")
     public DoctorAvailability getDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
@@ -34,9 +31,9 @@ public class DoctorAvailabilityController {
     }
 
     @PostMapping
-    public List<DoctorAvailability> createDoctorAvailabilities(@AuthenticationPrincipal UserPrincipal principal,
-                                                               @RequestBody List<DoctorAvailability> doctorAvailabilityList) {
-        return service.createAvailability(doctorAvailabilityList, principal.getUserId());
+    public DoctorAvailability createDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
+                                                       @RequestBody DoctorAvailability doctorAvailability) {
+        return service.createAvailability(doctorAvailability, principal.getUserId());
     }
 
     @PutMapping

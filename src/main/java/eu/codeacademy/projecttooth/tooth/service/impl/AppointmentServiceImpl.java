@@ -7,8 +7,12 @@ import eu.codeacademy.projecttooth.tooth.exception.IncorrectTimeException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
-import eu.codeacademy.projecttooth.tooth.repository.*;
+import eu.codeacademy.projecttooth.tooth.repository.AppointmentRepository;
+import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
+import eu.codeacademy.projecttooth.tooth.repository.ServiceRepository;
 import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
+import eu.codeacademy.projecttooth.tooth.service.PatientService;
+import eu.codeacademy.projecttooth.tooth.service.ServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,9 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -27,38 +29,38 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final AppointmentMapper appointmentMapper;
-    private final PatientRepository patientRepository;
     private final DoctorServiceAvailabilityRepository serviceAvailabilityRepository;
     private final ServiceRepository serviceRepository;
+    private final PatientService patientService;
+    private final ServiceService serviceService;
 
 
     @Override
     public Page<Appointment> getAppointmentPageable(Long userId, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
-        Page<AppointmentEntity> pageable = appointmentRepository.findAllByPatientUserUserId(userId, page);
+        Page<AppointmentEntity> pageable = appointmentRepository.findAllByPatientUserId(userId, page);
         return pageable.map(appointmentMapper::createDtoModel);
     }
 
     @Override
-    public Appointment getAppointment(Long userId, Long appointmentId) {
-        return appointmentRepository.findByUserId(userId)
+    public Appointment getAppointmentAsPatient(Long appointmentId, Long userId) {
+        return appointmentRepository.findByAppointmentIdAndUserIdAsPatient(appointmentId, userId)
                 .map(appointmentMapper::createDtoModel)
                 .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
     }
 
     @Override
     public Appointment updateAppointment(Long userId, ModifyAppointmentDto appointment) {
-        return appointmentMapper.createDtoModel(appointmentRepository.saveAndFlush(updateEntity(userId, appointment)));
+        AppointmentEntity appointmentEntity = updateEntity(userId, appointment);
+        updateDatabase(appointmentEntity);
+        return createAppointmentModel(appointmentEntity);
     }
+
 
     @Override
     public void deleteAppointment(Long userId, Long appointmentId) {
-        appointmentRepository.delete(getAppointmentEntity(userId, appointmentId));
-    }
 
-    @Override
-    public List<Appointment> getAppointmentList() {
-        return appointmentRepository.findAll().stream().map(appointmentMapper::createDtoModel).collect(Collectors.toUnmodifiableList());
+        appointmentRepository.delete(getAppointmentEntity(userId, appointmentId));
     }
 
 
@@ -70,7 +72,11 @@ public class AppointmentServiceImpl implements AppointmentService {
         checkIfAppointmentTimeMatchesWithAvailability(payload, doctorServiceAvailability);
         reserveServiceAvailability(doctorServiceAvailability);
         AppointmentEntity appointment = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
-        return appointmentMapper.createDtoModel(appointmentRepository.saveAndFlush(appointment));
+        return appointmentMapper.createDtoModel(updateDatabase(appointment));
+    }
+
+    private AppointmentEntity updateDatabase(AppointmentEntity appointment) {
+        return appointmentRepository.saveAndFlush(appointment);
     }
 
     private void reserveServiceAvailability(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
@@ -81,6 +87,20 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public void deleteExpiredAppointments() {
         appointmentRepository.deleteAllById(getExpiredAppointmentsId());
+    }
+
+    @Override
+    public Appointment getAppointmentAsDoctor(Long appointmentId, Long userId) {
+        return appointmentRepository.findByAppointmentIdAndUserIdAsDoctor(appointmentId, userId)
+                .map(appointmentMapper::createDtoModel)
+                .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
+    }
+
+    @Override
+    public Page<Appointment> getAppointmentPageableAsDoctor(Long userId, int pageNumber, int pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
+        Page<AppointmentEntity> pageable = appointmentRepository.findAllByDoctorUserId(userId, page);
+        return pageable.map(appointmentMapper::createDtoModel);
     }
 
     private void checkIfAppointmentTimeMatchesWithAvailability(ModifyAppointmentDto payload, DoctorServiceAvailabilityEntity doctorServiceAvailability) {
@@ -104,13 +124,12 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     private AppointmentEntity getAppointmentEntity(Long userId, Long appointmentId) {
-        return appointmentRepository.findByUserId(userId)
+        return appointmentRepository.findByAppointmentIdAndUserIdAsDoctor(appointmentId, userId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getAppointmentEntity' in AppointmentService with id:%s not found", appointmentId)));
     }
 
     private PatientEntity getPatientEntity(Long userId) {
-        return patientRepository.findByUserUserId(userId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getPatientEntity' in AppointmentService with id: %s not found", userId)));
+        return patientService.getPatientEntity(userId);
     }
 
     private ServiceEntity getServiceEntity(ModifyAppointmentDto appointment) {
@@ -145,5 +164,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (!Objects.nonNull(doctorAvailability)) {
             throw new ObjectNotFoundException("Checking Appointment time with availability, DoctorAvailability entity not found");
         }
+    }
+
+    private Appointment createAppointmentModel(AppointmentEntity appointmentEntity) {
+        return appointmentMapper.createDtoModel(appointmentEntity);
     }
 }

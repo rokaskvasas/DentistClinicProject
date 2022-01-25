@@ -20,9 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,27 +33,16 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
     @Override
     public DoctorAvailability getAvailability(Long availabilityId, UserPrincipal principal) {
-
-        Supplier<ObjectNotFoundException> objectNotFoundExceptionSupplier = () -> new ObjectNotFoundException("Method 'getAvailability' Availability not found, id: " + availabilityId);
-
-        if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
-            return availabilityRepository.findById(availabilityId).map(mapper::createModel).orElseThrow(objectNotFoundExceptionSupplier);
-        }
-        return mapper.createModel(
-                availabilityRepository.findByUserAndAvailabilityId(principal.getUserId(), availabilityId)
-                        .orElseThrow(objectNotFoundExceptionSupplier));
+        return getDoctorAvailability(availabilityId, principal);
     }
+
 
     @Override
     public Page<DoctorAvailability> getAvailabilityPageable(UserPrincipal principal, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorAvailabilityEntity> pageable;
-        if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
-            pageable = availabilityRepository.findAll(page);
-        } else {
-            pageable = availabilityRepository.findAllByUserId(principal.getUserId(), page);
-        }
-        return pageable.map(mapper::createModel);
+        pageable = getDoctorAvailabilityEntities(principal, page);
+        return pageable.map(this::createDoctorAvailabilityModel);
     }
 
 
@@ -66,30 +53,38 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     @Override
-    public List<DoctorAvailability> createAvailability(List<DoctorAvailability> doctorAvailabilityList, Long userId) {
-        doctorAvailabilityList.forEach(this::availabilityTimeCheck);
-        List<DoctorAvailabilityEntity> doctorAvailabilityEntities = doctorAvailabilityList
-                .stream()
-                .map(doctorAvailability -> mapper.createEntity(doctorAvailability, getDoctorEntity(userId)))
-                .collect(Collectors.toUnmodifiableList());
-        availabilityRepository.saveAllAndFlush(doctorAvailabilityEntities);
-        return doctorAvailabilityEntities.stream().map(mapper::createModel).collect(Collectors.toUnmodifiableList());
+    public DoctorAvailabilityEntity findDoctorAvailabilityEntityByUserAndAvailabilityId(Long availabilityId, Long userId) {
+        return availabilityRepository.findByUserAndAvailabilityId(userId, availabilityId)
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found", availabilityId)));
     }
 
     @Override
+    public DoctorAvailability createAvailability(DoctorAvailability doctorAvailability, Long userId) {
+        availabilityTimeCheck(doctorAvailability);
+        DoctorAvailabilityEntity doctorAvailabilityEntity = createDoctorAvailabilityEntity(doctorAvailability, userId);
+        updateDatabase(doctorAvailabilityEntity);
+        return createDoctorAvailabilityModel(doctorAvailabilityEntity);
+    }
+
+
+    @Override
     public DoctorAvailability updateAvailability(DoctorAvailability doctorAvailability, Long userId) {
-        return mapper.createModel(availabilityRepository.saveAndFlush(updateEntity(doctorAvailability, userId)));
+        return createDoctorAvailabilityModel(availabilityRepository.saveAndFlush(updateEntity(doctorAvailability, userId)));
     }
 
     @Override
     @Transactional
     public Long deleteAvailability(Long doctorAvailabilityId, UserPrincipal principal) {
+        deleteDoctorAvailabilityByPrincipalRole(doctorAvailabilityId, principal);
+        return doctorAvailabilityId;
+    }
+
+    private void deleteDoctorAvailabilityByPrincipalRole(Long doctorAvailabilityId, UserPrincipal principal) {
         if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
             availabilityRepository.deleteById(doctorAvailabilityId);
         } else {
             availabilityRepository.delete(getDoctorAvailabilityEntity(doctorAvailabilityId, principal.getUserId()));
         }
-        return doctorAvailabilityId;
     }
 
     private DoctorAvailabilityEntity updateEntity(DoctorAvailability doctorAvailability, Long userId) {
@@ -100,14 +95,14 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         return entity;
     }
 
-    private DoctorEntity getDoctorEntity(Long userId) {
-        return doctorRepository.findDoctor(userId)
+    private DoctorEntity getDoctorEntityByUserId(Long userId) {
+        return doctorRepository.findDoctorByUserId(userId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("DoctorEntity not found by id: %s", userId)));
     }
 
-
+    @Override
     public DoctorAvailabilityEntity getDoctorAvailabilityEntity(Long doctorAvailabilityId, Long userId) {
-        return availabilityRepository.findByUserAndAvailabilityId(userId,doctorAvailabilityId)
+        return availabilityRepository.findByUserAndAvailabilityId(userId, doctorAvailabilityId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found", userId)));
     }
 
@@ -136,4 +131,42 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
                 .mapToLong(DoctorAvailabilityEntity::getDoctorAvailabilityId).iterator();
     }
 
+    private DoctorAvailabilityEntity updateDatabase(DoctorAvailabilityEntity entity) {
+        return availabilityRepository.saveAndFlush(entity);
+    }
+
+    private DoctorAvailability createDoctorAvailabilityModel(DoctorAvailabilityEntity entity) {
+        return mapper.createModel(entity);
+    }
+
+    private DoctorAvailabilityEntity createDoctorAvailabilityEntity(DoctorAvailability doctorAvailability, Long userId) {
+        DoctorEntity doctorEntity = getDoctorEntityByUserId(userId);
+        DoctorAvailabilityEntity doctorAvailabilityEntity = mapper.createEntity(doctorAvailability);
+        doctorAvailabilityEntity.setDoctorEntity(doctorEntity);
+        return doctorAvailabilityEntity;
+    }
+
+    private Page<DoctorAvailabilityEntity> getDoctorAvailabilityEntities(UserPrincipal principal, Pageable page) {
+        Page<DoctorAvailabilityEntity> pageable;
+        if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
+            pageable = availabilityRepository.findAll(page);
+        } else {
+            pageable = availabilityRepository.findAllByUserId(principal.getUserId(), page);
+        }
+        return pageable;
+    }
+
+    private DoctorAvailability getDoctorAvailability(Long availabilityId, UserPrincipal principal) {
+        DoctorAvailability doctorAvailability;
+        Supplier<ObjectNotFoundException> objectNotFoundExceptionSupplier = () -> new ObjectNotFoundException("Method 'getAvailability' Availability not found, id: " + availabilityId);
+
+        if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
+            doctorAvailability = availabilityRepository.findById(availabilityId).map(mapper::createModel).orElseThrow(objectNotFoundExceptionSupplier);
+
+        } else {
+            doctorAvailability = mapper.createModel(availabilityRepository.findByUserAndAvailabilityId(principal.getUserId(), availabilityId)
+                    .orElseThrow(objectNotFoundExceptionSupplier));
+        }
+        return doctorAvailability;
+    }
 }

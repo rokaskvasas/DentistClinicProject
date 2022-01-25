@@ -4,15 +4,14 @@ import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface DoctorServiceAvailabilityRepository extends JpaRepository<DoctorServiceAvailabilityEntity, Long> {
+
 
     @Query("select dsa from DoctorServiceAvailabilityEntity dsa where dsa.doctorAvailability.doctorEntity.user.userId = ?1")
     Page<DoctorServiceAvailabilityEntity> findAllByUserId(Long aLong, Pageable pageable);

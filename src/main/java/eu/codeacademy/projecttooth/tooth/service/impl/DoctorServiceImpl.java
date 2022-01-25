@@ -26,7 +26,6 @@ import java.util.stream.Collectors;
 public class DoctorServiceImpl implements DoctorService {
 
 
-
     private final DoctorRepository doctorRepository;
 
     private final DoctorMapper doctorMapper;
@@ -39,17 +38,20 @@ public class DoctorServiceImpl implements DoctorService {
     public Doctor createDoctor(Doctor doctor) {
         LocationEntity locationEntity = verifyIfLocationExist(doctor);
         DoctorEntity doctorEntity = createDoctorEntity(doctor, locationEntity);
-        return doctorMapper.createModel(updateDatabase(doctorEntity));
+        return createDoctorModel(updateDatabase(doctorEntity));
     }
 
     @Override
     public Doctor getDoctorByUserId(Long userId) {
-        return doctorMapper.createModel(getDoctorEntityByUserid(userId));
+        DoctorEntity doctorEntity = findDoctorEntityByUserid(userId);
+        return createDoctorModel(doctorEntity);
     }
 
     @Override
     public Doctor updateDoctor(Doctor doctor, Long userId) {
-        return doctorMapper.createModel(updateDatabase(updateDoctorEntity(doctor, userId)));
+        DoctorEntity doctorEntity = updateDoctorEntity(doctor, userId);
+        updateDatabase(doctorEntity);
+        return createDoctorModel(doctorEntity);
     }
 
     @Override
@@ -66,22 +68,28 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Doctor verifyDoctor(Long doctorId) {
-        DoctorEntity doctorEntity = getDoctorEntity(doctorId);
-        doctorEntity.setStatus(StatusEnum.VERIFIED);
-        doctorEntity.getUser().setRole(RoleEnum.ROLE_DOCTOR.determinateRole());
+        DoctorEntity doctorEntity = verifyDoctorEntity(doctorId);
         return doctorMapper.createModel(updateDatabase(doctorEntity));
     }
-    private DoctorEntity getDoctorEntity(Long doctorId) {
+
+    private DoctorEntity verifyDoctorEntity(Long doctorId) {
+        DoctorEntity doctorEntity = findDoctorEntity(doctorId);
+        doctorEntity.setStatus(StatusEnum.VERIFIED);
+        doctorEntity.getUser().setRole(RoleEnum.ROLE_DOCTOR.determinateRole());
+        return doctorEntity;
+    }
+
+    private DoctorEntity findDoctorEntity(Long doctorId) {
         return doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
     }
 
-    private DoctorEntity getDoctorEntityByUserid(Long doctorId) {
-        return doctorRepository.findDoctor(doctorId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
+    private DoctorEntity findDoctorEntityByUserid(Long doctorId) {
+        return doctorRepository.findDoctorByUserId(doctorId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
     }
 
     private DoctorEntity updateDoctorEntity(Doctor doctor, Long userId) {
-        DoctorEntity entity = getDoctorEntityByUserid(userId);
+        DoctorEntity entity = findDoctorEntityByUserid(userId);
         entity.setQualification(doctor.getQualification());
         entity.setDoctorLicense(doctor.getDoctorLicense());
         entity.getUser().setFirstName(doctor.getFirstName());
@@ -89,6 +97,7 @@ public class DoctorServiceImpl implements DoctorService {
         entity.getUser().setPhoneNumber(doctor.getPhoneNumber());
         return entity;
     }
+
     private DoctorEntity createDoctorEntity(Doctor doctor, LocationEntity locationEntity) {
         doctor.setStatus(StatusEnum.UNVERIFIED);
         doctor.setPassword(passwordService.encode(doctor.getPassword()));
@@ -108,7 +117,12 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return locationEntity;
     }
+
     private DoctorEntity updateDatabase(DoctorEntity doctorEntity) {
         return doctorRepository.saveAndFlush(doctorEntity);
+    }
+
+    private Doctor createDoctorModel(DoctorEntity entity) {
+        return doctorMapper.createModel(entity);
     }
 }

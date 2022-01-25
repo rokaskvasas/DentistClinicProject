@@ -1,7 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
-import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorServiceAvailabilityDto;
-import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
@@ -16,15 +14,14 @@ public class DoctorServiceAvailabilityMapper {
 
     private final ServiceMapper serviceMapper;
 
-    public DoctorServiceAvailabilityEntity createEntity(ServiceEntity serviceEntity, DoctorAvailabilityEntity availabilityEntity) {
+    public DoctorServiceAvailabilityEntity createEntity(ServiceEntity serviceEntity) {
         return DoctorServiceAvailabilityEntity.builder()
                 .service(serviceEntity)
-                .doctorAvailability(availabilityEntity)
                 .build();
     }
 
 
-    public DoctorServiceAvailability createModel(DoctorServiceAvailabilityEntity entity){
+    public DoctorServiceAvailability createModel(DoctorServiceAvailabilityEntity entity) {
         return DoctorServiceAvailability.builder()
                 .doctorAvailability(availabilityMapper.createModel(entity.getDoctorAvailability()))
                 .doctorServiceAvailabilityId(entity.getDoctorAvailabilityServiceId())

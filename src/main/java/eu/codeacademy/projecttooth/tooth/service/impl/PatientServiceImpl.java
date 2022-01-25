@@ -49,10 +49,10 @@ public class PatientServiceImpl implements PatientService {
         patientRepository.delete(getPatientEntity(userId));
     }
 
-
-    private PatientEntity getPatientEntity(Long userId) {
+    @Override
+    public PatientEntity getPatientEntity(Long userId) {
         return patientRepository.findByUserUserId(userId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("PatientEntity with id:%s not found", userId)));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Patient Entity with id:%s not found", userId)));
     }
 
     private PatientEntity updatePatientEntity(Patient patient, Long userId) {

@@ -9,11 +9,11 @@ import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorServiceAvailabilityMapper;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
-import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityRepository;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
-import eu.codeacademy.projecttooth.tooth.repository.ServiceRepository;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
+import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
+import eu.codeacademy.projecttooth.tooth.service.ServiceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,64 +29,67 @@ import java.time.ZoneId;
 public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvailabilityService {
 
     private final DoctorServiceAvailabilityMapper mapper;
-    private final DoctorAvailabilityRepository availabilityRepository;
-    private final ServiceRepository serviceRepository;
     private final DoctorServiceAvailabilityRepository availabilityServiceRepository;
-    private final DoctorAvailabilityServiceImpl doctorAvailabilityService;
+    private final DoctorAvailabilityService doctorAvailabilityService;
+    private final ServiceService serviceService;
 
 
     @Override
     public Page<DoctorServiceAvailability> getAvailabilityServiceAsPage(UserPrincipal principal, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorServiceAvailabilityEntity> pageable;
-
-        if (principal.hasRole(RoleEnum.ROLE_PATIENT) || principal.hasRole(RoleEnum.ROLE_ADMIN)) {
-            pageable = availabilityServiceRepository.findAllAvailable(page);
-        } else {
-            pageable = availabilityServiceRepository.findAllByUserId(principal.getUserId(), page);
-        }
-        return pageable.map(mapper::createModel);
+        pageable = findDoctorServiceAvailabilityEntitiesByRole(principal, page);
+        return pageable.map(this::createDoctorServiceAvailabilityModel);
     }
+
 
     @Override
     public DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId) {
         return availabilityServiceRepository.findByUserAndServiceAvailabilityId(userId, availabilityServiceId)
-                .map(mapper::createModel)
+                .map(this::createDoctorServiceAvailabilityModel)
                 .orElseThrow(() -> new ObjectNotFoundException("Doctor Availability service by id not found: " + availabilityServiceId));
     }
 
 
     @Override
     public void deleteExpiredServiceAvailability() {
-        serviceRepository.deleteAllById(getExpiredServices());
+        availabilityServiceRepository.deleteAllById(getExpiredServices());
     }
 
 
     @Override
     public DoctorServiceAvailability createAvailabilityService(ModifyDoctorServiceAvailabilityDto serviceAvailability, Long userId) {
-
         isQualified(serviceAvailability, userId);
-        Long doctorAvailabilityId = serviceAvailability.getDoctorAvailabilityId();
-        ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
-        DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(doctorAvailabilityId, userId);
-        return mapper.createModel(availabilityServiceRepository.saveAndFlush(mapper.createEntity(serviceEntity, doctorAvailabilityEntity)));
-
+        DoctorServiceAvailabilityEntity doctorAvailabilityServiceEntity = createDoctorAvailabilityServiceEntity(serviceAvailability, userId);
+        updateDatabase(doctorAvailabilityServiceEntity);
+        return createDoctorServiceAvailabilityModel(doctorAvailabilityServiceEntity);
     }
 
     @Override
     public DoctorServiceAvailability updateAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
-        return mapper.createModel(availabilityServiceRepository.saveAndFlush(updateEntity(doctorServiceAvailability, userId)));
+        DoctorServiceAvailabilityEntity doctorServiceAvailabilityEntity = updateEntity(doctorServiceAvailability, userId);
+        updateDatabase(doctorServiceAvailabilityEntity);
+        return createDoctorServiceAvailabilityModel(doctorServiceAvailabilityEntity);
     }
 
     @Override
     @Transactional
     public Long deleteAvailabilityService(Long serviceId, UserPrincipal principal) {
+        DoctorServiceAvailabilityEntity doctorServiceAvailability = findDoctorServiceAvailabilityEntityById(serviceId);
+        deleteDoctorAvailabilityServiceByRoleAndServiceId(doctorServiceAvailability.getDoctorAvailabilityServiceId(), principal);
+        return serviceId;
+    }
+
+    private DoctorServiceAvailabilityEntity findDoctorServiceAvailabilityEntityById(Long serviceId) {
+        return availabilityServiceRepository.findById(serviceId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor service availability by id:%s not found", serviceId)));
+    }
+
+    private void deleteDoctorAvailabilityServiceByRoleAndServiceId(Long serviceId, UserPrincipal principal) {
         if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
             availabilityServiceRepository.deleteById(serviceId);
         } else {
             availabilityServiceRepository.delete(getDoctorServiceAvailabilityEntity(serviceId, principal.getUserId()));
         }
-        return serviceId;
     }
 
 
@@ -100,13 +103,11 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
     private DoctorAvailabilityEntity getDoctorAvailabilityEntityByUserID(Long availabilityId, Long userId) {
-        return availabilityRepository.findByUserAndAvailabilityId(userId, availabilityId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by user id:%s not found", availabilityId)));
+        return doctorAvailabilityService.findDoctorAvailabilityEntityByUserAndAvailabilityId(availabilityId, userId);
     }
 
     private ServiceEntity getServiceEntity(Long serviceId) {
-        return serviceRepository.findById(serviceId).
-                orElseThrow(() -> new ObjectNotFoundException(String.format("Service entity by id:%s not found", serviceId)));
+        return serviceService.findServiceEntity(serviceId);
     }
 
     private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(Long serviceAvailabilityId, Long userId) {
@@ -130,4 +131,34 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
                 .mapToLong(DoctorServiceAvailabilityEntity::getDoctorAvailabilityServiceId).iterator();
     }
 
+    private Page<DoctorServiceAvailabilityEntity> findDoctorServiceAvailabilityEntitiesByRole(UserPrincipal principal, Pageable page) {
+        Page<DoctorServiceAvailabilityEntity> pageable;
+        if (principal.hasRole(RoleEnum.ROLE_PATIENT) || principal.hasRole(RoleEnum.ROLE_ADMIN)) {
+            pageable = availabilityServiceRepository.findAllAvailable(page);
+        } else {
+            pageable = availabilityServiceRepository.findAllByUserId(principal.getUserId(), page);
+        }
+        return pageable;
+    }
+
+    private DoctorServiceAvailability createDoctorServiceAvailabilityModel(DoctorServiceAvailabilityEntity entity) {
+        return mapper.createModel(entity);
+    }
+
+    private DoctorServiceAvailabilityEntity createDoctorAvailabilityServiceEntity(ModifyDoctorServiceAvailabilityDto serviceAvailability, Long userId) {
+        Long doctorAvailabilityId = serviceAvailability.getDoctorAvailabilityId();
+        ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
+        DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(doctorAvailabilityId, userId);
+        DoctorServiceAvailabilityEntity doctorServiceAvailabilityEntity = createDoctorServiceAvailabilityEntity(serviceEntity);
+        doctorServiceAvailabilityEntity.setDoctorAvailability(doctorAvailabilityEntity);
+        return doctorServiceAvailabilityEntity;
+    }
+
+    private DoctorServiceAvailabilityEntity updateDatabase(DoctorServiceAvailabilityEntity entity) {
+        return availabilityServiceRepository.saveAndFlush(entity);
+    }
+
+    private DoctorServiceAvailabilityEntity createDoctorServiceAvailabilityEntity(ServiceEntity serviceEntity) {
+        return mapper.createEntity(serviceEntity);
+    }
 }

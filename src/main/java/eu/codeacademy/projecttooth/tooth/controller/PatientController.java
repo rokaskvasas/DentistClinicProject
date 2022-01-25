@@ -1,7 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.model.Patient;
-import eu.codeacademy.projecttooth.tooth.model.User;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -33,18 +32,14 @@ public class PatientController {
     }
 
     @PutMapping
-    public Patient updatePatient(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Patient patient){
-       return service.updatePatient(patient, principal.getUserId());
+
+    public Patient updatePatient(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Patient patient) {
+        return service.updatePatient(patient, principal.getUserId());
     }
 
-    @DeleteMapping
-    public void deletePatient(@AuthenticationPrincipal UserPrincipal principal){
-        service.deletePatient(principal.getUserId());
+    @DeleteMapping("{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
+    public void deletePatient(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal) {
+        service.deletePatient(userId);
     }
-
-//    @DeleteMapping("{userId}")
-//    @PreAuthorize("#userId == principal.getUserId()")
-//    public void deletePatient(@P("userId") @PathVariable  Long userId){
-//        service.deletePatient(userId);
-//    }
 }

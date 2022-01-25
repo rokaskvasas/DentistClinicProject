@@ -3,7 +3,6 @@ package eu.codeacademy.projecttooth.tooth.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "doctor_availability_service")
@@ -30,6 +29,6 @@ public class DoctorServiceAvailabilityEntity {
     @JoinColumn(name = "doctor_availability_id")
     private DoctorAvailabilityEntity doctorAvailability;
 
-    @OneToMany(mappedBy = "doctorServiceAvailability")
-    private Set<AppointmentEntity> appointments;
+//    @OneToMany(mappedBy = "doctorServiceAvailability")
+//    private Set<AppointmentEntity> appointments;
 }

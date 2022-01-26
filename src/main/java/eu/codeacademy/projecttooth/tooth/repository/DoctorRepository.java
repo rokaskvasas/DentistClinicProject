@@ -1,8 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.repository;
 
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
-import eu.codeacademy.projecttooth.tooth.model.Doctor;
-import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

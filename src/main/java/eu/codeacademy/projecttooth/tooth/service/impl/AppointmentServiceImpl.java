@@ -2,13 +2,11 @@ package eu.codeacademy.projecttooth.tooth.service.impl;
 
 import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
 import eu.codeacademy.projecttooth.tooth.entity.*;
-import eu.codeacademy.projecttooth.tooth.exception.IncorrectDoctorForAppointmentException;
 import eu.codeacademy.projecttooth.tooth.exception.IncorrectTimeException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
 import eu.codeacademy.projecttooth.tooth.repository.AppointmentRepository;
-import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
 import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.service.PatientService;
@@ -29,7 +27,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final AppointmentMapper appointmentMapper;
-    private final DoctorServiceAvailabilityRepository serviceAvailabilityRepository;
     private final DoctorServiceAvailabilityService doctorServiceAvailabilityService;
     private final PatientService patientService;
     private final ServiceService serviceService;
@@ -38,8 +35,14 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Page<Appointment> getAppointmentPageable(Long userId, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
-        Page<AppointmentEntity> pageable = appointmentRepository.findAllByPatientUserId(userId, page);
+        Page<AppointmentEntity> pageable;
+        pageable = findAllAppointments(userId, page);
         return pageable.map(appointmentMapper::createDtoModel);
+    }
+
+    private Page<AppointmentEntity> findAllAppointments(Long userId, Pageable page) {
+        Page<AppointmentEntity> pageable = appointmentRepository.findAllByPatientUserId(userId, page);
+        return pageable;
     }
 
     @Override
@@ -68,21 +71,14 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment createAppointment(Long userId, ModifyAppointmentDto payload) {
 
         PatientEntity patient = getPatientEntity(userId);
-        DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload);
+        DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload, userId);
         checkIfAppointmentTimeMatchesWithAvailability(payload, doctorServiceAvailability);
         reserveServiceAvailability(doctorServiceAvailability);
-        AppointmentEntity appointment = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
-        return appointmentMapper.createDtoModel(updateDatabase(appointment));
+        AppointmentEntity appointmentEntity = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
+        updateDatabase(appointmentEntity);
+        return createAppointmentModel(appointmentEntity);
     }
 
-    private AppointmentEntity updateDatabase(AppointmentEntity appointment) {
-        return appointmentRepository.saveAndFlush(appointment);
-    }
-
-    private void reserveServiceAvailability(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
-        doctorServiceAvailability.setReserved(true);
-        doctorServiceAvailabilityService.updateDoctorServiceAvailabilityToReservedAndSaveToDatabase(doctorServiceAvailability);
-    }
 
     @Override
     public void deleteExpiredAppointments() {
@@ -113,9 +109,6 @@ public class AppointmentServiceImpl implements AppointmentService {
     private AppointmentEntity updateEntity(Long userId, ModifyAppointmentDto appointmentDto) {
 
         AppointmentEntity appointment = getAppointmentEntity(userId, appointmentDto.getAppointmentId());
-        if (!checkIfAppointmentDoctorIsCorrect(userId, appointment.getDoctorServiceAvailability().getDoctorAvailabilityServiceId())) {
-            throw new IncorrectDoctorForAppointmentException("Wrong doctor for this appointment id: " + appointmentDto.getAppointmentId());
-        }
         appointment.setStartTime(appointmentDto.getStartTime());
         appointment.setEndTime(appointmentDto.getEndTime());
         ServiceEntity serviceEntity = getServiceEntity(appointmentDto);
@@ -137,14 +130,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         return serviceService.findServiceEntity(serviceId);
     }
 
-    private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(ModifyAppointmentDto payload) {
-        return serviceAvailabilityRepository.findById(payload.getDoctorServiceAvailabilityId())
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getDoctorServiceAvailabilityEntity' in AppointmentService with id:%s not found ", payload.getDoctorServiceAvailabilityId())));
+    private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(ModifyAppointmentDto payload, Long userId) {
+        return doctorServiceAvailabilityService.findDoctorServiceAvailabilityEntity(userId, payload.getDoctorServiceAvailabilityId());
     }
 
-    private boolean checkIfAppointmentDoctorIsCorrect(Long userId, Long doctorServiceAvailabilityId) {
-        return serviceAvailabilityRepository.findByUserAndServiceAvailabilityId(userId, doctorServiceAvailabilityId).isPresent();
-    }
 
     private Iterable<Long> getExpiredAppointmentsId() {
         return () -> appointmentRepository.findAll()
@@ -167,5 +156,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private Appointment createAppointmentModel(AppointmentEntity appointmentEntity) {
         return appointmentMapper.createDtoModel(appointmentEntity);
+    }
+
+    private AppointmentEntity updateDatabase(AppointmentEntity appointment) {
+        return appointmentRepository.saveAndFlush(appointment);
+    }
+
+    private void reserveServiceAvailability(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
+        doctorServiceAvailability.setReserved(true);
+        doctorServiceAvailabilityService.updateDoctorServiceAvailabilityToReservedAndSaveToDatabase(doctorServiceAvailability);
     }
 }

@@ -38,13 +38,13 @@ public class DoctorServiceImpl implements DoctorService {
 
     @Override
     public Doctor createDoctor(Doctor doctor) {
-        LocationEntity locationEntity = verifyIfLocationExist(doctor);
+        LocationEntity locationEntity = findLocation(doctor);
         DoctorEntity doctorEntity = createDoctorEntity(doctor, locationEntity);
-        emailService.send("DocBot@dentistClinic.com",
-                String.format("new doctor with email: %s and license %s waiting for verification", doctor.getEmail(), doctor.getDoctorLicense()),
-                "New doctor register");
-        return createDoctorModel(updateDatabase(doctorEntity));
+        sendEmailNotificationAboutNewDoctor(doctor);
+        updateDatabase(doctorEntity);
+        return createDoctorModel(doctorEntity);
     }
+
 
     @Override
     public Doctor getDoctorByUserId(Long userId) {
@@ -76,9 +76,11 @@ public class DoctorServiceImpl implements DoctorService {
     @Override
     public Doctor verifyDoctor(Long doctorId) {
         DoctorEntity doctorEntity = verifyDoctorEntity(doctorId);
-        emailService.send(doctorEntity.getUser().getEmail(), "Congratulations you've been verified", "Verification");
-        return doctorMapper.createModel(updateDatabase(doctorEntity));
+        sendVerificationEmailToDoctor(doctorEntity);
+        updateDatabase(doctorEntity);
+        return createDoctorModel(doctorEntity);
     }
+
 
     private DoctorEntity verifyDoctorEntity(Long doctorId) {
         DoctorEntity doctorEntity = findDoctorEntity(doctorId);
@@ -116,14 +118,8 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorEntity;
     }
 
-    private LocationEntity verifyIfLocationExist(Doctor doctor) {
-
-        LocationEntity locationEntity = locationService.getLocationEntity(doctor.getLocationId());
-        if (Objects.isNull(locationEntity)) {
-
-            throw new ObjectNotFoundException(String.format("Location by id%s not found", doctor.getLocationId()));
-        }
-        return locationEntity;
+    private LocationEntity findLocation(Doctor doctor) {
+        return locationService.getLocationEntity(doctor.getLocationId());
     }
 
     private DoctorEntity updateDatabase(DoctorEntity doctorEntity) {
@@ -143,4 +139,15 @@ public class DoctorServiceImpl implements DoctorService {
         }
         return pageable;
     }
+
+    private void sendVerificationEmailToDoctor(DoctorEntity doctorEntity) {
+        emailService.send(doctorEntity.getUser().getEmail(), "Congratulations you've been verified", "Verification");
+    }
+
+    private void sendEmailNotificationAboutNewDoctor(Doctor doctor) {
+        emailService.send("DocBot@dentistClinic.com",
+                String.format("new doctor with email: %s and license %s waiting for verification", doctor.getEmail(), doctor.getDoctorLicense()),
+                "New doctor register");
+    }
+
 }

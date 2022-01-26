@@ -9,8 +9,8 @@ import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
 import eu.codeacademy.projecttooth.tooth.repository.AppointmentRepository;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
-import eu.codeacademy.projecttooth.tooth.repository.ServiceRepository;
 import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
+import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.service.PatientService;
 import eu.codeacademy.projecttooth.tooth.service.ServiceService;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final AppointmentMapper appointmentMapper;
     private final DoctorServiceAvailabilityRepository serviceAvailabilityRepository;
-    private final ServiceRepository serviceRepository;
+    private final DoctorServiceAvailabilityService doctorServiceAvailabilityService;
     private final PatientService patientService;
     private final ServiceService serviceService;
 
@@ -81,7 +81,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private void reserveServiceAvailability(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
         doctorServiceAvailability.setReserved(true);
-        serviceAvailabilityRepository.saveAndFlush(doctorServiceAvailability);
+        doctorServiceAvailabilityService.updateDoctorServiceAvailabilityToReservedAndSaveToDatabase(doctorServiceAvailability);
     }
 
     @Override
@@ -134,8 +134,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private ServiceEntity getServiceEntity(ModifyAppointmentDto appointment) {
         Long serviceId = appointment.getServiceId();
-        return serviceRepository.findById(serviceId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'updateEntity' in AppointmentService with id:%s not found", serviceId)));
+        return serviceService.findServiceEntity(serviceId);
     }
 
     private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(ModifyAppointmentDto payload) {

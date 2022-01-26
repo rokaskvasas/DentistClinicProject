@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Secured({"ROLE_DOCTOR", "ROLE_ADMIN"})
@@ -17,15 +18,17 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class DoctorServiceAvailabilityController {
 
-    private final DoctorServiceAvailabilityService service;
+    private final DoctorServiceAvailabilityService doctorServiceAvailabilityService;
 
 
     @PreAuthorize("hasAnyRole('ROLE_PATIENT','ROLE_ADMIN')")
     @GetMapping("/available")
     public Page<DoctorServiceAvailability> getAllDoctorAvailabilityServiceListAsPatientAndAdmin(@AuthenticationPrincipal UserPrincipal principal,
                                                                                                 @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                                                                                @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
-        return service.getAvailabilityServiceAsPage(principal, pageNumber, pageSize);
+                                                                                                @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize,
+                                                                                                @RequestParam(name = "location", required = false, defaultValue = "all") String location,
+                                                                                                @RequestParam(name = "service", required = false, defaultValue = "all") String service) {
+        return doctorServiceAvailabilityService.getAvailabilityServiceAsPatientAndAdmin(principal, pageNumber, pageSize, location, service);
     }
 
 
@@ -33,30 +36,30 @@ public class DoctorServiceAvailabilityController {
     public Page<DoctorServiceAvailability> getAllDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
                                                                            @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
                                                                            @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
-        return service.getAvailabilityServiceAsPage(principal, pageNumber, pageSize);
+        return doctorServiceAvailabilityService.getAvailabilityServiceAsPage(principal, pageNumber, pageSize);
     }
 
 
     @GetMapping("/{id}")
     public DoctorServiceAvailability getDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
                                                                   @PathVariable(name = "id") Long availabilityServiceId) {
-        return service.getAvailabilityService(principal.getUserId(), availabilityServiceId);
+        return doctorServiceAvailabilityService.getAvailabilityService(principal.getUserId(), availabilityServiceId);
     }
 
     @PostMapping
     public DoctorServiceAvailability createDoctorServiceAvailability(@AuthenticationPrincipal UserPrincipal principal,
-                                                                     @RequestBody ModifyDoctorServiceAvailabilityDto payload) {
-        return service.createAvailabilityService(payload, principal.getUserId());
+                                                                     @Validated @RequestBody ModifyDoctorServiceAvailabilityDto payload) {
+        return doctorServiceAvailabilityService.createAvailabilityService(payload, principal.getUserId());
     }
 
     @PutMapping
     public DoctorServiceAvailability updateDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
                                                                      @RequestBody ModifyDoctorServiceAvailabilityDto doctorServiceAvailability) {
-        return service.updateAvailabilityService(doctorServiceAvailability, principal.getUserId());
+        return doctorServiceAvailabilityService.updateAvailabilityService(doctorServiceAvailability, principal.getUserId());
     }
 
     @DeleteMapping("/{id}")
     public Long deleteDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal, @PathVariable(name = "id") Long serviceId) {
-        return service.deleteAvailabilityService(serviceId, principal);
+        return doctorServiceAvailabilityService.deleteAvailabilityService(serviceId, principal);
     }
 }

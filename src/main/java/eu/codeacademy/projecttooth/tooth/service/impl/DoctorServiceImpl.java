@@ -13,14 +13,13 @@ import eu.codeacademy.projecttooth.tooth.security.PasswordService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
 import eu.codeacademy.projecttooth.tooth.service.LocationService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -67,14 +66,17 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public List<Doctor> getUnverifiedDoctors(String approved, int pageNumber, int pageSize) {
+    public Page<Doctor> findAllDoctorsByStatus(String status, int pageNumber, int pageSize) {
         Pageable page = PageRequest.of(pageNumber, pageSize);
-        return doctorRepository.findAll().stream().filter(e -> e.getStatus().toString().equals(approved)).map(doctorMapper::createModel).collect(Collectors.toUnmodifiableList());
+        Page<DoctorEntity> pageable = findAllDoctorsByStatus(status, page);
+        return pageable.map(this::createDoctorModel);
     }
+
 
     @Override
     public Doctor verifyDoctor(Long doctorId) {
         DoctorEntity doctorEntity = verifyDoctorEntity(doctorId);
+        emailService.send(doctorEntity.getUser().getEmail(), "Congratulations you've been verified", "Verification");
         return doctorMapper.createModel(updateDatabase(doctorEntity));
     }
 
@@ -130,5 +132,15 @@ public class DoctorServiceImpl implements DoctorService {
 
     private Doctor createDoctorModel(DoctorEntity entity) {
         return doctorMapper.createModel(entity);
+    }
+
+    private Page<DoctorEntity> findAllDoctorsByStatus(String status, Pageable page) {
+        Page<DoctorEntity> pageable;
+        if (status.equals("UNVERIFIED")) {
+            pageable = doctorRepository.findAllDoctorsByStatus(StatusEnum.UNVERIFIED, page);
+        } else {
+            pageable = doctorRepository.findAllDoctorsByStatus(StatusEnum.VERIFIED, page);
+        }
+        return pageable;
     }
 }

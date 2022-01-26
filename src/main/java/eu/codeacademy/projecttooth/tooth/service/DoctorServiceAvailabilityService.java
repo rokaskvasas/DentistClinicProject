@@ -20,8 +20,11 @@ public interface DoctorServiceAvailabilityService {
 
     DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId);
 
+    DoctorServiceAvailabilityEntity findDoctorServiceAvailabilityEntity(Long userId, Long availabilityServiceId);
 
     void deleteExpiredServiceAvailability();
 
     void updateDoctorServiceAvailabilityToReservedAndSaveToDatabase(DoctorServiceAvailabilityEntity doctorServiceAvailability);
+
+    Page<DoctorServiceAvailability> getAvailabilityServiceAsPatientAndAdmin(UserPrincipal principal, int pageNumber, int pageSize, String location, String service);
 }

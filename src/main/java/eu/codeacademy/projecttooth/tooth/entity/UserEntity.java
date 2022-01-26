@@ -2,8 +2,10 @@ package eu.codeacademy.projecttooth.tooth.entity;
 
 
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.util.Date;
 
 
 @Entity
@@ -37,5 +39,11 @@ public class UserEntity {
 
     @Column(name = "role_name")
     private String role;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "created_at")
+    private Date createdAt;
+
 
 }

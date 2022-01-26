@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
+import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.exception.IncorrectTimeException;
@@ -59,17 +60,25 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     @Override
-    public DoctorAvailability createAvailability(DoctorAvailability doctorAvailability, Long userId) {
-        availabilityTimeCheck(doctorAvailability);
-        DoctorAvailabilityEntity doctorAvailabilityEntity = createDoctorAvailabilityEntity(doctorAvailability, userId);
+    public DoctorAvailability createAvailability(ModifyDoctorAvailabilityDto modifyDoctorAvailabilityDto, Long userId) {
+        availabilityTimeCheck(modifyDoctorAvailabilityDto);
+        availabilityDuplicateCheck(modifyDoctorAvailabilityDto, userId);
+        DoctorAvailabilityEntity doctorAvailabilityEntity = createDoctorAvailabilityEntity(modifyDoctorAvailabilityDto, userId);
         updateDatabase(doctorAvailabilityEntity);
         return createDoctorAvailabilityModel(doctorAvailabilityEntity);
     }
 
+    private void availabilityDuplicateCheck(ModifyDoctorAvailabilityDto doctorAvailability, Long userId) {
+        LocalDateTime startTime = doctorAvailability.getStartTime();
+        if (availabilityRepository.findByUserIdAndStartTime(userId, startTime).isPresent()) {
+            throw new IncorrectTimeException("Doctor availability with this time already exists!");
+        }
+    }
+
 
     @Override
-    public DoctorAvailability updateAvailability(DoctorAvailability doctorAvailability, Long userId) {
-        return createDoctorAvailabilityModel(availabilityRepository.saveAndFlush(updateEntity(doctorAvailability, userId)));
+    public DoctorAvailability updateAvailability(ModifyDoctorAvailabilityDto doctorAvailabilityDto, Long userId) {
+        return createDoctorAvailabilityModel(availabilityRepository.saveAndFlush(updateEntity(doctorAvailabilityDto, userId)));
     }
 
     @Override
@@ -87,7 +96,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         }
     }
 
-    private DoctorAvailabilityEntity updateEntity(DoctorAvailability doctorAvailability, Long userId) {
+    private DoctorAvailabilityEntity updateEntity(ModifyDoctorAvailabilityDto doctorAvailability, Long userId) {
         availabilityTimeCheck(doctorAvailability);
         DoctorAvailabilityEntity entity = getDoctorAvailabilityEntity(doctorAvailability.getDoctorAvailabilityId(), userId);
         entity.setStartTime(doctorAvailability.getStartTime());
@@ -106,21 +115,21 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found", userId)));
     }
 
-    private void availabilityTimeCheck(DoctorAvailability doctorAvailability) {
-        if (!startAndEndTimeIsCorrect(doctorAvailability)) {
+    private void availabilityTimeCheck(ModifyDoctorAvailabilityDto modifyDoctorAvailabilityDto) {
+        if (!startAndEndTimeIsCorrect(modifyDoctorAvailabilityDto)) {
             throw new IncorrectTimeException("StartTime or endTime is incorrect");
         }
-        if (!timeIsInSameDay(doctorAvailability)) {
+        if (!timeIsInSameDay(modifyDoctorAvailabilityDto)) {
             throw new IncorrectTimeException("Method 'availabilityTimeCheck' dates are not the same");
         }
     }
 
-    private boolean timeIsInSameDay(DoctorAvailability doctorAvailability) {
+    private boolean timeIsInSameDay(ModifyDoctorAvailabilityDto doctorAvailability) {
         return doctorAvailability.getStartTime().toLocalDate().isEqual(doctorAvailability.getEndTime().toLocalDate());
     }
 
-    private boolean startAndEndTimeIsCorrect(DoctorAvailability doctorAvailability) {
-        return doctorAvailability.getStartTime().getHour() <= (doctorAvailability.getEndTime().getHour());
+    private boolean startAndEndTimeIsCorrect(ModifyDoctorAvailabilityDto modifyDoctorAvailabilityDto) {
+        return modifyDoctorAvailabilityDto.getStartTime().getHour() <= (modifyDoctorAvailabilityDto.getEndTime().getHour());
     }
 
 
@@ -139,7 +148,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         return mapper.createModel(entity);
     }
 
-    private DoctorAvailabilityEntity createDoctorAvailabilityEntity(DoctorAvailability doctorAvailability, Long userId) {
+    private DoctorAvailabilityEntity createDoctorAvailabilityEntity(ModifyDoctorAvailabilityDto doctorAvailability, Long userId) {
         DoctorEntity doctorEntity = getDoctorEntityByUserId(userId);
         DoctorAvailabilityEntity doctorAvailabilityEntity = mapper.createEntity(doctorAvailability);
         doctorAvailabilityEntity.setDoctorEntity(doctorEntity);

@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
+import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityService;
@@ -32,14 +33,14 @@ public class DoctorAvailabilityController {
 
     @PostMapping
     public DoctorAvailability createDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
-                                                       @RequestBody DoctorAvailability doctorAvailability) {
-        return service.createAvailability(doctorAvailability, principal.getUserId());
+                                                       @RequestBody ModifyDoctorAvailabilityDto doctorAvailabilityDto) {
+        return service.createAvailability(doctorAvailabilityDto, principal.getUserId());
     }
 
     @PutMapping
     public DoctorAvailability updateDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
-                                                       @RequestBody DoctorAvailability doctorAvailability) {
-        return service.updateAvailability(doctorAvailability, principal.getUserId());
+                                                       @RequestBody ModifyDoctorAvailabilityDto doctorAvailabilityDto) {
+        return service.updateAvailability(doctorAvailabilityDto, principal.getUserId());
     }
 
     @DeleteMapping("{id}")

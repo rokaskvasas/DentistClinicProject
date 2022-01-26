@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service;
 
+import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
@@ -9,9 +10,9 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DoctorAvailabilityService {
 
-    DoctorAvailability createAvailability(DoctorAvailability doctorAvailability, Long userId);
+    DoctorAvailability createAvailability(ModifyDoctorAvailabilityDto doctorAvailability, Long userId);
 
-    DoctorAvailability updateAvailability(DoctorAvailability doctorAvailability, Long userId);
+    DoctorAvailability updateAvailability(ModifyDoctorAvailabilityDto doctorAvailability, Long userId);
 
     Long deleteAvailability(Long doctorAvailabilityId, UserPrincipal principal);
 

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,6 @@ public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvaila
     @Query("select da from DoctorAvailabilityEntity da left join DoctorEntity doc on doc.doctorId = da.doctorEntity.doctorId where doc.user.userId = ?1 ")
     Page<DoctorAvailabilityEntity> findAllByUserId(Long userId, Pageable pageable);
 
+    @Query("select da from DoctorAvailabilityEntity da where da.doctorEntity.user.userId =?1 and da.startTime=?2")
+    Optional<DoctorAvailabilityEntity> findByUserIdAndStartTime(Long userId, LocalDateTime startTime);
 }

@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
+import eu.codeacademy.projecttooth.tooth.email.EmailService;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
@@ -34,10 +35,15 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final LocationService locationService;
 
+    private final EmailService emailService;
+
     @Override
     public Doctor createDoctor(Doctor doctor) {
         LocationEntity locationEntity = verifyIfLocationExist(doctor);
         DoctorEntity doctorEntity = createDoctorEntity(doctor, locationEntity);
+        emailService.send("DocBot@dentistClinic.com",
+                String.format("new doctor with email: %s and license %s waiting for verification", doctor.getEmail(), doctor.getDoctorLicense()),
+                "New doctor register");
         return createDoctorModel(updateDatabase(doctorEntity));
     }
 

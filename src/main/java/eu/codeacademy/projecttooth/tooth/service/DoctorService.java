@@ -2,6 +2,7 @@ package eu.codeacademy.projecttooth.tooth.service;
 
 
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ public interface DoctorService {
 
     void deleteDoctor(Long userId);
 
-    List<Doctor> getUnverifiedDoctors(String approved, int pageNumber, int pageSize);
+    Page<Doctor> findAllDoctorsByStatus(String status, int pageNumber, int pageSize);
 
     Doctor verifyDoctor(Long doctorId);
 }

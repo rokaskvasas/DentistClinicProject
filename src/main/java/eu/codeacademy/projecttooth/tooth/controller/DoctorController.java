@@ -4,12 +4,11 @@ import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Secured({"ROLE_DOCTOR", "ROLE_ADMIN"})
 @RestController
@@ -45,10 +44,10 @@ public class DoctorController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping("/admin/list")
-    public List<Doctor> getUnverifiedDoctors(@RequestParam(name = "approved", required = false, defaultValue = "UNVERIFIED") String approved,
-                                             @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
-                                             @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
-        return doctorService.getUnverifiedDoctors(approved, pageNumber, pageSize);
+    public Page<Doctor> findAllDoctorsByStatus(@RequestParam(name = "status", required = false, defaultValue = "UNVERIFIED") String status,
+                                               @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
+                                               @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
+        return doctorService.findAllDoctorsByStatus(status, pageNumber, pageSize);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

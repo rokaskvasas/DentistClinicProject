@@ -1,5 +1,5 @@
 package eu.codeacademy.projecttooth.tooth.email;
 
 public interface EmailService {
-    void send(String to, String email, String subject);
+    void send(String to, String emailText, String subject);
 }

@@ -56,6 +56,11 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         availabilityServiceRepository.deleteAllById(getExpiredServices());
     }
 
+    @Override
+    public void updateDoctorServiceAvailabilityToReservedAndSaveToDatabase(DoctorServiceAvailabilityEntity entity) {
+        updateDatabase(entity);
+    }
+
 
     @Override
     public DoctorServiceAvailability createAvailabilityService(ModifyDoctorServiceAvailabilityDto serviceAvailability, Long userId) {

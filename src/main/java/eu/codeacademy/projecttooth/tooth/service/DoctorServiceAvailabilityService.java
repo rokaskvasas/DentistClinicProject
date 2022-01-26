@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.service;
 
 import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorServiceAvailabilityDto;
+import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,8 @@ public interface DoctorServiceAvailabilityService {
 
     DoctorServiceAvailability getAvailabilityService(Long userId, Long availabilityServiceId);
 
-//    Page<DoctorServiceAvailability> getAvailabilityServicePageableAsPatient(int pageNumber, int pageSize);
 
     void deleteExpiredServiceAvailability();
+
+    void updateDoctorServiceAvailabilityToReservedAndSaveToDatabase(DoctorServiceAvailabilityEntity doctorServiceAvailability);
 }

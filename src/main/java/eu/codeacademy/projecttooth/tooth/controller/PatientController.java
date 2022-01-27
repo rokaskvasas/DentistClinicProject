@@ -32,7 +32,6 @@ public class PatientController {
     }
 
     @PutMapping
-
     public Patient updatePatient(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Patient patient) {
         return service.updatePatient(patient, principal.getUserId());
     }

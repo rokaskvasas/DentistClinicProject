@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityResponse;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
@@ -30,4 +31,11 @@ public class DoctorServiceAvailabilityMapper {
     }
 
 
+    public DoctorServiceAvailabilityResponse createResponseModel(DoctorServiceAvailabilityEntity entity) {
+        return DoctorServiceAvailabilityResponse.builder()
+                .doctorServiceAvailabilityId(entity.getDoctorAvailabilityServiceId())
+                .doctorAvailabilityDto(availabilityMapper.createDtoModel(entity.getDoctorAvailability()))
+                .service(serviceMapper.createModel(entity.getService())).build();
+
+    }
 }

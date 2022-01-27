@@ -36,4 +36,20 @@ public class DoctorAvailabilityEntity {
 
     @OneToMany(mappedBy = "doctorAvailability", cascade = CascadeType.ALL)
     private List<DoctorServiceAvailabilityEntity> doctorServiceAvailability;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updated_at;
+
+    @PrePersist
+    public void setCreatedAtDateTime() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updated_at = LocalDateTime.now();
+    }
 }

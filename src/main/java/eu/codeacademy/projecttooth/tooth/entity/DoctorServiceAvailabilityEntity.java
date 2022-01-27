@@ -3,6 +3,7 @@ package eu.codeacademy.projecttooth.tooth.entity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "doctor_availability_service")
@@ -31,4 +32,20 @@ public class DoctorServiceAvailabilityEntity {
 
 //    @OneToMany(mappedBy = "doctorServiceAvailability")
 //    private Set<AppointmentEntity> appointments;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updated_at;
+
+    @PrePersist
+    public void setCreatedAtDateTime() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updated_at = LocalDateTime.now();
+    }
 }

@@ -19,7 +19,6 @@ public class AppointmentEntity {
     @Column(name = "id", nullable = false)
     private Long appointmentId;
 
-
     @Column(name = "start_time")
     private LocalDateTime startTime;
 
@@ -34,5 +33,20 @@ public class AppointmentEntity {
     @JoinColumn(name = "patient_id")
     private PatientEntity patient;
 
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updated_at;
+
+    @PrePersist
+    public void setCreatedAtDateTime() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updated_at = LocalDateTime.now();
+    }
 
 }

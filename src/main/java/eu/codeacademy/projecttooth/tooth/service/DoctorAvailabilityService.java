@@ -1,8 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.service;
 
-import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorAvailabilityDto;
+import eu.codeacademy.projecttooth.tooth.dto.DoctorAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
-import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -10,15 +9,15 @@ import org.springframework.stereotype.Service;
 @Service
 public interface DoctorAvailabilityService {
 
-    DoctorAvailability createAvailability(ModifyDoctorAvailabilityDto doctorAvailability, Long userId);
+    DoctorAvailabilityDto createAvailability(DoctorAvailabilityDto doctorAvailability, Long userId);
 
-    DoctorAvailability updateAvailability(ModifyDoctorAvailabilityDto doctorAvailability, Long userId);
+    DoctorAvailabilityDto updateAvailability(DoctorAvailabilityDto doctorAvailability, Long userId);
 
     Long deleteAvailability(Long doctorAvailabilityId, UserPrincipal principal);
 
-    DoctorAvailability getAvailability(Long availabilityId, UserPrincipal principal);
+    DoctorAvailabilityDto getAvailability(Long availabilityId, UserPrincipal principal);
 
-    Page<DoctorAvailability> getAvailabilityPageable(UserPrincipal principal, int pageNumber, int pageSize);
+    Page<DoctorAvailabilityDto> getAvailabilityPageable(UserPrincipal principal, int pageNumber, int pageSize);
 
 
     void deleteExpiredAvailabilities();

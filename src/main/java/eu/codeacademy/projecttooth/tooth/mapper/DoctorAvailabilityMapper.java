@@ -1,6 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
-import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorAvailabilityDto;
+import eu.codeacademy.projecttooth.tooth.dto.DoctorAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.model.DoctorAvailability;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ public class DoctorAvailabilityMapper {
 
     private final DoctorMapper doctorMapper;
 
-    public DoctorAvailabilityEntity createEntity(ModifyDoctorAvailabilityDto doctorAvailability) {
+    public DoctorAvailabilityEntity createEntity(DoctorAvailabilityDto doctorAvailability) {
         return DoctorAvailabilityEntity.builder()
                 .startTime(doctorAvailability.getStartTime())
                 .endTime(doctorAvailability.getEndTime())
@@ -28,5 +28,10 @@ public class DoctorAvailabilityMapper {
                 .build();
     }
 
-
+    public DoctorAvailabilityDto createDtoModel(DoctorAvailabilityEntity entity){
+        return DoctorAvailabilityDto.builder()
+                .doctorAvailabilityId(entity.getDoctorAvailabilityId())
+                .startTime(entity.getStartTime())
+                .endTime(entity.getEndTime()).build();
+    }
 }

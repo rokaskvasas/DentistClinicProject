@@ -1,9 +1,13 @@
 package eu.codeacademy.projecttooth.tooth.dto;
 
 import eu.codeacademy.projecttooth.tooth.model.modelenum.QualificationEnum;
-import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
+import eu.codeacademy.projecttooth.tooth.validation.ValidOnlyAlphabets;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -12,22 +16,30 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class DoctorDto {
 
+
     private Long doctorId;
 
+    @NotBlank
+    @Size(min = 2, max = 30)
+    @ValidOnlyAlphabets
+    @NotNull
     private String firstName;
 
+    @NotBlank
+    @Size(min = 2, max = 30)
+    @ValidOnlyAlphabets
+    @NotNull
     private String lastName;
 
+    @Pattern(regexp = "^(\\+3706)?\\d{7}$")
+    private String phoneNumber;
+
+    @NotBlank
+    @Size(min = 5, max = 70)
     private String doctorLicense;
 
-    private StatusEnum status;
-
+    @NotNull
     private QualificationEnum qualification;
 
-    private String locationCity;
-
-    private String locationName;
-
-    private String phoneNumber;
 
 }

@@ -1,4 +1,4 @@
-package eu.codeacademy.projecttooth.tooth.email;
+package eu.codeacademy.projecttooth.tooth.dto;
 
 import lombok.Data;
 

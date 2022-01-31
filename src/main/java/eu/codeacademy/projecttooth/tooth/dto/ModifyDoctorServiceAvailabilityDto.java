@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -12,8 +14,8 @@ import lombok.NoArgsConstructor;
 public class ModifyDoctorServiceAvailabilityDto {
 
     private Long doctorServiceAvailabilityId;
-
+    @NotNull
     private Long doctorAvailabilityId;
-
+    @NotNull
     private Long serviceId;
 }

@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
@@ -8,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @Secured({"ROLE_DOCTOR", "ROLE_ADMIN"})
@@ -32,14 +35,16 @@ public class DoctorController {
     }
 
 
-    @PutMapping
-    public Doctor updateDoctor(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Doctor doctor) {
-        return doctorService.updateDoctor(doctor, principal.getUserId());
+    @PutMapping("/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
+    public Doctor updateDoctor(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal, @Validated @RequestBody DoctorDto doctorDto) {
+        return doctorService.updateDoctor(doctorDto, userId);
     }
 
-    @DeleteMapping
-    public void deleteDoctor(@AuthenticationPrincipal UserPrincipal principal) {
-        doctorService.deleteDoctor(principal.getUserId());
+    @DeleteMapping("/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
+    public Long deleteDoctor(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal) {
+        return doctorService.deleteDoctor(userId);
     }
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")

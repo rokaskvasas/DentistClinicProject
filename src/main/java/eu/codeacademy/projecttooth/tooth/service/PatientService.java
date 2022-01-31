@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service;
 
+import eu.codeacademy.projecttooth.tooth.dto.PatientDto;
 import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
 import eu.codeacademy.projecttooth.tooth.model.Patient;
 import org.springframework.stereotype.Service;
@@ -10,7 +11,7 @@ public interface PatientService {
 
     Patient getPatient(Long userId);
 
-    Patient updatePatient(Patient patient, Long userId);
+    Patient updatePatient(PatientDto patientDto, Long userId);
 
     PatientEntity getPatientEntity(Long userId);
 

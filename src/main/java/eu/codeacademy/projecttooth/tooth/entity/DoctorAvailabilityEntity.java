@@ -35,7 +35,7 @@ public class DoctorAvailabilityEntity {
     private DoctorEntity doctorEntity;
 
     @OneToMany(mappedBy = "doctorAvailability", cascade = CascadeType.ALL)
-    private List<DoctorServiceAvailabilityEntity> doctorServiceAvailability;
+    private Set<DoctorServiceAvailabilityEntity> doctorServiceAvailability;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

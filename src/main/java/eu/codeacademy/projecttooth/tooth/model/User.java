@@ -3,12 +3,16 @@ package eu.codeacademy.projecttooth.tooth.model;
 
 import eu.codeacademy.projecttooth.tooth.validation.ValidEmail;
 import eu.codeacademy.projecttooth.tooth.validation.ValidOnlyAlphabets;
+import eu.codeacademy.projecttooth.tooth.validation.ValidPassword;
+import eu.codeacademy.projecttooth.tooth.validation.ValidPhoneNumber;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -22,21 +26,28 @@ public abstract class User {
     @NotBlank
     @Size(min = 2, max = 30)
     @ValidOnlyAlphabets
+    @NotNull
     private String firstName;
 
     @NotBlank
     @Size(min = 2, max = 30)
     @ValidOnlyAlphabets
+    @NotNull
     private String lastName;
 
     @ValidEmail
+    @NotNull
+    @NotEmpty
     private String email;
 
     @NotBlank
-    @Size(min = 8, max = 10)
+    @ValidPhoneNumber
+    @NotNull
     private String phoneNumber;
+
     @NotBlank
-    @Size(min = 4, max = 30)
+    @ValidPassword
+    @NotNull
     private String password;
 
     private String role;

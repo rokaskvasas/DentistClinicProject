@@ -1,9 +1,9 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
+import eu.codeacademy.projecttooth.tooth.dto.PatientDto;
 import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.PatientMapper;
-import eu.codeacademy.projecttooth.tooth.mapper.UserMapper;
 import eu.codeacademy.projecttooth.tooth.model.Patient;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.repository.PatientRepository;
@@ -20,17 +20,16 @@ public class PatientServiceImpl implements PatientService {
 
     private final PatientMapper patientMapper;
 
-    private final UserMapper userMapper;
-
     private final PasswordService passwordService;
 
     @Override
     public Patient createPatient(Patient patient) {
-        patient.setPassword(passwordService.encode(patient.getPassword()));
-        patient.setRole(RoleEnum.ROLE_PATIENT.determinateRole());
-        return patientMapper.createModel(patientRepository.saveAndFlush(patientMapper.createEntity(userMapper.getUserEntity(patient))));
+        PatientEntity patientEntity = createPatientEntity(patient);
+        updateDatabase(patientEntity);
+        return createPatientModel(patientEntity);
 
     }
+
 
     @Override
     public Patient getPatient(Long userId) {
@@ -39,14 +38,17 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Patient updatePatient(Patient patient, Long userId) {
-        return patientMapper.createModel(patientRepository.saveAndFlush(updatePatientEntity(patient, userId)));
+    public Patient updatePatient(PatientDto patient, Long userId) {
+        PatientEntity patientEntity = updatePatientEntity(patient, userId);
+        updateDatabase(patientEntity);
+        return createPatientModel(patientEntity);
 
     }
 
     @Override
     public void deletePatient(Long userId) {
-        patientRepository.delete(getPatientEntity(userId));
+        PatientEntity patientEntity = getPatientEntity(userId);
+        patientRepository.delete(patientEntity);
     }
 
     @Override
@@ -55,12 +57,27 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Patient Entity with id:%s not found", userId)));
     }
 
-    private PatientEntity updatePatientEntity(Patient patient, Long userId) {
+    private PatientEntity updatePatientEntity(PatientDto patientDto, Long userId) {
         PatientEntity entity = getPatientEntity(userId);
-        entity.getUser().setFirstName(patient.getFirstName());
-        entity.getUser().setLastName(patient.getLastName());
-        entity.getUser().setPhoneNumber(patient.getPhoneNumber());
+        entity.getUser().setFirstName(patientDto.getFirstName());
+        entity.getUser().setLastName(patientDto.getLastName());
+        entity.getUser().setPhoneNumber(patientDto.getPhoneNumber());
         return entity;
     }
+
+    private Patient createPatientModel(PatientEntity patientEntity) {
+        return patientMapper.createModel(patientEntity);
+    }
+
+    private void updateDatabase(PatientEntity patientEntity) {
+        patientRepository.saveAndFlush(patientEntity);
+    }
+
+    private PatientEntity createPatientEntity(Patient patient) {
+        patient.setPassword(passwordService.encode(patient.getPassword()));
+        patient.setRole(RoleEnum.ROLE_PATIENT.determinateRole());
+        return patientMapper.createEntity(patient);
+    }
+
 
 }

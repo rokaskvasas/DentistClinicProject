@@ -3,17 +3,21 @@ package eu.codeacademy.projecttooth.tooth.mapper;
 import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.model.Patient;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class PatientMapper {
 
-    public PatientEntity createEntity(UserEntity userEntity){
+    private final UserMapper userMapper;
+
+    public PatientEntity createEntity(Patient patient){
 
         return PatientEntity.builder()
-                .user(userEntity).build();
+                .user(userMapper.getUserEntity(patient)).build();
     }
     public Patient createModel(PatientEntity entity){
         Patient.PatientBuilder<?, ?> builder = Patient.builder();

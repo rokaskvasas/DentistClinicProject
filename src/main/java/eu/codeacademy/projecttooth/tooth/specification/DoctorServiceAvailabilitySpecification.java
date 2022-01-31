@@ -1,8 +1,8 @@
 package eu.codeacademy.projecttooth.tooth.specification;
 
 import eu.codeacademy.projecttooth.tooth.entity.*;
+import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailabilitySearchCriteria;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.ServiceEnum;
-import eu.codeacademy.projecttooth.tooth.test.DSASearchCriteria;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -47,8 +47,7 @@ public class DoctorServiceAvailabilitySpecification {
         }
         return ((root, query, criteriaBuilder) -> {
             Join<DoctorServiceAvailabilityEntity, DoctorAvailabilityEntity> availabilityEntityJoin = root.join("doctorAvailability");
-            Predicate afterStartTime = criteriaBuilder.greaterThan(availabilityEntityJoin.get("startTime"), startTime);
-            return afterStartTime;
+            return criteriaBuilder.greaterThan(availabilityEntityJoin.get("startTime"), startTime);
         });
     }
 
@@ -58,8 +57,7 @@ public class DoctorServiceAvailabilitySpecification {
         }
         return (root, query, criteriaBuilder) -> {
             Join<DoctorServiceAvailabilityEntity, DoctorAvailabilityEntity> availabilityEntityJoin = root.join("doctorAvailability");
-            Predicate beforeEndTime = criteriaBuilder.lessThan(availabilityEntityJoin.get("endTime"), endTime);
-            return beforeEndTime;
+            return criteriaBuilder.lessThan(availabilityEntityJoin.get("endTime"), endTime);
         };
     }
 
@@ -72,10 +70,10 @@ public class DoctorServiceAvailabilitySpecification {
             Join<DoctorServiceAvailabilityEntity, DoctorAvailabilityEntity> availabilityEntityJoin = root.join("doctorAvailability");
             Join<DoctorAvailabilityEntity, DoctorEntity> doctorEntityJoin = availabilityEntityJoin.join("doctorEntity");
             Join<DoctorEntity, UserEntity> userEntityJoin = doctorEntityJoin.join("user");
-            Predicate firstName = criteriaBuilder.like(userEntityJoin.get("firstName"), "%" + doctorFirstName + "%");
-            return firstName;
+            return criteriaBuilder.like(userEntityJoin.get("firstName"), "%" + doctorFirstName + "%");
         };
     }
+
     private Specification<DoctorServiceAvailabilityEntity> findByDoctorLastName(String doctorLastName) {
         if (Objects.isNull(doctorLastName)) {
             return null;
@@ -84,49 +82,22 @@ public class DoctorServiceAvailabilitySpecification {
             Join<DoctorServiceAvailabilityEntity, DoctorAvailabilityEntity> availabilityEntityJoin = root.join("doctorAvailability");
             Join<DoctorAvailabilityEntity, DoctorEntity> doctorEntityJoin = availabilityEntityJoin.join("doctorEntity");
             Join<DoctorEntity, UserEntity> userEntityJoin = doctorEntityJoin.join("user");
-            Predicate lastName = criteriaBuilder.like(userEntityJoin.get("lastName"), "%" + doctorLastName + "%");
-            return lastName;
+            return criteriaBuilder.like(userEntityJoin.get("lastName"), "%" + doctorLastName + "%");
         };
     }
-    private Specification<DoctorServiceAvailabilityEntity> availableServices(){
+
+    private Specification<DoctorServiceAvailabilityEntity> availableServices() {
         return (root, query, criteriaBuilder) -> criteriaBuilder.isFalse(root.get("reserved"));
     }
-//    public Specification<DoctorServiceAvailabilityEntity> findDoctorByFirstOrLastName(String doctorFirstName, String doctorLastName) {
-//        if (Objects.isNull(doctorFirstName) && Objects.isNull(doctorLastName)) {
-//            return null;
-//        }
-//        return (root, query, criteriaBuilder) -> {
-//            List<Predicate> predicates = new ArrayList<>();
-//            Join<DoctorServiceAvailabilityEntity, DoctorAvailabilityEntity> availabilityEntityJoin = root.join("doctorAvailability");
-//            Join<DoctorAvailabilityEntity, DoctorEntity> doctorEntityJoin = availabilityEntityJoin.join("doctorEntity");
-//            Join<DoctorEntity, UserEntity> userEntityJoin = doctorEntityJoin.join("user");
-//            predicates.add(criteriaBuilder.like(userEntityJoin.get("firstName"), "%" + doctorFirstName + "%"));
-//            predicates.add(criteriaBuilder.like(userEntityJoin.get("lastName"), "%" + doctorLastName + "%"));
-//            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-//        };
-//    }
 
-
-    public Specification<DoctorServiceAvailabilityEntity> findAllWithFilters(String city, ServiceEnum serviceName, LocalDateTime startTime, LocalDateTime endTime, String doctorFirstName, String doctorLastName) {
+    public Specification<DoctorServiceAvailabilityEntity> findAllWithFilters(DoctorServiceAvailabilitySearchCriteria doctorServiceAvailabilitySearchCriteria) {
         return
-                Specification.where(getService(serviceName))
-                        .and(getLocation(city))
-                        .and(getAfterStartTime(startTime))
-                        .and(getBeforeEndTime(endTime))
-//                        .and(findDoctorByFirstOrLastName(doctorFirstName,doctorLastName));
-                        .and(findByDoctorFirstName(doctorFirstName))
-                        .and(findByDoctorLastName(doctorLastName))
-                        .and(availableServices());
-
-    }
-    public Specification<DoctorServiceAvailabilityEntity> findAllWithFiltersTEST(DSASearchCriteria criteria) {
-        return
-                Specification.where(getService(criteria.getService()))
-                        .and(getLocation(criteria.getCity()))
-                        .and(getAfterStartTime(criteria.getStartTime()))
-                        .and(getBeforeEndTime(criteria.getEndTime()))
-                        .and(findByDoctorFirstName(criteria.getFirstName()))
-                        .and(findByDoctorLastName(criteria.getLastName()))
+                Specification.where(getService(doctorServiceAvailabilitySearchCriteria.getService()))
+                        .and(getLocation(doctorServiceAvailabilitySearchCriteria.getCity()))
+                        .and(getAfterStartTime(doctorServiceAvailabilitySearchCriteria.getStartTime()))
+                        .and(getBeforeEndTime(doctorServiceAvailabilitySearchCriteria.getEndTime()))
+                        .and(findByDoctorFirstName(doctorServiceAvailabilitySearchCriteria.getFirstName()))
+                        .and(findByDoctorLastName(doctorServiceAvailabilitySearchCriteria.getLastName()))
                         .and(availableServices());
 
     }

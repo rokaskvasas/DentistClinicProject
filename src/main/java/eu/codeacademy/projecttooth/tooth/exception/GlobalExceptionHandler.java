@@ -14,21 +14,25 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse userNotFound(ObjectNotFoundException e) {
+        log.error("Object not found", e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(EmailNotFoundException.class)
     public ErrorResponse emailNotFound(EmailNotFoundException e) {
+        log.error("Email not found", e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(IncorrectTimeException.class)
     public ErrorResponse incorrectAvailabilityTime(IncorrectTimeException e) {
-        return  new ErrorResponse(e.getMessage());
+        log.error("Incorrect availability time", e);
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler(QualificationException.class)
-    public ErrorResponse minimumQualification(QualificationException e){
+    public ErrorResponse minimumQualification(QualificationException e) {
+        log.error("minimum qualification ", e);
         return new ErrorResponse(e.getMessage());
     }
 

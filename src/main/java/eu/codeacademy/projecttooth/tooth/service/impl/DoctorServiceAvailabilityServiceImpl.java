@@ -50,12 +50,6 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         return pageable.map(this::createDoctorServiceAvailabilityResponseModel);
     }
 
-    @Override
-    public Page<DoctorServiceAvailability> getAvailabilityServiceAsPatientAndAdmin(UserPrincipal principal, int pageNumber, int pageSize) {
-        Pageable page = PageRequest.of(pageNumber, pageSize);
-        Page<DoctorServiceAvailabilityEntity> pageable = findDoctorServiceAvailabilityEntitiesByRole(principal, page);
-        return pageable.map(this::createDoctorServiceAvailabilityModel);
-    }
 
     @Override
     public Page<DoctorServiceAvailability> findAvailableDoctorServiceAvailablities(DoctorServiceAvailabilitySearchCriteria doctorServiceAvailabilitySearchCriteria, DoctorServiceAvailabilityPageHelper doctorServiceAvailabilityPageHelper) {

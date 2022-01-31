@@ -5,30 +5,30 @@ import eu.codeacademy.projecttooth.tooth.dto.ModifyDoctorServiceAvailabilityDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorServiceAvailabilityEntity;
 import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
+import eu.codeacademy.projecttooth.tooth.exception.DuplicateServiceException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
+import eu.codeacademy.projecttooth.tooth.helper.DoctorServiceAvailabilityPageHelper;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorServiceAvailabilityMapper;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
+import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailabilitySearchCriteria;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
-import eu.codeacademy.projecttooth.tooth.model.modelenum.ServiceEnum;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.service.ServiceService;
 import eu.codeacademy.projecttooth.tooth.specification.DoctorServiceAvailabilitySpecification;
-import eu.codeacademy.projecttooth.tooth.test.DSAPage;
-import eu.codeacademy.projecttooth.tooth.test.DSASearchCriteria;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +39,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     private final DoctorAvailabilityService doctorAvailabilityService;
     private final ServiceService serviceService;
     private final DoctorServiceAvailabilitySpecification specifications;
+    private final DoctorServiceAvailabilityPageHelper pageHelper;
 
 
     @Override
@@ -57,23 +58,11 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
     @Override
-    public Page<DoctorServiceAvailability> findAvailableDoctorServiceAvailablities(String city, ServiceEnum service, LocalDateTime startTime, LocalDateTime endTime, String doctorFirstName, String doctorLastName, DSAPage dsaPage) {
-        Pageable page = PageRequest.of(dsaPage.getPageNumber(), dsaPage.getPageSize());
+    public Page<DoctorServiceAvailability> findAvailableDoctorServiceAvailablities(DoctorServiceAvailabilitySearchCriteria doctorServiceAvailabilitySearchCriteria, DoctorServiceAvailabilityPageHelper doctorServiceAvailabilityPageHelper) {
+        Pageable page = pageHelper.getPageable(doctorServiceAvailabilityPageHelper);
         Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository
-                .findAll(specifications.findAllWithFilters(city, service, startTime, endTime, doctorFirstName, doctorLastName), page);
+                .findAll(specifications.findAllWithFilters(doctorServiceAvailabilitySearchCriteria), page);
         return pageable.map(this::createDoctorServiceAvailabilityModel);
-    }
-
-    @Override
-    public Page<DoctorServiceAvailability> testWithSearch(DSAPage dsaPage, DSASearchCriteria dsaSearchCriteria) {
-        Pageable page = getPageable(dsaPage);
-        Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository.findAll(specifications.findAllWithFiltersTEST(dsaSearchCriteria), page);
-        return pageable.map(this::createDoctorServiceAvailabilityModel);
-    }
-
-    private Pageable getPageable(DSAPage dsaPage) {
-        Sort sort = Sort.by(dsaPage.getSortDirection(), dsaPage.getSortBy());
-        return PageRequest.of(dsaPage.getPageNumber(), dsaPage.getPageSize(), sort);
     }
 
 
@@ -128,7 +117,8 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         return serviceId;
     }
 
-    private DoctorServiceAvailabilityEntity findDoctorServiceAvailabilityEntityById(Long serviceId) {
+    @Override
+    public DoctorServiceAvailabilityEntity findDoctorServiceAvailabilityEntityById(Long serviceId) {
         return availabilityServiceRepository.findById(serviceId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor service availability by id:%s not found", serviceId)));
     }
 
@@ -197,9 +187,17 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         Long doctorAvailabilityId = serviceAvailability.getDoctorAvailabilityId();
         ServiceEntity serviceEntity = getServiceEntity(serviceAvailability.getServiceId());
         DoctorAvailabilityEntity doctorAvailabilityEntity = getDoctorAvailabilityEntityByUserID(doctorAvailabilityId, userId);
+        checkIfServiceExist(doctorAvailabilityEntity, serviceAvailability);
         DoctorServiceAvailabilityEntity doctorServiceAvailabilityEntity = createDoctorServiceAvailabilityEntity(serviceEntity);
         doctorServiceAvailabilityEntity.setDoctorAvailability(doctorAvailabilityEntity);
         return doctorServiceAvailabilityEntity;
+    }
+
+    private void checkIfServiceExist(DoctorAvailabilityEntity entity, ModifyDoctorServiceAvailabilityDto serviceAvailabilityDto) {
+        Set<DoctorServiceAvailabilityEntity> doctorServiceAvailabilityEntitySet = entity.getDoctorServiceAvailability();
+        if (doctorServiceAvailabilityEntitySet.stream().anyMatch(entity1 -> entity1.getService().getServiceId().equals(serviceAvailabilityDto.getServiceId()))) {
+            throw new DuplicateServiceException(String.format("Service with id:%s already exist on this availability", serviceAvailabilityDto.getServiceId()));
+        }
     }
 
     private DoctorServiceAvailabilityEntity updateDatabase(DoctorServiceAvailabilityEntity entity) {

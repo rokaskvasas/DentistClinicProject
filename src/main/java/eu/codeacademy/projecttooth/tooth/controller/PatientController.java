@@ -1,5 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
+import eu.codeacademy.projecttooth.tooth.dto.PatientDto;
 import eu.codeacademy.projecttooth.tooth.model.Patient;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.PatientService;
@@ -8,6 +9,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -31,9 +33,10 @@ public class PatientController {
         return service.createPatient(patient);
     }
 
-    @PutMapping
-    public Patient updatePatient(@AuthenticationPrincipal UserPrincipal principal, @RequestBody Patient patient) {
-        return service.updatePatient(patient, principal.getUserId());
+    @PutMapping("/{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
+    public Patient updatePatient(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal, @Validated @RequestBody PatientDto patientDto) {
+        return service.updatePatient(patientDto, userId);
     }
 
     @DeleteMapping("{userId}")

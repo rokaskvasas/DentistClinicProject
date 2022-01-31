@@ -1,6 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.email.EmailService;
+import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
@@ -11,18 +11,20 @@ import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorRepository;
 import eu.codeacademy.projecttooth.tooth.security.PasswordService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
+import eu.codeacademy.projecttooth.tooth.service.EmailService;
 import eu.codeacademy.projecttooth.tooth.service.LocationService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DoctorServiceImpl implements DoctorService {
 
 
@@ -42,6 +44,7 @@ public class DoctorServiceImpl implements DoctorService {
         DoctorEntity doctorEntity = createDoctorEntity(doctor, locationEntity);
         sendEmailNotificationAboutNewDoctor(doctor);
         updateDatabase(doctorEntity);
+        log.debug("create doctor: {}", doctor);
         return createDoctorModel(doctorEntity);
     }
 
@@ -53,16 +56,20 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public Doctor updateDoctor(Doctor doctor, Long userId) {
-        DoctorEntity doctorEntity = updateDoctorEntity(doctor, userId);
+    public Doctor updateDoctor(DoctorDto doctorDto, Long userId) {
+        DoctorEntity doctorEntity = updateDoctorEntity(doctorDto, userId);
         updateDatabase(doctorEntity);
+        log.debug("Updated doctor: {}", doctorDto);
         return createDoctorModel(doctorEntity);
     }
 
     @Override
     @Transactional
-    public void deleteDoctor(Long userId) {
-        doctorRepository.removeByUser_UserId(userId);
+    public Long deleteDoctor(Long userId) {
+        DoctorEntity doctorEntity = findDoctorEntity(userId);
+        doctorRepository.delete(doctorEntity);
+        log.debug("Deleted doctor by userId:{}", userId);
+        return doctorEntity.getDoctorId();
     }
 
     @Override
@@ -78,6 +85,7 @@ public class DoctorServiceImpl implements DoctorService {
         DoctorEntity doctorEntity = verifyDoctorEntity(doctorId);
         sendVerificationEmailToDoctor(doctorEntity);
         updateDatabase(doctorEntity);
+        log.debug("Verified doctor by id:{}", doctorId);
         return createDoctorModel(doctorEntity);
     }
 
@@ -94,17 +102,17 @@ public class DoctorServiceImpl implements DoctorService {
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
     }
 
-    private DoctorEntity findDoctorEntityByUserid(Long doctorId) {
-        return doctorRepository.findDoctorByUserId(doctorId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
+    private DoctorEntity findDoctorEntityByUserid(Long userId) {
+        return doctorRepository.findDoctorByUserId(userId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by user id: %s not found", userId)));
     }
 
-    private DoctorEntity updateDoctorEntity(Doctor doctor, Long userId) {
+    private DoctorEntity updateDoctorEntity(DoctorDto doctorDto, Long userId) {
         DoctorEntity entity = findDoctorEntityByUserid(userId);
-        entity.setQualification(doctor.getQualification());
-        entity.setDoctorLicense(doctor.getDoctorLicense());
-        entity.getUser().setFirstName(doctor.getFirstName());
-        entity.getUser().setLastName(doctor.getLastName());
-        entity.getUser().setPhoneNumber(doctor.getPhoneNumber());
+        entity.setQualification(doctorDto.getQualification());
+        entity.setDoctorLicense(doctorDto.getDoctorLicense());
+        entity.getUser().setFirstName(doctorDto.getFirstName());
+        entity.getUser().setLastName(doctorDto.getLastName());
+        entity.getUser().setPhoneNumber(doctorDto.getPhoneNumber());
         return entity;
     }
 

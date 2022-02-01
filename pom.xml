@@ -26,6 +26,12 @@
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-jpamodelgen</artifactId>
+            <version>5.6.4.Final</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>
             <version>1.6.1</version>
@@ -107,6 +113,18 @@
                 <configuration>
                     <source>14</source>
                     <target>14</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.springframework.boot</groupId>
+                            <artifactId>spring-boot-configuration-processor</artifactId>
+                            <version>2.2.11.RELEASE</version>
+                        </path>
+                        <path>
+                            <groupId>org.hibernate</groupId>
+                            <artifactId>hibernate-jpamodelgen</artifactId>
+                            <version>5.6.4.Final</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
         </plugins>

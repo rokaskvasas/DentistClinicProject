@@ -113,7 +113,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
             throw new IncorrectTimeException("StartTime or endTime is incorrect");
         }
         if (!timeIsInSameDay(doctorAvailabilityDto)) {
-            throw new IncorrectTimeException("Method 'availabilityTimeCheck' dates are not the same");
+            throw new IncorrectTimeException("Date must be in the same day");
         }
     }
 
@@ -122,7 +122,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     private boolean startAndEndTimeIsCorrect(DoctorAvailabilityDto doctorAvailabilityDto) {
-        return doctorAvailabilityDto.getStartTime().getHour() <= (doctorAvailabilityDto.getEndTime().getHour());
+        return doctorAvailabilityDto.getStartTime().getHour() < (doctorAvailabilityDto.getEndTime().getHour());
     }
 
 

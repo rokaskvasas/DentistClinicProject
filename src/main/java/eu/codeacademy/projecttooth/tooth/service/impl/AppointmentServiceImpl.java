@@ -4,17 +4,23 @@ import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
 import eu.codeacademy.projecttooth.tooth.entity.*;
 import eu.codeacademy.projecttooth.tooth.exception.IncorrectTimeException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
+import eu.codeacademy.projecttooth.tooth.helper.AppointmentPageHelper;
 import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
+import eu.codeacademy.projecttooth.tooth.model.AppointmentSearchCriteria;
+import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.repository.AppointmentRepository;
+import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
 import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
 import eu.codeacademy.projecttooth.tooth.service.PatientService;
 import eu.codeacademy.projecttooth.tooth.service.ServiceService;
+import eu.codeacademy.projecttooth.tooth.specification.AppointmentSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +36,8 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final DoctorServiceAvailabilityService doctorServiceAvailabilityService;
     private final PatientService patientService;
     private final ServiceService serviceService;
+    private final AppointmentSpecification specification;
+    private final AppointmentPageHelper appointmentPageHelper;
 
 
     @Override
@@ -37,7 +45,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<AppointmentEntity> pageable;
         pageable = findAllAppointments(userId, page);
-        return pageable.map(appointmentMapper::createDtoModel);
+        return pageable.map(this::createAppointmentModel);
     }
 
     private Page<AppointmentEntity> findAllAppointments(Long userId, Pageable page) {
@@ -53,6 +61,13 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    public Appointment getAppointmentAsDoctor(Long appointmentId, Long userId) {
+        return appointmentRepository.findByAppointmentIdAndUserIdAsDoctor(appointmentId, userId)
+                .map(appointmentMapper::createDtoModel)
+                .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
+    }
+
+    @Override
     public Appointment updateAppointment(Long userId, ModifyAppointmentDto appointment) {
         AppointmentEntity appointmentEntity = updateEntity(userId, appointment);
         updateDatabase(appointmentEntity);
@@ -62,8 +77,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public void deleteAppointment(Long userId, Long appointmentId) {
-
-        appointmentRepository.delete(getAppointmentEntity(userId, appointmentId));
+        AppointmentEntity appointmentEntity = getAppointmentEntity(userId, appointmentId);
+        appointmentRepository.delete(appointmentEntity);
     }
 
 
@@ -71,7 +86,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment createAppointment(Long userId, ModifyAppointmentDto payload) {
 
         PatientEntity patient = getPatientEntity(userId);
-        DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload, userId);
+        DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload);
         checkIfAppointmentTimeMatchesWithAvailability(payload, doctorServiceAvailability);
         reserveServiceAvailability(doctorServiceAvailability);
         AppointmentEntity appointmentEntity = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
@@ -85,19 +100,33 @@ public class AppointmentServiceImpl implements AppointmentService {
         appointmentRepository.deleteAllById(getExpiredAppointmentsId());
     }
 
-    @Override
-    public Appointment getAppointmentAsDoctor(Long appointmentId, Long userId) {
-        return appointmentRepository.findByAppointmentIdAndUserIdAsDoctor(appointmentId, userId)
-                .map(appointmentMapper::createDtoModel)
-                .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
-    }
+
+//    @Override
+//    public Page<Appointment> getAppointmentPageableAsDoctor(Long userId, int pageNumber, int pageSize) {
+//        Pageable page = PageRequest.of(pageNumber, pageSize);
+//        Page<AppointmentEntity> pageable = appointmentRepository.findAllByDoctorUserId(userId, page);
+//        return pageable.map(this::createAppointmentModel);
+//    }
 
     @Override
-    public Page<Appointment> getAppointmentPageableAsDoctor(Long userId, int pageNumber, int pageSize) {
-        Pageable page = PageRequest.of(pageNumber, pageSize);
-        Page<AppointmentEntity> pageable = appointmentRepository.findAllByDoctorUserId(userId, page);
-        return pageable.map(appointmentMapper::createDtoModel);
+    public Page<Appointment> findAllAppointments(UserPrincipal principal, AppointmentSearchCriteria searchCriteria, AppointmentPageHelper pageHelper) {
+        Pageable pageable = appointmentPageHelper.getPageable(pageHelper);
+        Page<AppointmentEntity> appointments = findAppointmentsByRole(principal, searchCriteria, pageable);
+        return appointments.map(this::createAppointmentModel);
     }
+
+    private Page<AppointmentEntity> findAppointmentsByRole(UserPrincipal principal, AppointmentSearchCriteria searchCriteria, Pageable pageable) {
+        Page<AppointmentEntity> appointments;
+        if (principal.hasRole(RoleEnum.ROLE_PATIENT)) {
+            Specification<AppointmentEntity> filter = specification.findAllWithFiltersForPatient(searchCriteria, principal.getUserId());
+            appointments = appointmentRepository.findAll(filter, pageable);
+        } else {
+            Specification<AppointmentEntity> filter = specification.findAllWithFiltersForDoctor(searchCriteria, principal.getUserId());
+            appointments = appointmentRepository.findAll(filter, pageable);
+        }
+        return appointments;
+    }
+
 
     private void checkIfAppointmentTimeMatchesWithAvailability(ModifyAppointmentDto payload, DoctorServiceAvailabilityEntity doctorServiceAvailability) {
         DoctorAvailabilityEntity doctorAvailability = doctorServiceAvailability.getDoctorAvailability();
@@ -130,8 +159,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         return serviceService.findServiceEntity(serviceId);
     }
 
-    private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(ModifyAppointmentDto payload, Long userId) {
-        return doctorServiceAvailabilityService.findDoctorServiceAvailabilityEntity(userId, payload.getDoctorServiceAvailabilityId());
+    private DoctorServiceAvailabilityEntity getDoctorServiceAvailabilityEntity(ModifyAppointmentDto payload) {
+        return doctorServiceAvailabilityService.findDoctorServiceAvailabilityEntityById(payload.getDoctorServiceAvailabilityId());
     }
 
 

@@ -1,7 +1,10 @@
 package eu.codeacademy.projecttooth.tooth.service;
 
 import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
+import eu.codeacademy.projecttooth.tooth.helper.AppointmentPageHelper;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
+import eu.codeacademy.projecttooth.tooth.model.AppointmentSearchCriteria;
+import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +24,6 @@ public interface AppointmentService {
 
     Appointment getAppointmentAsDoctor(Long appointmentId, Long userId);
 
-    Page<Appointment> getAppointmentPageableAsDoctor(Long userId, int pageNumber, int pageSize);
+    Page<Appointment> findAllAppointments(UserPrincipal principal, AppointmentSearchCriteria searchCriteria, AppointmentPageHelper pageHelper);
+
 }

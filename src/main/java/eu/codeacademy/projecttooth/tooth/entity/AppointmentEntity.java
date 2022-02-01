@@ -37,7 +37,7 @@ public class AppointmentEntity {
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     @PrePersist
     public void setCreatedAtDateTime() {
@@ -46,7 +46,7 @@ public class AppointmentEntity {
 
     @PreUpdate
     public void preUpdate() {
-        this.updated_at = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
 }

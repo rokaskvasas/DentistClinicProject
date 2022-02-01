@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -41,7 +40,7 @@ public class DoctorAvailabilityEntity {
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at")
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     @PrePersist
     public void setCreatedAtDateTime() {
@@ -50,6 +49,6 @@ public class DoctorAvailabilityEntity {
 
     @PreUpdate
     public void preUpdate() {
-        this.updated_at = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 }

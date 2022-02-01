@@ -20,4 +20,6 @@ public class DoctorAvailabilityDto {
     private LocalDateTime startTime;
     @NotNull
     private LocalDateTime endTime;
+
+    private DoctorDto doctorDto;
 }

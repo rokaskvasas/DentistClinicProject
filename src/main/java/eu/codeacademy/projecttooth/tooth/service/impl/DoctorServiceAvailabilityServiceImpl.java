@@ -10,7 +10,6 @@ import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
 import eu.codeacademy.projecttooth.tooth.helper.DoctorServiceAvailabilityPageHelper;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorServiceAvailabilityMapper;
-import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailability;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailabilitySearchCriteria;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorServiceAvailabilityRepository;
@@ -52,7 +51,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
 
     @Override
-    public Page<DoctorServiceAvailability> findAvailableDoctorServiceAvailablities(DoctorServiceAvailabilitySearchCriteria doctorServiceAvailabilitySearchCriteria, DoctorServiceAvailabilityPageHelper doctorServiceAvailabilityPageHelper) {
+    public Page<DoctorServiceAvailabilityResponse> findAvailableDoctorServiceAvailablities(DoctorServiceAvailabilitySearchCriteria doctorServiceAvailabilitySearchCriteria, DoctorServiceAvailabilityPageHelper doctorServiceAvailabilityPageHelper) {
         Pageable page = pageHelper.getPageable(doctorServiceAvailabilityPageHelper);
         Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository
                 .findAll(specifications.findAllWithFilters(doctorServiceAvailabilitySearchCriteria), page);
@@ -97,7 +96,7 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     }
 
     @Override
-    public DoctorServiceAvailability updateAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
+    public DoctorServiceAvailabilityResponse updateAvailabilityService(ModifyDoctorServiceAvailabilityDto doctorServiceAvailability, Long userId) {
         DoctorServiceAvailabilityEntity doctorServiceAvailabilityEntity = updateEntity(doctorServiceAvailability, userId);
         updateDatabase(doctorServiceAvailabilityEntity);
         return createDoctorServiceAvailabilityModel(doctorServiceAvailabilityEntity);
@@ -173,8 +172,8 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
         return pageable;
     }
 
-    private DoctorServiceAvailability createDoctorServiceAvailabilityModel(DoctorServiceAvailabilityEntity entity) {
-        return mapper.createModel(entity);
+    private DoctorServiceAvailabilityResponse createDoctorServiceAvailabilityModel(DoctorServiceAvailabilityEntity entity) {
+        return mapper.createResponseModel(entity);
     }
 
     private DoctorServiceAvailabilityEntity createDoctorAvailabilityServiceEntity(ModifyDoctorServiceAvailabilityDto serviceAvailability, Long userId) {

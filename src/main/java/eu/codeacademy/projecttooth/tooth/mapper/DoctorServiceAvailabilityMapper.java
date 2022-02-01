@@ -36,6 +36,7 @@ public class DoctorServiceAvailabilityMapper {
         return DoctorServiceAvailabilityResponse.builder()
                 .doctorServiceAvailabilityId(entity.getDoctorAvailabilityServiceId())
                 .doctorAvailabilityDto(availabilityMapper.createDtoModel(entity.getDoctorAvailability()))
+                .reserved(entity.isReserved())
                 .service(serviceMapper.createModel(entity.getService())).build();
 
     }

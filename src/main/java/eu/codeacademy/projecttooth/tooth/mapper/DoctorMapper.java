@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
@@ -48,6 +49,25 @@ public class DoctorMapper {
                     .lastName(user.getLastName())
                     .phoneNumber(user.getPhoneNumber())
                     .role(user.getRole());
+        }
+    }
+
+    public DoctorDto createDtoModel(DoctorEntity entity) {
+        DoctorDto.DoctorDtoBuilder builder = DoctorDto.builder();
+        setUserDetailsToDoctorDto(builder, entity.getUser());
+        return builder
+                .doctorId(entity.getDoctorId())
+                .doctorLicense(entity.getDoctorLicense())
+                .qualification(entity.getQualification())
+                .location(locationMapper.createModel(entity.getLocation()))
+                .build();
+    }
+
+    private void setUserDetailsToDoctorDto(DoctorDto.DoctorDtoBuilder builder, UserEntity user) {
+        if (Objects.nonNull(user)) {
+            builder.firstName(user.getFirstName())
+                    .lastName(user.getLastName())
+                    .phoneNumber(user.getPhoneNumber());
         }
     }
 

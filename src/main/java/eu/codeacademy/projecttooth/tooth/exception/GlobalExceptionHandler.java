@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse userNotFound(ObjectNotFoundException e) {
+    public ErrorResponse objectNotFound(ObjectNotFoundException e) {
         log.error("Object not found", e);
         return new ErrorResponse(e.getMessage());
     }
@@ -33,6 +33,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(QualificationException.class)
     public ErrorResponse minimumQualification(QualificationException e) {
         log.error("minimum qualification ", e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler(DuplicateServiceException.class)
+    public ErrorResponse duplicateServiceException(DuplicateServiceException e) {
+        log.error("duplicate service for same doctor service availability ", e);
         return new ErrorResponse(e.getMessage());
     }
 

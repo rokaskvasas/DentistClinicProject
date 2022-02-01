@@ -16,11 +16,9 @@ import java.util.Objects;
 @Component
 public class AppointmentSpecification {
 
-    private final EntityManager entityManager;
     private final CriteriaBuilder criteriaBuilder;
 
     public AppointmentSpecification(EntityManager entityManager) {
-        this.entityManager = entityManager;
         this.criteriaBuilder = entityManager.getCriteriaBuilder();
     }
 

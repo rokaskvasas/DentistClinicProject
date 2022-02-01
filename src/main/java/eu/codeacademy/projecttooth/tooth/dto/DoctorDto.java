@@ -1,12 +1,13 @@
 package eu.codeacademy.projecttooth.tooth.dto;
 
+import eu.codeacademy.projecttooth.tooth.model.Location;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.QualificationEnum;
 import eu.codeacademy.projecttooth.tooth.validation.ValidOnlyAlphabets;
+import eu.codeacademy.projecttooth.tooth.validation.ValidPhoneNumber;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -31,12 +32,14 @@ public class DoctorDto {
     @NotNull
     private String lastName;
 
-    @Pattern(regexp = "^(\\+3706)?\\d{7}$")
+    @ValidPhoneNumber
     private String phoneNumber;
 
     @NotBlank
     @Size(min = 5, max = 70)
     private String doctorLicense;
+
+    private Location location;
 
     @NotNull
     private QualificationEnum qualification;

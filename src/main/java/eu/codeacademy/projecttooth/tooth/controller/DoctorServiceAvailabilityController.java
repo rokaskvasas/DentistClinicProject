@@ -26,7 +26,7 @@ public class DoctorServiceAvailabilityController {
 
     @PreAuthorize("hasAnyRole('ROLE_PATIENT','ROLE_ADMIN')")
     @GetMapping("/available")
-    public Page<DoctorServiceAvailability> getAllDoctorServiceAvailability(DoctorServiceAvailabilitySearchCriteria doctorServiceAvailabilitySearchCriteria, DoctorServiceAvailabilityPageHelper doctorServiceAvailabilityPageHelper) {
+    public Page<DoctorServiceAvailabilityResponse> getAllDoctorServiceAvailability(DoctorServiceAvailabilitySearchCriteria doctorServiceAvailabilitySearchCriteria, DoctorServiceAvailabilityPageHelper doctorServiceAvailabilityPageHelper) {
         return doctorServiceAvailabilityService.findAvailableDoctorServiceAvailablities(doctorServiceAvailabilitySearchCriteria, doctorServiceAvailabilityPageHelper);
     }
 
@@ -51,7 +51,7 @@ public class DoctorServiceAvailabilityController {
     }
 
     @PutMapping
-    public DoctorServiceAvailability updateDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
+    public DoctorServiceAvailabilityResponse updateDoctorAvailabilityService(@AuthenticationPrincipal UserPrincipal principal,
                                                                      @RequestBody ModifyDoctorServiceAvailabilityDto doctorServiceAvailability) {
         return doctorServiceAvailabilityService.updateAvailabilityService(doctorServiceAvailability, principal.getUserId());
     }

@@ -27,37 +27,7 @@ public class AppointmentMapper {
 
     }
 
-//    public AppointmentDto createDtoModel(AppointmentEntity entity) {
-//        DoctorServiceAvailabilityEntity doctorServiceAvailability = entity.getDoctorServiceAvailability();
-//        ServiceEntity service = doctorServiceAvailability.getService();
-//        DoctorAvailabilityEntity doctorAvailability = doctorServiceAvailability.getDoctorAvailability();
-//        DoctorEntity doctorEntity = doctorAvailability.getDoctorEntity();
-//        LocationEntity location = doctorEntity.getLocation();
-//        UserEntity user = doctorEntity.getUser();
-//
-//        checkIfNullIsPresent("Creating appointmentDTO", doctorAvailability, doctorServiceAvailability, doctorEntity, location, service, user);
-//
-//        return AppointmentDto.builder()
-//                .appointmentId(entity.getAppointmentId())
-//                .startTime(entity.getStartTime())
-//                .endTime(entity.getEndTime())
-//                .firstName(user.getFirstName())
-//                .lastName(user.getLastName())
-//                .locationCity(location.getCity())
-//                .locationName(location.getName())
-//                .phoneNumber(user.getPhoneNumber())
-//                .serviceEnum(service.getName())
-//                .build();
-//    }
-//
-//    private void checkIfNullIsPresent(String methodName, Object... objects) {
-//        List<Object> checksForNull = new ArrayList<>(Arrays.asList(objects));
-//        if (checksForNull.contains(null)) {
-//            throw new NullPointerException(String.format("%s null was found", methodName));
-//        }
-//    }
-//
-    public Appointment createDtoModel(AppointmentEntity entity){
+    public Appointment createDtoModel(AppointmentEntity entity) {
         Appointment.AppointmentBuilder builder = Appointment.builder()
                 .appointmentId(entity.getAppointmentId())
                 .startTime(entity.getStartTime())

@@ -44,7 +44,6 @@ public class JWTUtility {
         return JWT.create()
                 .withSubject(user.getUsername())
                 .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenTime))
-//                .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()))
                 .withClaim("userId", user.getUserId())
                 .sign(algorithm);

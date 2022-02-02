@@ -8,9 +8,9 @@ import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorAvailabilityMapper;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.repository.DoctorAvailabilityRepository;
-import eu.codeacademy.projecttooth.tooth.repository.DoctorRepository;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorAvailabilityService;
+import eu.codeacademy.projecttooth.tooth.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,7 +28,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
     private final DoctorAvailabilityMapper mapper;
     private final DoctorAvailabilityRepository availabilityRepository;
-    private final DoctorRepository doctorRepository;
+    private final DoctorService doctorService;
 
 
     @Override
@@ -54,7 +54,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     @Override
     public DoctorAvailabilityEntity findDoctorAvailabilityEntityByUserAndAvailabilityId(Long availabilityId, Long userId) {
         return availabilityRepository.findByUserAndAvailabilityId(userId, availabilityId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found", availabilityId)));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found!", availabilityId)));
     }
 
     @Override
@@ -97,23 +97,22 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
         return entity;
     }
 
-    private DoctorEntity getDoctorEntityByUserId(Long userId) {
-        return doctorRepository.findDoctorByUserId(userId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("DoctorEntity not found by id: %s", userId)));
+    private DoctorEntity findDoctorEntityByUserId(Long userId) {
+        return doctorService.findDoctorEntity(userId);
     }
 
     @Override
     public DoctorAvailabilityEntity getDoctorAvailabilityEntity(Long doctorAvailabilityId, Long userId) {
         return availabilityRepository.findByUserAndAvailabilityId(userId, doctorAvailabilityId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found", userId)));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability entity by id:%s not found!", userId)));
     }
 
     private void availabilityTimeCheck(DoctorAvailabilityDto doctorAvailabilityDto) {
         if (!startAndEndTimeIsCorrect(doctorAvailabilityDto)) {
-            throw new IncorrectTimeException("StartTime or endTime is incorrect");
+            throw new IncorrectTimeException("StartTime or endTime is incorrect!");
         }
         if (!timeIsInSameDay(doctorAvailabilityDto)) {
-            throw new IncorrectTimeException("Date must be in the same day");
+            throw new IncorrectTimeException("Please choose same day!");
         }
     }
 
@@ -143,7 +142,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     private DoctorAvailabilityEntity createDoctorAvailabilityEntity(DoctorAvailabilityDto doctorAvailability, Long userId) {
-        DoctorEntity doctorEntity = getDoctorEntityByUserId(userId);
+        DoctorEntity doctorEntity = findDoctorEntityByUserId(userId);
         DoctorAvailabilityEntity doctorAvailabilityEntity = mapper.createEntity(doctorAvailability);
         doctorAvailabilityEntity.setDoctorEntity(doctorEntity);
         return doctorAvailabilityEntity;
@@ -161,7 +160,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
     private DoctorAvailabilityDto getDoctorAvailability(Long availabilityId, UserPrincipal principal) {
         DoctorAvailabilityDto doctorAvailabilityDto;
-        Supplier<ObjectNotFoundException> objectNotFoundExceptionSupplier = () -> new ObjectNotFoundException("Method 'getAvailability' Availability not found, id: " + availabilityId);
+        Supplier<ObjectNotFoundException> objectNotFoundExceptionSupplier = () -> new ObjectNotFoundException("Availability not found, id: " + availabilityId);
 
         if (principal.hasRole(RoleEnum.ROLE_ADMIN)) {
             doctorAvailabilityDto = availabilityRepository.findById(availabilityId).map(this::createDoctorAvailabilityDtoModel).orElseThrow(objectNotFoundExceptionSupplier);

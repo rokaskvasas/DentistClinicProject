@@ -2,6 +2,7 @@ package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
+import eu.codeacademy.projecttooth.tooth.model.AppointmentSearchCriteria;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
 import lombok.RequiredArgsConstructor;
@@ -18,49 +19,54 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AppointmentController {
 
-    private final AppointmentService service;
+    private final AppointmentService appointmentService;
+
 
     @GetMapping
     public Page<Appointment> getAllAppointmentsAsPatient(@AuthenticationPrincipal UserPrincipal principal,
+                                                         AppointmentSearchCriteria searchCriteria,
                                                          @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
                                                          @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
-        return service.getAppointmentPageable(principal.getUserId(), pageNumber, pageSize);
+        return appointmentService.findAllAppointments(principal, searchCriteria, pageNumber, pageSize);
     }
 
     @GetMapping("/{appointmentId}/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
     public Appointment getAppointmentAsPatient(@PathVariable Long appointmentId, @P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal) {
-        return service.getAppointmentAsPatient(appointmentId, userId);
+        return appointmentService.getAppointmentAsPatient(appointmentId, userId);
     }
 
     @GetMapping("/doctors/{appointmentId}/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
     public Appointment getAppointmentAsDoctor(@PathVariable Long appointmentId, @P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal) {
-        return service.getAppointmentAsDoctor(appointmentId, userId);
+        return appointmentService.getAppointmentAsDoctor(appointmentId, userId);
     }
+
 
     @GetMapping("/doctors")
     public Page<Appointment> getAllAppointmentsAsDoctor(@AuthenticationPrincipal UserPrincipal principal,
+                                                        AppointmentSearchCriteria searchCriteria,
                                                         @RequestParam(name = "page", required = false, defaultValue = "0") int pageNumber,
                                                         @RequestParam(name = "pageSize", required = false, defaultValue = "5") int pageSize) {
-        return service.getAppointmentPageableAsDoctor(principal.getUserId(), pageNumber, pageSize);
+        return appointmentService.findAllAppointments(principal, searchCriteria, pageNumber, pageSize);
     }
 
 
     @PostMapping
     public Appointment createAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody ModifyAppointmentDto payload) {
-        return service.createAppointment(principal.getUserId(), payload);
+        return appointmentService.createAppointment(principal.getUserId(), payload);
     }
 
     @PreAuthorize("hasRole('ROLE_DOCTOR')")
     @PutMapping
     public Appointment updateAppointment(@AuthenticationPrincipal UserPrincipal principal, @RequestBody ModifyAppointmentDto payload) {
-        return service.updateAppointment(principal.getUserId(), payload);
+        return appointmentService.updateAppointment(principal.getUserId(), payload);
     }
 
     @DeleteMapping("{id}")
     public void deleteAppointment(@AuthenticationPrincipal UserPrincipal principal, @PathVariable(name = "id") Long appointmentId) {
-        service.deleteAppointment(principal.getUserId(), appointmentId);
+        appointmentService.deleteAppointment(principal.getUserId(), appointmentId);
     }
+
 
 }

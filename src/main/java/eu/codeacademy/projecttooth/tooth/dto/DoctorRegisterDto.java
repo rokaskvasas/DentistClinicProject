@@ -1,7 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.dto;
 
+import eu.codeacademy.projecttooth.tooth.model.Location;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.QualificationEnum;
-import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import lombok.*;
 
@@ -12,13 +12,15 @@ import lombok.*;
 @AllArgsConstructor
 public class DoctorRegisterDto {
 
+    private Long doctorId;
+
+    private Long userId;
+
     private String firstName;
 
     private String lastName;
 
     private String doctorLicense;
-
-    private String password;
 
     private StatusEnum status;
 
@@ -26,9 +28,8 @@ public class DoctorRegisterDto {
 
     private QualificationEnum qualification;
 
-    private Long locationId;
+    private Location location;
 
     private String phoneNumber;
 
-    private RoleEnum role;
 }

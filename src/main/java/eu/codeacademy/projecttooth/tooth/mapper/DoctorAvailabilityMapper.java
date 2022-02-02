@@ -28,10 +28,11 @@ public class DoctorAvailabilityMapper {
                 .build();
     }
 
-    public DoctorAvailabilityDto createDtoModel(DoctorAvailabilityEntity entity){
+    public DoctorAvailabilityDto createDtoModel(DoctorAvailabilityEntity entity) {
         return DoctorAvailabilityDto.builder()
                 .doctorAvailabilityId(entity.getDoctorAvailabilityId())
                 .startTime(entity.getStartTime())
+                .doctorDto(doctorMapper.createDtoModel(entity.getDoctorEntity()))
                 .endTime(entity.getEndTime()).build();
     }
 }

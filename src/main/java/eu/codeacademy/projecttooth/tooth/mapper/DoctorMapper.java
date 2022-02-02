@@ -2,8 +2,8 @@ package eu.codeacademy.projecttooth.tooth.mapper;
 
 
 import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
+import eu.codeacademy.projecttooth.tooth.dto.DoctorRegisterDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
-import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +69,20 @@ public class DoctorMapper {
                     .lastName(user.getLastName())
                     .phoneNumber(user.getPhoneNumber());
         }
+    }
+
+    public DoctorRegisterDto createRegisterDtoModel(DoctorEntity entity) {
+        return DoctorRegisterDto.builder().doctorId(entity.getDoctorId())
+                .doctorLicense(entity.getDoctorLicense())
+                .email(entity.getUser().getEmail())
+                .firstName(entity.getUser().getFirstName())
+                .lastName(entity.getUser().getLastName())
+                .location(locationMapper.createModel(entity.getLocation()))
+                .phoneNumber(entity.getUser().getPhoneNumber())
+                .qualification(entity.getQualification())
+                .status(entity.getStatus())
+                .userId(entity.getUser().getUserId())
+                .build();
     }
 
 }

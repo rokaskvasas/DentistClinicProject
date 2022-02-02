@@ -6,9 +6,11 @@ import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.UserMapper;
 import eu.codeacademy.projecttooth.tooth.repository.UserRepository;
 import eu.codeacademy.projecttooth.tooth.service.UserService;
-import eu.codeacademy.projecttooth.tooth.specification.UserSpecification;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -16,7 +18,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
     private final UserMapper mapper;
-    private final UserSpecification userSpecification;
 
 
     @Override
@@ -25,13 +26,19 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUnverifiedUsers() {
-
-        repository.deleteAllById(unverifiedUsersId());
+    public boolean findIfEmailExist(String email) {
+        return repository.findByEmail(email).isPresent();
     }
 
-    private Iterable<Long> unverifiedUsersId() {
-        return () -> repository.findAll(userSpecification.findUnverifiedUsers()).stream().mapToLong(UserEntity::getUserId).iterator();
+    @Override
+    public List<UserEntity> findAllUsersWithSpecification(Specification<UserEntity> specification) {
+        return repository.findAll(specification);
     }
+
+    @Override
+    public void deleteUnverifiedUsers(Iterable<UserEntity> expiredUsers) {
+        repository.deleteAllInBatch(expiredUsers);
+    }
+
 
 }

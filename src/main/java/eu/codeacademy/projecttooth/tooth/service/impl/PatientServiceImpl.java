@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
 import eu.codeacademy.projecttooth.tooth.dto.PatientDto;
+import eu.codeacademy.projecttooth.tooth.dto.PatientRegisterDto;
 import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.PatientMapper;
@@ -23,13 +24,16 @@ public class PatientServiceImpl implements PatientService {
     private final PasswordService passwordService;
 
     @Override
-    public Patient createPatient(Patient patient) {
+    public PatientRegisterDto createPatient(Patient patient) {
         PatientEntity patientEntity = createPatientEntity(patient);
         updateDatabase(patientEntity);
-        return createPatientModel(patientEntity);
+        return createPatientRegisterDtoModel(patientEntity);
 
     }
 
+    private PatientRegisterDto createPatientRegisterDtoModel(PatientEntity entity) {
+        return patientMapper.createPatientRegisterDtoModel(entity);
+    }
 
     @Override
     public Patient getPatient(Long userId) {

@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
+import eu.codeacademy.projecttooth.tooth.dto.DoctorRegisterDto;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
@@ -30,7 +31,7 @@ public class DoctorController {
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public Doctor createDoctor(@RequestBody Doctor doctor) {
+    public DoctorRegisterDto createDoctor(@RequestBody Doctor doctor) {
         return doctorService.createDoctor(doctor);
     }
 

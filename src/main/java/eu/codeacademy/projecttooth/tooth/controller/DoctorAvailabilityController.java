@@ -17,9 +17,9 @@ public class DoctorAvailabilityController {
 
     private final DoctorAvailabilityService service;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{availabilityId}")
     public DoctorAvailabilityDto getDoctorAvailability(@AuthenticationPrincipal UserPrincipal principal,
-                                                       @PathVariable(name = "id") Long availabilityId) {
+                                                       @PathVariable(name = "availabilityId") Long availabilityId) {
         return service.getAvailability(availabilityId, principal);
     }
 

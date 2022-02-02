@@ -8,7 +8,6 @@ import eu.codeacademy.projecttooth.tooth.entity.ServiceEntity;
 import eu.codeacademy.projecttooth.tooth.exception.DuplicateServiceException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.exception.QualificationException;
-import eu.codeacademy.projecttooth.tooth.helper.DoctorServiceAvailabilityPageHelper;
 import eu.codeacademy.projecttooth.tooth.mapper.DoctorServiceAvailabilityMapper;
 import eu.codeacademy.projecttooth.tooth.model.DoctorServiceAvailabilitySearchCriteria;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
@@ -38,7 +37,6 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
     private final DoctorAvailabilityService doctorAvailabilityService;
     private final ServiceService serviceService;
     private final DoctorServiceAvailabilitySpecification specifications;
-    private final DoctorServiceAvailabilityPageHelper pageHelper;
 
 
     @Override
@@ -51,8 +49,8 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
 
     @Override
-    public Page<DoctorServiceAvailabilityResponse> findAvailableDoctorServiceAvailablities(DoctorServiceAvailabilitySearchCriteria doctorServiceAvailabilitySearchCriteria, DoctorServiceAvailabilityPageHelper doctorServiceAvailabilityPageHelper) {
-        Pageable page = pageHelper.getPageable(doctorServiceAvailabilityPageHelper);
+    public Page<DoctorServiceAvailabilityResponse> findAvailableDoctorServiceAvailablities(DoctorServiceAvailabilitySearchCriteria doctorServiceAvailabilitySearchCriteria, int pageNumber, int pageSize) {
+        Pageable page = PageRequest.of(pageNumber, pageSize);
         Page<DoctorServiceAvailabilityEntity> pageable = availabilityServiceRepository
                 .findAll(specifications.findAllWithFilters(doctorServiceAvailabilitySearchCriteria), page);
         return pageable.map(this::createDoctorServiceAvailabilityModel);
@@ -66,13 +64,6 @@ public class DoctorServiceAvailabilityServiceImpl implements DoctorServiceAvaila
 
     private DoctorServiceAvailabilityResponse createDoctorServiceAvailabilityResponseModel(DoctorServiceAvailabilityEntity entity) {
         return mapper.createResponseModel(entity);
-    }
-
-
-    @Override
-    public DoctorServiceAvailabilityEntity findDoctorServiceAvailabilityEntity(Long userId, Long availabilityServiceId) {
-        return availabilityServiceRepository.findByUserAndServiceAvailabilityId(userId, availabilityServiceId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor availability service entity by id:%s not found", availabilityServiceId)));
     }
 
 

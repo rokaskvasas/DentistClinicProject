@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.dto.PatientDto;
+import eu.codeacademy.projecttooth.tooth.dto.PatientRegisterDto;
 import eu.codeacademy.projecttooth.tooth.model.Patient;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.PatientService;
@@ -11,8 +12,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 @Secured({"ROLE_PATIENT", "ROLE_ADMIN"})
 @RestController
@@ -29,7 +28,7 @@ public class PatientController {
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public Patient createPatient(@Valid @RequestBody Patient patient) {
+    public PatientRegisterDto createPatient(@Validated @RequestBody Patient patient) {
         return service.createPatient(patient);
     }
 

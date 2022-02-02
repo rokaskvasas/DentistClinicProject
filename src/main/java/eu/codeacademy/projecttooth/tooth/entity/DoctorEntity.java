@@ -5,8 +5,8 @@ import eu.codeacademy.projecttooth.tooth.model.modelenum.StatusEnum;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "doctor")
@@ -44,5 +44,21 @@ public class DoctorEntity {
 
     @OneToMany(mappedBy = "doctorEntity", cascade = CascadeType.ALL)
     private List<DoctorAvailabilityEntity> doctorAvailabilityEntities;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void setCreatedAtDateTime() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
 }

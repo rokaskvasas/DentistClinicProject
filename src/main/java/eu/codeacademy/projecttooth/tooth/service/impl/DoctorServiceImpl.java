@@ -1,6 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
 import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
+import eu.codeacademy.projecttooth.tooth.dto.DoctorRegisterDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
@@ -18,9 +19,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,14 +41,19 @@ public class DoctorServiceImpl implements DoctorService {
 
     private final EmailService emailService;
 
+
     @Override
-    public Doctor createDoctor(Doctor doctor) {
+    public DoctorRegisterDto createDoctor(Doctor doctor) {
         LocationEntity locationEntity = findLocation(doctor);
         DoctorEntity doctorEntity = createDoctorEntity(doctor, locationEntity);
         sendEmailNotificationAboutNewDoctor(doctor);
         updateDatabase(doctorEntity);
         log.debug("create doctor: {}", doctor);
-        return createDoctorModel(doctorEntity);
+        return createDoctorRegisterModel(doctorEntity);
+    }
+
+    private DoctorRegisterDto createDoctorRegisterModel(DoctorEntity entity) {
+        return doctorMapper.createRegisterDtoModel(entity);
     }
 
 
@@ -89,6 +97,16 @@ public class DoctorServiceImpl implements DoctorService {
         return createDoctorModel(doctorEntity);
     }
 
+    @Override
+    public List<DoctorEntity> findAllDoctorsWithSpecification(Specification<DoctorEntity> specification) {
+        return doctorRepository.findAll(specification);
+    }
+
+    @Override
+    public void deleteUnverifiedDoctors(Iterable<DoctorEntity> expiredDoctors) {
+        doctorRepository.deleteAllInBatch(expiredDoctors);
+    }
+
 
     private DoctorEntity verifyDoctorEntity(Long doctorId) {
         DoctorEntity doctorEntity = findDoctorEntity(doctorId);
@@ -97,7 +115,8 @@ public class DoctorServiceImpl implements DoctorService {
         return doctorEntity;
     }
 
-    private DoctorEntity findDoctorEntity(Long doctorId) {
+    @Override
+    public DoctorEntity findDoctorEntity(Long doctorId) {
         return doctorRepository.findById(doctorId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
     }
@@ -157,5 +176,6 @@ public class DoctorServiceImpl implements DoctorService {
                 String.format("new doctor with email: %s and license %s waiting for verification", doctor.getEmail(), doctor.getDoctorLicense()),
                 "New doctor register");
     }
+
 
 }

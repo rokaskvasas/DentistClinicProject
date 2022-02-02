@@ -4,7 +4,6 @@ import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
 import eu.codeacademy.projecttooth.tooth.entity.*;
 import eu.codeacademy.projecttooth.tooth.exception.IncorrectTimeException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
-import eu.codeacademy.projecttooth.tooth.helper.AppointmentPageHelper;
 import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
 import eu.codeacademy.projecttooth.tooth.model.Appointment;
 import eu.codeacademy.projecttooth.tooth.model.AppointmentSearchCriteria;
@@ -37,21 +36,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final PatientService patientService;
     private final ServiceService serviceService;
     private final AppointmentSpecification specification;
-    private final AppointmentPageHelper appointmentPageHelper;
 
-
-    @Override
-    public Page<Appointment> getAppointmentPageable(Long userId, int pageNumber, int pageSize) {
-        Pageable page = PageRequest.of(pageNumber, pageSize);
-        Page<AppointmentEntity> pageable;
-        pageable = findAllAppointments(userId, page);
-        return pageable.map(this::createAppointmentModel);
-    }
-
-    private Page<AppointmentEntity> findAllAppointments(Long userId, Pageable page) {
-        Page<AppointmentEntity> pageable = appointmentRepository.findAllByPatientUserId(userId, page);
-        return pageable;
-    }
 
     @Override
     public Appointment getAppointmentAsPatient(Long appointmentId, Long userId) {
@@ -101,16 +86,9 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
 
-//    @Override
-//    public Page<Appointment> getAppointmentPageableAsDoctor(Long userId, int pageNumber, int pageSize) {
-//        Pageable page = PageRequest.of(pageNumber, pageSize);
-//        Page<AppointmentEntity> pageable = appointmentRepository.findAllByDoctorUserId(userId, page);
-//        return pageable.map(this::createAppointmentModel);
-//    }
-
     @Override
-    public Page<Appointment> findAllAppointments(UserPrincipal principal, AppointmentSearchCriteria searchCriteria, AppointmentPageHelper pageHelper) {
-        Pageable pageable = appointmentPageHelper.getPageable(pageHelper);
+    public Page<Appointment> findAllAppointments(UserPrincipal principal, AppointmentSearchCriteria searchCriteria, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
         Page<AppointmentEntity> appointments = findAppointmentsByRole(principal, searchCriteria, pageable);
         return appointments.map(this::createAppointmentModel);
     }

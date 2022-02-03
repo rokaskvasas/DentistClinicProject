@@ -1,6 +1,6 @@
 package eu.codeacademy.projecttooth.tooth.mapper;
 
-import eu.codeacademy.projecttooth.tooth.dto.PatientRegisterDto;
+import eu.codeacademy.projecttooth.tooth.dto.PatientResponseDto;
 import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.model.Patient;
@@ -39,8 +39,10 @@ public class PatientMapper {
         }
     }
 
-    public PatientRegisterDto createPatientRegisterDtoModel(PatientEntity entity) {
-        return PatientRegisterDto.builder()
+    public PatientResponseDto createPatientResponseModel(PatientEntity entity) {
+        return PatientResponseDto.builder()
+                .patientId(entity.getPatientId())
+                .userId(entity.getUser().getUserId())
                 .firstName(entity.getUser().getFirstName())
                 .lastName(entity.getUser().getLastName())
                 .phoneNumber(entity.getUser().getPhoneNumber())

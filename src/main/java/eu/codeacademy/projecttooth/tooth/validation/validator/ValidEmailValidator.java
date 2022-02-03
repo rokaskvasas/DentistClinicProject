@@ -28,7 +28,7 @@ public class ValidEmailValidator implements ConstraintValidator<ValidEmail, Stri
             if (!patternIsValid(email)) {
                 return false;
             }
-            if (!emailIsUnique(email)) {
+            if (emailIsUnique(email)) {
                 return false;
             }
         } catch (ValidationException e) {

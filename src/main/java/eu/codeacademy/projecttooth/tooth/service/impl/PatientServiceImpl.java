@@ -1,7 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
-import eu.codeacademy.projecttooth.tooth.dto.PatientDto;
-import eu.codeacademy.projecttooth.tooth.dto.PatientRegisterDto;
+import eu.codeacademy.projecttooth.tooth.dto.PatientRequestDto;
+import eu.codeacademy.projecttooth.tooth.dto.PatientResponseDto;
 import eu.codeacademy.projecttooth.tooth.entity.PatientEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.PatientMapper;
@@ -24,15 +24,15 @@ public class PatientServiceImpl implements PatientService {
     private final PasswordService passwordService;
 
     @Override
-    public PatientRegisterDto createPatient(Patient patient) {
+    public PatientResponseDto createPatient(Patient patient) {
         PatientEntity patientEntity = createPatientEntity(patient);
         updateDatabase(patientEntity);
         return createPatientRegisterDtoModel(patientEntity);
 
     }
 
-    private PatientRegisterDto createPatientRegisterDtoModel(PatientEntity entity) {
-        return patientMapper.createPatientRegisterDtoModel(entity);
+    private PatientResponseDto createPatientRegisterDtoModel(PatientEntity entity) {
+        return patientMapper.createPatientResponseModel(entity);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class PatientServiceImpl implements PatientService {
     }
 
     @Override
-    public Patient updatePatient(PatientDto patient, Long userId) {
+    public Patient updatePatient(PatientRequestDto patient, Long userId) {
         PatientEntity patientEntity = updatePatientEntity(patient, userId);
         updateDatabase(patientEntity);
         return createPatientModel(patientEntity);
@@ -61,11 +61,11 @@ public class PatientServiceImpl implements PatientService {
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Patient Entity with id:%s not found", userId)));
     }
 
-    private PatientEntity updatePatientEntity(PatientDto patientDto, Long userId) {
+    private PatientEntity updatePatientEntity(PatientRequestDto patientRequestDto, Long userId) {
         PatientEntity entity = getPatientEntity(userId);
-        entity.getUser().setFirstName(patientDto.getFirstName());
-        entity.getUser().setLastName(patientDto.getLastName());
-        entity.getUser().setPhoneNumber(patientDto.getPhoneNumber());
+        entity.getUser().setFirstName(patientRequestDto.getFirstName());
+        entity.getUser().setLastName(patientRequestDto.getLastName());
+        entity.getUser().setPhoneNumber(patientRequestDto.getPhoneNumber());
         return entity;
     }
 

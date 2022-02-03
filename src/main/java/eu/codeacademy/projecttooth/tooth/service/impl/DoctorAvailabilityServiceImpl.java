@@ -69,6 +69,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
 
     @Override
     public DoctorAvailabilityDto updateAvailability(DoctorAvailabilityDto doctorAvailabilityDto, Long userId) {
+        availabilityDuplicateCheck(doctorAvailabilityDto,userId);
         DoctorAvailabilityEntity doctorAvailabilityEntity = updateEntity(doctorAvailabilityDto, userId);
         updateDatabase(doctorAvailabilityEntity);
         return createDoctorAvailabilityDtoModel(doctorAvailabilityEntity);

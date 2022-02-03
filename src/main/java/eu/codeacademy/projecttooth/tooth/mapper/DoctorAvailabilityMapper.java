@@ -33,6 +33,7 @@ public class DoctorAvailabilityMapper {
                 .doctorAvailabilityId(entity.getDoctorAvailabilityId())
                 .startTime(entity.getStartTime())
                 .doctorDto(doctorMapper.createDtoModel(entity.getDoctorEntity()))
+                .reserved(entity.isReserved())
                 .endTime(entity.getEndTime()).build();
     }
 }

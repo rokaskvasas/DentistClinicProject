@@ -22,4 +22,6 @@ public class DoctorAvailabilityDto {
     private LocalDateTime endTime;
 
     private DoctorDto doctorDto;
+
+    private boolean reserved;
 }

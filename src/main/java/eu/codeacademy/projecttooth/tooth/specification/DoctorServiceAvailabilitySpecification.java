@@ -24,7 +24,7 @@ public class DoctorServiceAvailabilitySpecification {
             Join<DoctorEntity, LocationEntity> locationEntityJoin = doctorEntityJoin.join(DoctorEntity_.location);
             Join<DoctorEntity, UserEntity> userEntityJoin = doctorEntityJoin.join(DoctorEntity_.user);
 
-            predicates.add(criteriaBuilder.isFalse(root.get(DoctorServiceAvailabilityEntity_.reserved)));
+            predicates.add(criteriaBuilder.isFalse(doctorAvailabilityEntityJoin.get(DoctorAvailabilityEntity_.reserved)));
 
             if (Objects.nonNull(searchCriteria.getService())) {
                 predicates.add(criteriaBuilder.equal(serviceEntityJoin.get(ServiceEntity_.name), searchCriteria.getService()));

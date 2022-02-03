@@ -19,8 +19,6 @@ public class DoctorServiceAvailabilityEntity {
     @Column(name = "id", nullable = false)
     private Long doctorAvailabilityServiceId;
 
-    @Column(name = "reserved")
-    private boolean reserved;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "service_id")
@@ -29,9 +27,6 @@ public class DoctorServiceAvailabilityEntity {
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "doctor_availability_id")
     private DoctorAvailabilityEntity doctorAvailability;
-
-//    @OneToMany(mappedBy = "doctorServiceAvailability")
-//    private Set<AppointmentEntity> appointments;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

@@ -17,6 +17,7 @@ public class DoctorAvailabilityEntity_ {
     public static volatile SingularAttribute<DoctorAvailabilityEntity, LocalDateTime> endTime;
     public static volatile SingularAttribute<DoctorAvailabilityEntity, DoctorEntity> doctor;
     public static volatile SetAttribute<DoctorAvailabilityEntity, DoctorServiceAvailabilityEntity> doctorServiceAvailabilities;
+    public static volatile SingularAttribute<DoctorAvailabilityEntity, Boolean> reserved;
     public static volatile SetAttribute<DoctorAvailabilityEntity, LocalDateTime> createdAt;
     public static volatile SetAttribute<DoctorAvailabilityEntity, LocalDateTime> updatedAt;
 }

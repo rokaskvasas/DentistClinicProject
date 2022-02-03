@@ -14,7 +14,7 @@ public class DoctorServiceAvailabilityResponse {
     private Long doctorServiceAvailabilityId;
     private DoctorAvailabilityDto doctorAvailabilityDto;
     private Service service;
-    private boolean reserved;
+
 
 
 }

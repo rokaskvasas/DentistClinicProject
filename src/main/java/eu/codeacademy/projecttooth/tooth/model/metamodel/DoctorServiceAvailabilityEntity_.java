@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 public class DoctorServiceAvailabilityEntity_ {
 
     public static volatile SingularAttribute<DoctorServiceAvailabilityEntity, Long> doctorServiceAvailabilityId;
-    public static volatile SingularAttribute<DoctorServiceAvailabilityEntity, Boolean> reserved;
     public static volatile SingularAttribute<DoctorServiceAvailabilityEntity, ServiceEntity> service;
     public static volatile SingularAttribute<DoctorServiceAvailabilityEntity, DoctorAvailabilityEntity> doctorAvailability;
     public static volatile SingularAttribute<DoctorServiceAvailabilityEntity, LocalDateTime> createdAt;

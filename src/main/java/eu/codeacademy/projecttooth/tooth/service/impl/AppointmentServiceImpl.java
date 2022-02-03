@@ -14,6 +14,7 @@ import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.*;
 import eu.codeacademy.projecttooth.tooth.specification.AppointmentSpecification;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -41,14 +42,14 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment getAppointmentAsPatient(Long appointmentId, Long userId) {
         return appointmentRepository.findByAppointmentIdAndUserIdAsPatient(appointmentId, userId)
                 .map(this::createAppointmentModel)
-                .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
+                .orElseThrow(() -> new ObjectNotFoundException("Appointment not found"));
     }
 
     @Override
     public Appointment getAppointmentAsDoctor(Long appointmentId, Long userId) {
         return appointmentRepository.findByAppointmentIdAndUserIdAsDoctor(appointmentId, userId)
                 .map(appointmentMapper::createDtoModel)
-                .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
+                .orElseThrow(() -> new ObjectNotFoundException("Appointment not found"));
     }
 
     @Override
@@ -127,7 +128,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private AppointmentEntity getAppointmentEntity(Long userId, Long appointmentId) {
         return appointmentRepository.findByAppointmentIdAndUserIdAsDoctor(appointmentId, userId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("AppointmentService with id:%s not found", appointmentId)));
+                .orElseThrow(() -> new ObjectNotFoundException(("AppointmentService not found")));
     }
 
     private PatientEntity getPatientEntity(Long userId) {

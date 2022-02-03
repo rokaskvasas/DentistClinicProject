@@ -22,7 +22,7 @@ public interface DoctorServiceAvailabilityRepository extends JpaRepository<Docto
     Optional<DoctorServiceAvailabilityEntity> findByUserAndServiceAvailabilityId(Long userId, Long serviceAvailabilityId);
 
 
-    @Query("SELECT service from DoctorServiceAvailabilityEntity  as service where service.reserved = false")
+    @Query("SELECT service from DoctorServiceAvailabilityEntity  as service join DoctorAvailabilityEntity da on da.doctorAvailabilityId = service.doctorAvailability.doctorAvailabilityId where da.reserved = false")
     Page<DoctorServiceAvailabilityEntity> findAllAvailable(Pageable pageable);
 
 

@@ -42,4 +42,10 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(e.getMessage());
     }
 
+    @ExceptionHandler(DoctorAvailabilityReservedException.class)
+    public ErrorResponse doctorAvailabilityReservedException(DoctorAvailabilityReservedException e){
+        log.error("doctor availability already reserved", e);
+        return new ErrorResponse(e.getMessage());
+    }
+
 }

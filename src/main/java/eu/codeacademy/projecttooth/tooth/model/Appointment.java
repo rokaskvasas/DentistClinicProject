@@ -1,5 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.model;
 
+import eu.codeacademy.projecttooth.tooth.dto.DoctorServiceAvailabilityResponse;
+import eu.codeacademy.projecttooth.tooth.dto.PatientResponseDto;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -12,9 +14,9 @@ public class Appointment {
 
     private Long appointmentId;
 
-    private Patient patient;
+    private PatientResponseDto patient;
 
-    private DoctorServiceAvailability serviceAvailability;
+    private DoctorServiceAvailabilityResponse serviceAvailability;
 
     private LocalDateTime startTime;
 

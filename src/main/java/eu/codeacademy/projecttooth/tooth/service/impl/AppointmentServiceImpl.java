@@ -2,6 +2,7 @@ package eu.codeacademy.projecttooth.tooth.service.impl;
 
 import eu.codeacademy.projecttooth.tooth.dto.ModifyAppointmentDto;
 import eu.codeacademy.projecttooth.tooth.entity.*;
+import eu.codeacademy.projecttooth.tooth.exception.DoctorAvailabilityReservedException;
 import eu.codeacademy.projecttooth.tooth.exception.IncorrectTimeException;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
 import eu.codeacademy.projecttooth.tooth.mapper.AppointmentMapper;
@@ -41,7 +42,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     @Override
     public Appointment getAppointmentAsPatient(Long appointmentId, Long userId) {
         return appointmentRepository.findByAppointmentIdAndUserIdAsPatient(appointmentId, userId)
-                .map(appointmentMapper::createDtoModel)
+                .map(this::createAppointmentModel)
                 .orElseThrow(() -> new ObjectNotFoundException("Get appointment not found by id:" + appointmentId));
     }
 
@@ -72,11 +73,18 @@ public class AppointmentServiceImpl implements AppointmentService {
 
         PatientEntity patient = getPatientEntity(userId);
         DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload);
+        checkIfServiceIsAvailable(doctorServiceAvailability);
         checkIfAppointmentTimeMatchesWithAvailability(payload, doctorServiceAvailability);
-        reserveServiceAvailability(doctorServiceAvailability);
+        reserveAvailability(doctorServiceAvailability);
         AppointmentEntity appointmentEntity = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
         updateDatabase(appointmentEntity);
         return createAppointmentModel(appointmentEntity);
+    }
+
+    private void checkIfServiceIsAvailable(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
+        if (doctorServiceAvailability.getDoctorAvailability().isReserved()) {
+            throw new DoctorAvailabilityReservedException("Doctor Availability is already reserved");
+        }
     }
 
 
@@ -125,7 +133,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private AppointmentEntity getAppointmentEntity(Long userId, Long appointmentId) {
         return appointmentRepository.findByAppointmentIdAndUserIdAsDoctor(appointmentId, userId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Method 'getAppointmentEntity' in AppointmentService with id:%s not found", appointmentId)));
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("AppointmentService with id:%s not found", appointmentId)));
     }
 
     private PatientEntity getPatientEntity(Long userId) {
@@ -169,8 +177,8 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepository.saveAndFlush(appointment);
     }
 
-    private void reserveServiceAvailability(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
-        doctorServiceAvailability.setReserved(true);
+    private void reserveAvailability(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
+        doctorServiceAvailability.getDoctorAvailability().setReserved(true);
         doctorServiceAvailabilityService.updateDoctorServiceAvailabilityToReservedAndSaveToDatabase(doctorServiceAvailability);
     }
 }

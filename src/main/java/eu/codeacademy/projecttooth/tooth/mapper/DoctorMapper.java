@@ -2,7 +2,7 @@ package eu.codeacademy.projecttooth.tooth.mapper;
 
 
 import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
-import eu.codeacademy.projecttooth.tooth.dto.DoctorRegisterDto;
+import eu.codeacademy.projecttooth.tooth.dto.DoctorResponseDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.entity.UserEntity;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
@@ -71,8 +71,8 @@ public class DoctorMapper {
         }
     }
 
-    public DoctorRegisterDto createRegisterDtoModel(DoctorEntity entity) {
-        return DoctorRegisterDto.builder().doctorId(entity.getDoctorId())
+    public DoctorResponseDto createRegisterDtoModel(DoctorEntity entity) {
+        return DoctorResponseDto.builder().doctorId(entity.getDoctorId())
                 .doctorLicense(entity.getDoctorLicense())
                 .email(entity.getUser().getEmail())
                 .firstName(entity.getUser().getFirstName())

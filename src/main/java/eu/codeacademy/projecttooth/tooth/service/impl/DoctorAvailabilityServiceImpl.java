@@ -99,7 +99,7 @@ public class DoctorAvailabilityServiceImpl implements DoctorAvailabilityService 
     }
 
     private DoctorEntity findDoctorEntityByUserId(Long userId) {
-        return doctorService.findDoctorEntity(userId);
+        return doctorService.findDoctorEntityByUserId(userId);
     }
 
     @Override

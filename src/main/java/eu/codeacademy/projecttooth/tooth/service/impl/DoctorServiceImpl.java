@@ -1,7 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.service.impl;
 
 import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
-import eu.codeacademy.projecttooth.tooth.dto.DoctorRegisterDto;
+import eu.codeacademy.projecttooth.tooth.dto.DoctorResponseDto;
 import eu.codeacademy.projecttooth.tooth.entity.DoctorEntity;
 import eu.codeacademy.projecttooth.tooth.entity.LocationEntity;
 import eu.codeacademy.projecttooth.tooth.exception.ObjectNotFoundException;
@@ -43,38 +43,38 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
-    public DoctorRegisterDto createDoctor(Doctor doctor) {
+    public DoctorResponseDto createDoctor(Doctor doctor) {
         LocationEntity locationEntity = findLocation(doctor);
         DoctorEntity doctorEntity = createDoctorEntity(doctor, locationEntity);
         sendEmailNotificationAboutNewDoctor(doctor);
         updateDatabase(doctorEntity);
         log.debug("create doctor: {}", doctor);
-        return createDoctorRegisterModel(doctorEntity);
+        return createDoctorResponse(doctorEntity);
     }
 
-    private DoctorRegisterDto createDoctorRegisterModel(DoctorEntity entity) {
+    private DoctorResponseDto createDoctorResponse(DoctorEntity entity) {
         return doctorMapper.createRegisterDtoModel(entity);
     }
 
 
     @Override
-    public DoctorRegisterDto getDoctorByUserId(Long userId) {
+    public DoctorResponseDto getDoctorByUserId(Long userId) {
         DoctorEntity doctorEntity = findDoctorEntityByUserid(userId);
-        return createDoctorRegisterModel(doctorEntity);
+        return createDoctorResponse(doctorEntity);
     }
 
     @Override
-    public DoctorRegisterDto updateDoctor(DoctorDto doctorDto, Long userId) {
+    public DoctorResponseDto updateDoctor(DoctorDto doctorDto, Long userId) {
         DoctorEntity doctorEntity = updateDoctorEntity(doctorDto, userId);
         updateDatabase(doctorEntity);
         log.debug("Updated doctor: {}", doctorDto);
-        return createDoctorRegisterModel(doctorEntity);
+        return createDoctorResponse(doctorEntity);
     }
 
     @Override
     @Transactional
     public Long deleteDoctor(Long userId) {
-        DoctorEntity doctorEntity = findDoctorEntity(userId);
+        DoctorEntity doctorEntity = findDoctorEntityByUserId(userId);
         doctorRepository.delete(doctorEntity);
         log.debug("Deleted doctor by userId:{}", userId);
         return doctorEntity.getDoctorId();
@@ -89,12 +89,12 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
-    public DoctorRegisterDto verifyDoctor(Long doctorId) {
-        DoctorEntity doctorEntity = verifyDoctorEntity(doctorId);
+    public DoctorResponseDto verifyDoctor(Long userId) {
+        DoctorEntity doctorEntity = verifyDoctorEntity(userId);
         sendVerificationEmailToDoctor(doctorEntity);
         updateDatabase(doctorEntity);
-        log.debug("Verified doctor by id:{}", doctorId);
-        return createDoctorRegisterModel(doctorEntity);
+        log.debug("Verified doctor by user id:{}", userId);
+        return createDoctorResponse(doctorEntity);
     }
 
     @Override
@@ -108,18 +108,19 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
 
-    private DoctorEntity verifyDoctorEntity(Long doctorId) {
-        DoctorEntity doctorEntity = findDoctorEntity(doctorId);
+    private DoctorEntity verifyDoctorEntity(Long userId) {
+        DoctorEntity doctorEntity = findDoctorEntityByUserId(userId);
         doctorEntity.setStatus(StatusEnum.VERIFIED);
         doctorEntity.getUser().setRole(RoleEnum.ROLE_DOCTOR.determinateRole());
         return doctorEntity;
     }
 
     @Override
-    public DoctorEntity findDoctorEntity(Long userId) {
+    public DoctorEntity findDoctorEntityByUserId(Long userId) {
         return doctorRepository.findDoctorByUserId(userId)
                 .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by user id: %s not found", userId)));
     }
+
 
     private DoctorEntity findDoctorEntityByUserid(Long userId) {
         return doctorRepository.findDoctorByUserId(userId).orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by user id: %s not found", userId)));

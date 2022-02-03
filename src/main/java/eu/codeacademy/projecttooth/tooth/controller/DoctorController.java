@@ -1,7 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
 import eu.codeacademy.projecttooth.tooth.dto.DoctorDto;
-import eu.codeacademy.projecttooth.tooth.dto.DoctorRegisterDto;
+import eu.codeacademy.projecttooth.tooth.dto.DoctorResponseDto;
 import eu.codeacademy.projecttooth.tooth.model.Doctor;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.DoctorService;
@@ -24,21 +24,21 @@ public class DoctorController {
 
     @PreAuthorize("hasAnyRole('ROLE_DOCTOR','ROLE_UNVERIFIED_DOCTOR' )")
     @GetMapping("/account")
-    public DoctorRegisterDto getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
+    public DoctorResponseDto getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
         return doctorService.getDoctorByUserId(principal.getUserId());
     }
 
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public DoctorRegisterDto createDoctor(@RequestBody @Validated Doctor doctor) {
+    public DoctorResponseDto createDoctor(@RequestBody @Validated Doctor doctor) {
         return doctorService.createDoctor(doctor);
     }
 
 
     @PutMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
-    public DoctorRegisterDto updateDoctor(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal, @Validated @RequestBody DoctorDto doctorDto) {
+    public DoctorResponseDto updateDoctor(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal, @Validated @RequestBody DoctorDto doctorDto) {
         return doctorService.updateDoctor(doctorDto, userId);
     }
 
@@ -58,7 +58,7 @@ public class DoctorController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/admin/{id}")
-    public DoctorRegisterDto verifyDoctor(@PathVariable(name = "id") Long doctorId) {
+    public DoctorResponseDto verifyDoctor(@PathVariable(name = "id") Long doctorId) {
         return doctorService.verifyDoctor(doctorId);
     }
 }

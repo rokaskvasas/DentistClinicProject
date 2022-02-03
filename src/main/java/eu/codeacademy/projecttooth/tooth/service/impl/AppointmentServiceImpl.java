@@ -11,10 +11,7 @@ import eu.codeacademy.projecttooth.tooth.model.AppointmentSearchCriteria;
 import eu.codeacademy.projecttooth.tooth.model.modelenum.RoleEnum;
 import eu.codeacademy.projecttooth.tooth.repository.AppointmentRepository;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
-import eu.codeacademy.projecttooth.tooth.service.AppointmentService;
-import eu.codeacademy.projecttooth.tooth.service.DoctorServiceAvailabilityService;
-import eu.codeacademy.projecttooth.tooth.service.PatientService;
-import eu.codeacademy.projecttooth.tooth.service.ServiceService;
+import eu.codeacademy.projecttooth.tooth.service.*;
 import eu.codeacademy.projecttooth.tooth.specification.AppointmentSpecification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -37,6 +34,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     private final PatientService patientService;
     private final ServiceService serviceService;
     private final AppointmentSpecification specification;
+    private final EmailService emailService;
 
 
     @Override
@@ -72,20 +70,16 @@ public class AppointmentServiceImpl implements AppointmentService {
     public Appointment createAppointment(Long userId, ModifyAppointmentDto payload) {
 
         PatientEntity patient = getPatientEntity(userId);
-        DoctorServiceAvailabilityEntity doctorServiceAvailability = getDoctorServiceAvailabilityEntity(payload);
-        checkIfServiceIsAvailable(doctorServiceAvailability);
-        checkIfAppointmentTimeMatchesWithAvailability(payload, doctorServiceAvailability);
-        reserveAvailability(doctorServiceAvailability);
-        AppointmentEntity appointmentEntity = appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
+        DoctorServiceAvailabilityEntity doctorServiceAvailabilityEntity = getDoctorServiceAvailabilityEntity(payload);
+        checkIfServiceIsAvailable(doctorServiceAvailabilityEntity);
+        checkIfAppointmentTimeMatchesWithAvailability(payload, doctorServiceAvailabilityEntity);
+        reserveAvailability(doctorServiceAvailabilityEntity);
+        AppointmentEntity appointmentEntity = createAppointmentEntity(payload, patient, doctorServiceAvailabilityEntity);
         updateDatabase(appointmentEntity);
+        notifyDoctorAboutAppointment(doctorServiceAvailabilityEntity, appointmentEntity);
         return createAppointmentModel(appointmentEntity);
     }
 
-    private void checkIfServiceIsAvailable(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
-        if (doctorServiceAvailability.getDoctorAvailability().isReserved()) {
-            throw new DoctorAvailabilityReservedException("Doctor Availability is already reserved");
-        }
-    }
 
 
     @Override
@@ -181,4 +175,22 @@ public class AppointmentServiceImpl implements AppointmentService {
         doctorServiceAvailability.getDoctorAvailability().setReserved(true);
         doctorServiceAvailabilityService.updateDoctorServiceAvailabilityToReservedAndSaveToDatabase(doctorServiceAvailability);
     }
+
+    private AppointmentEntity createAppointmentEntity(ModifyAppointmentDto payload, PatientEntity patient, DoctorServiceAvailabilityEntity doctorServiceAvailability) {
+        return appointmentMapper.createEntity(payload, patient, doctorServiceAvailability);
+    }
+    private void notifyDoctorAboutAppointment(DoctorServiceAvailabilityEntity dsaEntity, AppointmentEntity appointment) {
+        String doctorEmail = dsaEntity.getDoctorAvailability().getDoctorEntity().getUser().getEmail();
+        LocalDateTime startTime = appointment.getStartTime();
+        LocalDateTime endTime = appointment.getEndTime();
+        emailService.send(doctorEmail, String.format("Appointment created from %s to %s", startTime, endTime), "Appointment");
+    }
+
+
+    private void checkIfServiceIsAvailable(DoctorServiceAvailabilityEntity doctorServiceAvailability) {
+        if (doctorServiceAvailability.getDoctorAvailability().isReserved()) {
+            throw new DoctorAvailabilityReservedException("Doctor Availability is already reserved");
+        }
+    }
+
 }

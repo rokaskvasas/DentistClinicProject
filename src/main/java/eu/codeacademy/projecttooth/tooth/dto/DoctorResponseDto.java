@@ -10,7 +10,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DoctorRegisterDto {
+public class DoctorResponseDto {
 
     private Long doctorId;
 

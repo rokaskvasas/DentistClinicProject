@@ -21,7 +21,7 @@ public interface DoctorAvailabilityRepository extends JpaRepository<DoctorAvaila
     @Query("select da from DoctorAvailabilityEntity da left join DoctorEntity doc on doc.doctorId = da.doctorEntity.doctorId where doc.user.userId=?1 and da.doctorAvailabilityId =?2")
     Optional<DoctorAvailabilityEntity> findByUserAndAvailabilityId(Long userId, Long availabilityId);
 
-    @Query("select da from DoctorAvailabilityEntity da left join DoctorEntity doc on doc.doctorId = da.doctorEntity.doctorId where doc.user.userId = ?1 ")
+    @Query("select da from DoctorAvailabilityEntity da left join DoctorEntity doc on doc.user.userId = da.doctorEntity.user.userId where doc.user.userId = ?1 ")
     Page<DoctorAvailabilityEntity> findAllByUserId(Long userId, Pageable pageable);
 
     @Query("select da from DoctorAvailabilityEntity da where da.doctorEntity.user.userId =?1 and da.startTime=?2")

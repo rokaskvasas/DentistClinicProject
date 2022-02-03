@@ -15,15 +15,15 @@ public interface DoctorService {
 
     DoctorRegisterDto createDoctor(Doctor doctor);
 
-    Doctor getDoctorByUserId(Long userId);
+    DoctorRegisterDto getDoctorByUserId(Long userId);
 
-    Doctor updateDoctor(DoctorDto doctorDto, Long userId);
+    DoctorRegisterDto updateDoctor(DoctorDto doctorDto, Long userId);
 
     Long deleteDoctor(Long userId);
 
     Page<Doctor> findAllDoctorsByStatus(String status, int pageNumber, int pageSize);
 
-    Doctor verifyDoctor(Long doctorId);
+    DoctorRegisterDto verifyDoctor(Long doctorId);
 
     List<DoctorEntity> findAllDoctorsWithSpecification(Specification<DoctorEntity> specification);
 

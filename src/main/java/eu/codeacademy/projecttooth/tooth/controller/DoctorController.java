@@ -24,21 +24,21 @@ public class DoctorController {
 
     @PreAuthorize("hasAnyRole('ROLE_DOCTOR','ROLE_UNVERIFIED_DOCTOR' )")
     @GetMapping("/account")
-    public Doctor getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
+    public DoctorRegisterDto getDoctor(@AuthenticationPrincipal UserPrincipal principal) {
         return doctorService.getDoctorByUserId(principal.getUserId());
     }
 
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public DoctorRegisterDto createDoctor(@RequestBody Doctor doctor) {
+    public DoctorRegisterDto createDoctor(@RequestBody @Validated Doctor doctor) {
         return doctorService.createDoctor(doctor);
     }
 
 
     @PutMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
-    public Doctor updateDoctor(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal, @Validated @RequestBody DoctorDto doctorDto) {
+    public DoctorRegisterDto updateDoctor(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal, @Validated @RequestBody DoctorDto doctorDto) {
         return doctorService.updateDoctor(doctorDto, userId);
     }
 
@@ -58,7 +58,7 @@ public class DoctorController {
 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PatchMapping("/admin/{id}")
-    public Doctor verifyDoctor(@PathVariable(name = "id") Long doctorId) {
+    public DoctorRegisterDto verifyDoctor(@PathVariable(name = "id") Long doctorId) {
         return doctorService.verifyDoctor(doctorId);
     }
 }

@@ -58,17 +58,17 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
-    public Doctor getDoctorByUserId(Long userId) {
+    public DoctorRegisterDto getDoctorByUserId(Long userId) {
         DoctorEntity doctorEntity = findDoctorEntityByUserid(userId);
-        return createDoctorModel(doctorEntity);
+        return createDoctorRegisterModel(doctorEntity);
     }
 
     @Override
-    public Doctor updateDoctor(DoctorDto doctorDto, Long userId) {
+    public DoctorRegisterDto updateDoctor(DoctorDto doctorDto, Long userId) {
         DoctorEntity doctorEntity = updateDoctorEntity(doctorDto, userId);
         updateDatabase(doctorEntity);
         log.debug("Updated doctor: {}", doctorDto);
-        return createDoctorModel(doctorEntity);
+        return createDoctorRegisterModel(doctorEntity);
     }
 
     @Override
@@ -89,12 +89,12 @@ public class DoctorServiceImpl implements DoctorService {
 
 
     @Override
-    public Doctor verifyDoctor(Long doctorId) {
+    public DoctorRegisterDto verifyDoctor(Long doctorId) {
         DoctorEntity doctorEntity = verifyDoctorEntity(doctorId);
         sendVerificationEmailToDoctor(doctorEntity);
         updateDatabase(doctorEntity);
         log.debug("Verified doctor by id:{}", doctorId);
-        return createDoctorModel(doctorEntity);
+        return createDoctorRegisterModel(doctorEntity);
     }
 
     @Override
@@ -116,9 +116,9 @@ public class DoctorServiceImpl implements DoctorService {
     }
 
     @Override
-    public DoctorEntity findDoctorEntity(Long doctorId) {
-        return doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by id: %s not found", doctorId)));
+    public DoctorEntity findDoctorEntity(Long userId) {
+        return doctorRepository.findDoctorByUserId(userId)
+                .orElseThrow(() -> new ObjectNotFoundException(String.format("Doctor by user id: %s not found", userId)));
     }
 
     private DoctorEntity findDoctorEntityByUserid(Long userId) {

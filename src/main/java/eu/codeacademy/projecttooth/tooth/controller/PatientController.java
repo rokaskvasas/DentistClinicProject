@@ -1,7 +1,7 @@
 package eu.codeacademy.projecttooth.tooth.controller;
 
-import eu.codeacademy.projecttooth.tooth.dto.PatientDto;
-import eu.codeacademy.projecttooth.tooth.dto.PatientRegisterDto;
+import eu.codeacademy.projecttooth.tooth.dto.PatientRequestDto;
+import eu.codeacademy.projecttooth.tooth.dto.PatientResponseDto;
 import eu.codeacademy.projecttooth.tooth.model.Patient;
 import eu.codeacademy.projecttooth.tooth.security.UserPrincipal;
 import eu.codeacademy.projecttooth.tooth.service.PatientService;
@@ -28,14 +28,14 @@ public class PatientController {
 
     @PreAuthorize("permitAll()")
     @PostMapping
-    public PatientRegisterDto createPatient(@Validated @RequestBody Patient patient) {
+    public PatientResponseDto createPatient(@Validated @RequestBody Patient patient) {
         return service.createPatient(patient);
     }
 
     @PutMapping("/{userId}")
     @PreAuthorize("hasAnyRole('ROLE_ADMIN') || #userId == principal.getUserId()")
-    public Patient updatePatient(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal, @Validated @RequestBody PatientDto patientDto) {
-        return service.updatePatient(patientDto, userId);
+    public Patient updatePatient(@P("userId") @PathVariable Long userId, @AuthenticationPrincipal UserPrincipal principal, @Validated @RequestBody PatientRequestDto patientRequestDto) {
+        return service.updatePatient(patientRequestDto, userId);
     }
 
     @DeleteMapping("{userId}")
